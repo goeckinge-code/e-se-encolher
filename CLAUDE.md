@@ -18,7 +18,8 @@ Vídeos verticais 9:16 (1080x1920), 60–70 s, para TikTok/Shorts, sem voz: o do
 ## Estrutura
 - `ESTILO.md` — guia de estilo (ler primeiro).
 - `blender/lib.py`, `blender/look.py` — Léo e render Workbench; `blender/camera.py` — gramática de câmera (Rig/Shot).
-- `episodios/<tema>/` — um episódio por pasta (modelo atual: `episodios/imortal/`):
+- `blender/personagens.py` — outros protagonistas com o mesmo esqueleto do Léo (Bia, com rabo opcional; controle `BiaCtl`).
+- `episodios/<tema>/` — um episódio por pasta (`imortal/` 66 s com o Léo; `rabo/` 30 s com a Bia):
   `roteiro.py` (texto, tempos, legendas, calendário, card), `cenas.py` (cenas bpy), `render.py`,
   `render_todas.sh`, `montar.sh`, `hyperframes/` (composição final), `narracao.txt`.
 - Episódio 1 (encolher), na raiz: `blender/scenes.py`, `hyperframes/`, `scripts/`, `narracao.txt`.

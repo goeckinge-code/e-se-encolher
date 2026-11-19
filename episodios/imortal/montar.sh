@@ -7,7 +7,7 @@ python3 roteiro.py > /dev/null
 if [ "$1" = "--hq" ]; then DIR=renders/frames_hq; else DIR=renders/frames; fi
 LIST=$(mktemp)
 for s in s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 s10; do
-  for f in "$DIR/$s"/*.jpg; do echo "file '$PWD/$f'"; echo "duration 0.0333333"; done
+  for f in "$DIR/$s"/[0-9][0-9][0-9][0-9][0-9].jpg; do echo "file '$PWD/$f'"; echo "duration 0.0333333"; done
 done > "$LIST"
 TOTAL=$(python3 -c "import roteiro; print(roteiro.TOTAL)")
 mkdir -p hyperframes/assets/video
