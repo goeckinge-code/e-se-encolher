@@ -1,0 +1,26 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    .tm { position:absolute; left:0; top:190px; width:100%; display:flex; justify-content:center; }
+    .pill { display:flex; align-items:center; gap:14px; padding:14px 40px; background:#FFD93D; border:8px solid #1E1B2E;
+             border-radius:60px; box-shadow:0 12px 0 #1E1B2E; font-family:Nunito; font-weight:900; font-size:92px; color:#1E1B2E; }
+    .ico { font-size:72px } .of { font-size:54px; opacity:0.55 }
+  </style>
+  <div id="root" data-composition-id="cronometro" data-width="1080" data-height="1920">
+    <div id="tm-0" class="clip tm" data-start="0.000" data-duration="5.350"><div id="tmb-0" class="pill"><span class="ico">⏱</span><span>1s</span><span class="of">/10</span></div></div>
+<div id="tm-1" class="clip tm" data-start="5.200" data-duration="4.434"><div id="tmb-1" class="pill"><span class="ico">⏱</span><span>3s</span><span class="of">/10</span></div></div>
+<div id="tm-2" class="clip tm" data-start="9.634" data-duration="4.103"><div id="tmb-2" class="pill"><span class="ico">⏱</span><span>5s</span><span class="of">/10</span></div></div>
+<div id="tm-3" class="clip tm" data-start="13.737" data-duration="4.684"><div id="tmb-3" class="pill"><span class="ico">⏱</span><span>8s</span><span class="of">/10</span></div></div>
+<div id="tm-4" class="clip tm" data-start="18.421" data-duration="5.135"><div id="tmb-4" class="pill"><span class="ico">⏱</span><span>10s</span><span class="of">/10</span></div></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#tmb-0",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},0.000);
+tl.fromTo("#tmb-1",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},5.200);
+tl.fromTo("#tmb-2",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},9.634);
+tl.fromTo("#tmb-3",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},13.737);
+tl.fromTo("#tmb-4",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},18.421);
+    tl.set({}, {}, 29.381);
+    window.__timelines["cronometro"] = tl;
+  </script>
+</template>
