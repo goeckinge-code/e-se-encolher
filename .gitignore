@@ -1,0 +1,11 @@
+renders/frames/
+renders/frames_hq/
+renders/still/
+renders/E-se-voce-encolhesse-final.mp4
+hyperframes/assets/video/
+hyperframes/.hyperframes/
+hyperframes/out/
+node_modules/
+__pycache__/
+*.blend1
+.DS_Store

@@ -1,0 +1,30 @@
+<template>
+<style>
+#root{position:absolute;inset:0;pointer-events:none}
+#fc-card{position:absolute;left:0;top:300px;width:100%;display:flex;flex-direction:column;align-items:center;gap:34px;font-family:Nunito;font-weight:900}
+.card-q{font-size:104px;color:#FFD93D;-webkit-text-stroke:20px #1E1B2E;paint-order:stroke fill}
+.card-row{display:flex;gap:40px}
+.opt{width:420px;height:330px;border:8px solid #1E1B2E;border-radius:46px;box-shadow:0 18px 0 #1E1B2E;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-size:50px;line-height:1.12;text-align:center;color:#1E1B2E}
+.optA{background:#FFD93D} .optB{background:#4FC08D}
+.card-cta{font-size:62px;color:#fff;-webkit-text-stroke:16px #1E1B2E;paint-order:stroke fill}
+.arw{display:inline-block}
+</style>
+<div id="root" data-composition-id="final" data-width="1080" data-height="1920">
+<div id="fc-card">
+  <div class="card-q">E AMANHÃ?</div>
+  <div class="card-row">
+    <div id="fc-optA" class="opt optA"><svg viewBox="-40 -40 80 80" width="96" height="96"><path d="M-14,-30 L14,-30 L14,2 L32,2 L0,34 L-32,2 L-14,2 Z" fill="#1E1B2E"/></svg><span>CONTINUAR<br>ENCOLHENDO</span></div>
+    <div id="fc-optB" class="opt optB"><svg viewBox="-40 -40 80 80" width="96" height="96"><path d="M-14,30 L14,30 L14,-2 L32,-2 L0,-34 L-32,-2 L-14,-2 Z" fill="#1E1B2E"/></svg><span>TENTAR<br>VOLTAR</span></div>
+  </div>
+  <div class="card-cta">COMENTA AÍ <span id="fc-arw" class="arw">▼</span></div>
+</div></div>
+<script>
+const tl=gsap.timeline({paused:true});
+const T0=0.300;
+tl.fromTo('#fc-card',{opacity:0,scale:0.6,y:40},{opacity:1,scale:1,y:0,duration:0.45,ease:'back.out(1.8)'},T0);
+tl.fromTo('#fc-optA',{rotation:-4},{rotation:4,duration:0.6,ease:'sine.inOut',yoyo:true,repeat:10},T0);
+tl.fromTo('#fc-optB',{rotation:4},{rotation:-4,duration:0.6,ease:'sine.inOut',yoyo:true,repeat:10},T0);
+tl.fromTo('#fc-arw',{y:-8},{y:14,duration:0.35,ease:'sine.inOut',yoyo:true,repeat:18},T0);
+tl.set({},{},6.384);
+window.__timelines["final"]=tl;
+</script></template>
