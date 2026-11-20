@@ -18,11 +18,12 @@ W, H = 1080, 1920
 SCENES = [
     # GANCHO (0–5 s): começa no meio da ação, pergunta + promessa de resposta, 4 batidas de câmera em 5 s
     dict(id="s0", text="Seu micro-ondas esquenta comida sem fogo nenhum. Sabe como? O segredo tá na água.", badge="SEM FOGO?!", hook=True),
-    dict(id="s1", text="Lá dentro tem uma peça chamada magnetron. Ela solta ondas invisíveis, tipo as do wi-fi.", badge="1 · MAGNETRON"),
-    dict(id="s2", text="Quase toda comida tem água. Quando as ondas chegam, as gotinhas começam a chacoalhar sem parar.", badge="2 · ÁGUA"),
+    dict(id="s1", text="Lá dentro tem uma peça chamada magnetron. Ela solta ondas invisíveis, tipo as do wi-fi, só que bem mais fortes.", badge="1 · MAGNETRON"),
+    dict(id="s2", text="Quase toda comida tem água. Quando as ondas chegam, as gotinhas começam a chacoalhar, bilhões de vezes por segundo.", badge="2 · ÁGUA"),
     dict(id="s3", text="E chacoalhar esquenta. É igual esfregar as mãos quando tá frio.", badge="3 · CALOR"),
     dict(id="s4", text="E o prato gira pra esquentar tudo por igual. Senão, um lado pela e o outro fica gelado.", badge="4 · O PRATO GIRA"),
-    dict(id="s5", text="Qual objeto eu explico no próximo? Geladeira ou ar-condicionado? Comenta aí.", hold=2.0),
+    dict(id="s5", text="E nunca coloca garfo lá dentro. As ondas batem no metal e sai faísca pra todo lado.", badge="⚠ NADA DE METAL"),
+    dict(id="s6", text="Qual objeto eu explico no próximo? Geladeira ou ar-condicionado? Comenta aí.", hold=2.0),
 ]
 
 # ritmo da referência: ~3 palavras/s, narração emendada de uma cena na outra (quase sem respiro)

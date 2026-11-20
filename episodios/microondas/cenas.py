@@ -278,8 +278,53 @@ def build_s4(sc, W):
         rig.apply(t)
     return frame, rig
 
-# ================================================================== S5 — escolha
+# ================================================================== S5 — nada de metal: faísca
 def build_s5(sc, W):
+    setup_render("#BFE3E0")
+    kitchen(); M = microwave()
+    M["hinge"].rotation_euler = (0, 0, -math.radians(105))
+    M["bowl"].hide_render = True
+    for c in M["bowl"].children_recursive: c.hide_render = True
+    fork = empty("fork", (0, -0.1, 0.25), M["plate"])
+    cube("forkh", "#C9CDD8", (0, 0.15, 0), (0.09, 0.6, 0.05), fork, bevel=0.015)
+    cube("forkb", "#C9CDD8", (0, -0.17, 0), (0.2, 0.08, 0.05), fork, bevel=0.015)
+    for k in range(4): cube(f"fork{k}", "#C9CDD8", (-0.075 + k*0.05, -0.32, 0), (0.025, 0.26, 0.04), fork, bevel=0.008)
+    fork.rotation_euler = (math.radians(-65), 0, 0.3)
+    sparks = [cube(f"spk{k}", "#FFE14D", (0, 0, -50), (0.04, 0.01, 0.28), bevel=0) for k in range(22)]
+    flash = sphere("flash", "#FFF6B0", (0, 0, -50), 0.32, (1, 0.1, 1), sub=1)
+    warn = text3d("warn", "!", "#E63946", (0, 0, -50), 0.6, extrude=0.05)
+    cam = camera(40); leo = LeoCtl("leo")
+    TG, TB, TF = W("garfo"), W("batem"), W("faísca")
+    D = sc["dur"]
+    pw = Vector((-0.31, 0.95, MZ + 0.2))
+    shots = [Shot(0, 0, 1.9, 3.2),
+             Shot(TG - 0.05, pw.x, pw.z + 0.35, 1.3, roll=-6),        # close no garfo no prato
+             Shot(TB + 0.1, pw.x, pw.z + 0.4, 1.6, kind="cut", shake=0.08),   # faíscas!
+             Shot(TF - 0.05, 0.05, 1.65, 1.9, roll=6, shake=0.04)]   # Léo apavorado
+    rig = Rig(cam, shots, D, enter=(0.6, 0.3, 0.5, -7), exit=(0, 0.4, -0.45, 7))
+    rr = random.Random(7); sd = [(rr.uniform(0, 6.28), rr.uniform(0.15, 0.45), rr.uniform(0, 1)) for _ in sparks]
+    def frame(t):
+        M["plate"].rotation_euler = (0, 0, 0)
+        on = t > TB + 0.1
+        bpy.context.view_layer.update()
+        tip = M["plate"].matrix_world @ Vector((0.0, -0.3, 0.55))
+        for (a, r, ph), sp in zip(sd, sparks):
+            if not on: sp.location = (0, 0, -50); continue
+            u = (t*5 + ph) % 1
+            sp.location = (tip.x + math.cos(a)*r*u*2.0, tip.y - 0.3, tip.z + math.sin(a)*r*u*2.0)
+            sp.rotation_euler = (0, -a + math.pi/2, 0); sp.scale = (1, 1, 1 - u)
+        fl = on and (int(t*12) % 2 == 0)
+        flash.location = (tip.x, tip.y - 0.25, tip.z + 0.1) if fl else (0, 0, -50)
+        warn.location = (0.62, -0.9, 2.0 + math.sin(t*20)*0.03) if t > TF - 0.1 else (0, 0, -50)
+        warn.rotation_euler = (math.pi/2, 0, 0.1)
+        leo.pose(t, loc=(0, -0.6, 0), expr=[[0, "neutral"], [TG, "worried"], [TB + 0.1, "shock"]],
+                 arms=((160, 15), (160, 15)) if on else (10, (40, 60)), look=(0, -12 if t < TF else 0),
+                 tilt=math.sin(t*30)*3 if on else 0)
+        rig.apply(t)
+    return frame, rig
+
+# ================================================================== S6 — escolha
+def build_s6(sc, W):
     setup_render("#BFE3E0")
     kitchen(); M = microwave()
     q = text3d("q", "?", "#FFD93D", (0.75, -0.9, 1.95), 0.45, extrude=0.04)
@@ -293,4 +338,4 @@ def build_s5(sc, W):
         rig.apply(t)
     return frame, rig
 
-BUILD = {f"s{i}": globals()[f"build_s{i}"] for i in range(6)}
+BUILD = {f"s{i}": globals()[f"build_s{i}"] for i in range(7)}

@@ -1,10 +1,11 @@
-COMO FUNCIONA O MICRO-ONDAS? — narração (≈32s)
+COMO FUNCIONA O MICRO-ONDAS? — narração (≈40s)
 
 Cada linha começa no tempo indicado. A legenda na tela mostra 1 palavra por vez nesse ritmo.
 
 [0:00.1] Seu micro-ondas esquenta comida sem fogo nenhum. Sabe como? O segredo tá na água.
-[0:05.2] Lá dentro tem uma peça chamada magnetron. Ela solta ondas invisíveis, tipo as do wi-fi.
-[0:10.4] Quase toda comida tem água. Quando as ondas chegam, as gotinhas começam a chacoalhar sem parar.
-[0:16.0] E chacoalhar esquenta. É igual esfregar as mãos quando tá frio.
-[0:20.0] E o prato gira pra esquentar tudo por igual. Senão, um lado pela e o outro fica gelado.
-[0:25.7] Qual objeto eu explico no próximo? Geladeira ou ar-condicionado? Comenta aí.
+[0:05.2] Lá dentro tem uma peça chamada magnetron. Ela solta ondas invisíveis, tipo as do wi-fi, só que bem mais fortes.
+[0:11.8] Quase toda comida tem água. Quando as ondas chegam, as gotinhas começam a chacoalhar, bilhões de vezes por segundo.
+[0:18.4] E chacoalhar esquenta. É igual esfregar as mãos quando tá frio.
+[0:22.4] E o prato gira pra esquentar tudo por igual. Senão, um lado pela e o outro fica gelado.
+[0:28.2] E nunca coloca garfo lá dentro. As ondas batem no metal e sai faísca pra todo lado.
+[0:33.5] Qual objeto eu explico no próximo? Geladeira ou ar-condicionado? Comenta aí.
