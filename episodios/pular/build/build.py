@@ -435,8 +435,8 @@ def s3_ceu(S):
     for x, a in ((180, 18), (900, -18), (360, 6), (720, -6)):
         o += g(cone(p, 0, 0, 60, 380, 1500, "c", .45), tr=f"translate({x},1560) rotate({180+a})")
     o += skyline(14, 1400, 150, 520, "#120e1a", lit=.25)
-    o += ranking(f"{p}rk", 540, 400, [("1º", "O CANGURU", "R$ 900.000.000", "?"), ("2º", "A ATLETA", "R$ 48.000.000", "atleta"),
-                                      ("3º", "DONO DO CIRCO", "R$ 12.000.000", "dono")], s=.8, hi=0)
+    o += ranking(f"{p}rk", 540, 400, [("1º", "O CANGURU", "R$ 900.000.000", "?"), ("2º", "KÁTIA MOLA", "R$ 48.000.000", "atleta"),
+                                      ("3º", "BARÃO PIRUETA", "R$ 12.000.000", "dono")], s=.8, hi=0)
     S(f"tl.from('#{p}rk',{{y:'+=1300',duration:1.3,ease:'power2.out'}},{jt(S.t0+.1)})")
     S.focus, S.zoom, S.dy = (540, 700), .03, 30
     return o
@@ -445,8 +445,8 @@ def s3_ceu(S):
 def s3_ranking(S):
     p = S.p
     o = bg("ceu", .45)
-    o += ranking(f"{p}rk", 540, 330, [("1º", "O CANGURU", "R$ 900.000.000", "?"), ("2º", "A ATLETA", "R$ 48.000.000", "atleta"),
-                                      ("3º", "DONO DO CIRCO", "R$ 12.000.000", "dono")], s=1.25, hi=0)
+    o += ranking(f"{p}rk", 540, 330, [("1º", "O CANGURU", "R$ 900.000.000", "?"), ("2º", "KÁTIA MOLA", "R$ 48.000.000", "atleta"),
+                                      ("3º", "BARÃO PIRUETA", "R$ 12.000.000", "dono")], s=1.25, hi=0)
     o += glow(p, 540, 640, 520, "g", .35)
     o += tag(f"{p}tg", 540, 1180, "HÁ 30 ANOS EM 1º", 54)
     S(f"tl.fromTo('#{p}tg',{{opacity:0,scale:.4}},{{opacity:1,scale:1,duration:.2,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.T('trinta'))})")
@@ -523,7 +523,7 @@ def s4_vo(S):
     o += rect(780, 1300, 260, 24, "#6b4423", stroke=INK, sw=5) + rect(880, 1320, 40, 240, "#6b4423", stroke=INK, sw=5)
     o += g(rect(-90, -60, 180, 120, "#fff", rx=4, stroke=INK, sw=4) + text(0, -20, "CONTA DE LUZ", 24, fill=INK) +
            text(0, 34, "ATRASADA", 40, fill="#e63946"), tr="translate(910,1240) rotate(-8)")
-    o += tag(f"{p}tg", 470, 800, "VÓ", 64)
+    o += tag(f"{p}tg", 470, 800, "VÓ DALVA", 64)
     S(f"tl.fromTo('#{p}tg',{{opacity:0,scale:.4}},{{opacity:1,scale:1,duration:.2,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.t0+.15)})")
     S.focus, S.zoom = (470, 1050), .045
     return o
@@ -647,7 +647,7 @@ def s6_dono(S):
     S.rain = False
     o = bg("circo_dentro", .25) + bokeh(p, 9, 10, cols=("#ffd36b", "#ff9a5a"))
     o += person(f"{p}a", "dono", 540, 2250, 3.4, "angry", pose="hips")
-    o += tag(f"{p}tg", 540, 430, "DONO DO CIRCO", 60)
+    o += tag(f"{p}tg", 540, 430, "BARÃO PIRUETA", 60)
     badge = g(rect(-200, -60, 400, 110, "#0b2414", rx=12, stroke="#3cff5a", sw=6) +
               text(0, 26, "3º NO RANKING", 56, fill="#3cff5a", font=FONT_COND), id=f"{p}bd", extra='opacity="0"')
     o += g(badge, tr="translate(820,560) rotate(6)")
@@ -840,7 +840,7 @@ def s9_ranking(S):
     p = S.p
     o = bg("espaco")
     o += ranking(f"{p}rk", 540, 340, [("1º", "LÉO", "R$ 900.000.001", "leo"), ("2º", "O CANGURU", "R$ 900.000.000", "?"),
-                                      ("3º", "A ATLETA", "R$ 48.000.000", "atleta")], s=1.25, hi=0)
+                                      ("3º", "KÁTIA MOLA", "R$ 48.000.000", "atleta")], s=1.25, hi=0)
     S(f"tl.from('#{p}rk',{{scale:1.6,opacity:0,duration:.3,ease:'power3.out',transformOrigin:'50% 0%'}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 700), .05
     return o
@@ -874,12 +874,12 @@ def s9_juntos(S):
     p = S.p
     o = bg("espaco")
     # empilhado na vertical: Canguru em cima, Léo embaixo
-    o += g(person(f"{p}c", "canguru", 420, 900, 1.4, "smile", alt=("happy",), pose="wave"), id=f"{p}fc")
+    o += g(person(f"{p}c", "canguru", 400, 1060, 1.3, "smile", alt=("happy",), pose="wave"), id=f"{p}fc")
     o += g(person(f"{p}a", "leo", 660, 1560, 1.4, "shock", helmet=True, alt=("neutral",), pose="float"), id=f"{p}fa")
     bal = g(path("M-330,-110 L330,-110 Q360,-110 360,-80 L360,60 Q360,90 330,90 L-90,90 L-150,150 L-140,90 L-330,90 Q-360,90 -360,60 L-360,-80 Q-360,-110 -330,-110 Z",
                  "#ffffff", INK, 7) + text(0, -12, "TRINTA ANOS,", 62, fill=INK) + text(0, 62, "GAROTO.", 62, fill=INK),
             id=f"{p}bal", extra='opacity="0"')
-    o += g(bal, tr="translate(560,380)")
+    o += g(bal, tr="translate(600,330)")
     S(f"F('{p}c','smile','happy',{jt(S.T('sorriu'))})")
     S(f"tl.fromTo('#{p}bal',{{opacity:0,scale:.3}},{{opacity:1,scale:1,duration:.22,ease:'back.out(2.5)',transformOrigin:'20% 100%'}},{jt(S.T('Trinta'))})")
     S(f"F('{p}a','shock','neutral',{jt(S.T('esperando'))});PZ('{p}a','shrug',{jt(S.T('esperando'))})")
@@ -971,7 +971,7 @@ function IDLE(p,t0,t1,ph,blink){const n=(per)=>Math.max(1,Math.floor((t1-t0)/per
  tl.fromTo('#'+p+'-br',{scaleY:1},Object.assign({scaleY:1.016,duration:1.3,repeat:n(1.3),yoyo:true,ease:'sine.inOut',immediateRender:false},RO),t0+ph*.5);
  tl.fromTo('#'+p+'-hb',{rotation:-2.2},Object.assign({rotation:2.2,duration:1.7,repeat:n(1.7),yoyo:true,ease:'sine.inOut',immediateRender:false},RO),t0+ph);
  tl.fromTo(['#'+p+'-wL','#'+p+'-wR'],{rotation:-5},Object.assign({rotation:5,duration:1.1,repeat:n(1.1),yoyo:true,ease:'sine.inOut',immediateRender:false},RO),t0+ph*.7);
- if(blink){for(let t=t0+.6+ph;t<t1-.2;t+=2.6+ph){tl.to('#'+p+' .eyes',{scaleY:.1,duration:.06,yoyo:true,repeat:1,svgOrigin:'0 2',smoothOrigin:false},t);}}}
+ if(blink){for(let t=t0+.6+ph;t<t1-.2;t+=2.6+ph){tl.set('#'+p+'-blink',{opacity:1},t);tl.set('#'+p+'-blink',{opacity:0},t+.09);}}}
 function M(id,t,hold){const s='#'+id;
  tl.fromTo(s,{opacity:0,scale:.5,y:0},{opacity:1,scale:1.15,duration:.12,ease:'back.out(3)',transformOrigin:'50% 50%',immediateRender:false},t);
  tl.to(s,{scale:1,duration:.08,transformOrigin:'50% 50%'},t+.12);

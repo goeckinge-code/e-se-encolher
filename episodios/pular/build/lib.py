@@ -282,12 +282,12 @@ def face_icon(kind, cx, cy):
         o += circ(cx, cy + 6, 34, "#1a1524")
         o += text(cx, cy + 22, "?", 50, fill="#ffd23a", font=FONT_COND)
     else:
-        col = {"leo": SKIN, "atleta": "#a8714e", "dono": SKIN, "girl": SKIN}.get(kind, SKIN)
+        col = {"leo": "#8d5a3b", "atleta": "#6e4430", "dono": "#e6b089", "girl": SKIN}.get(kind, SKIN)
         o += circ(cx, cy + 8, 32, col, INK, 4)
         o += circ(cx - 11, cy + 4, 4, INK) + circ(cx + 11, cy + 4, 4, INK)
         o += line(f"M{cx-10},{cy+20} Q{cx},{cy+27} {cx+10},{cy+20}", INK, 4)
         if kind == "leo":
-            o += path(f"M{cx-34},{cy-2} Q{cx},{cy-46} {cx+34},{cy-2} Z", "#e63946", INK, 4)
+            o += circ(cx, cy - 18, 30, "#1b120d", INK, 3) + rect(cx - 30, cy - 14, 60, 8, "#ff7a1a", rx=3)
     return o
 
 
@@ -467,7 +467,7 @@ def crowd(prefix, seed, n, y, x0=-60, x1=W + 60, s=(0.55, 0.75), umbrella=.25, b
     for i, x in enumerate(xs):
         pid = f"{prefix}{i}"
         ids.append(pid)
-        out += person(pid, kind=r.choice(["exec", "exec", "girl", "atleta", "exec"]) if r.random() < .5 else "exec",
+        out += person(pid, kind=r.choice(["exec", "girl", "atleta", "guard", "exec"]),
                       x=x, y=y + r.uniform(-20, 20), s=r.uniform(*s), expr=r.choice(["happy", "smile", "neutral"]),
                       flip=r.random() < .5, shirt=r.choice(CROWD_SHIRTS),
                       umbrella=r.random() < umbrella, briefcase=r.random() < briefcase, hidden=hidden)

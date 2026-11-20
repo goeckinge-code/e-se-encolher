@@ -219,87 +219,60 @@ def hand_shapes(p, side, skin):
     return o
 
 
-# ------------------------------------------------------------------ corpo
+# ------------------------------------------------------------------ corpo (peças renderizadas no Blender)
+# Os personagens são modelados no Blender (blender/chars3d.py) e renderizados em peças;
+# aqui as peças são montadas no esqueleto. A versão 100% SVG anterior ficou em chars_svg_v3.py.
+KIND = {"leo": "leo", "vo": "vo", "canguru": "canguru", "exec": "exec", "girl": "bia", "bia": "bia",
+        "atleta": "katia", "katia": "katia", "dono": "barao", "barao": "barao", "guard": "seguranca", "seguranca": "seguranca"}
+BOX = {"head": (-140, 140, -320, 150), "torso": (-100, 100, -340, -30), "arm": (-34, 34, -30, 86),
+       "fore": (-30, 30, -18, 74), "hand": (-44, 44, -38, 74), "thigh": (-36, 36, -20, 100), "shin": (-60, 60, -18, 104)}
+EXPRS = ["neutral", "happy", "sad", "shock", "determined", "angry", "smile"]
+HANDS = ["open", "fist", "point", "thumb", "peace"]
+
+
+def img(name, file, part, mirror=False, id=None, hidden=False):
+    x0, x1, y0, y1 = BOX[part]
+    a = (f' id="{id}"' if id else "") + (' opacity="0"' if hidden else "")
+    im = (f'<image{a} href="../assets/chars/{name}/{file}.png" x="{x0}" y="{y0}" width="{x1-x0}" height="{y1-y0}" '
+          f'preserveAspectRatio="none"/>')
+    return f'<g transform="scale(-1,1)">{im}</g>' if mirror else im
+
+
 def person(p, kind="leo", x=0, y=0, s=1.0, expr="neutral", flip=False, shirt=None, umbrella=False,
            briefcase=False, hidden=False, alt=(), helmet=False, pose="rest"):
-    lk = dict(LOOKS.get(kind, LOOKS["exec"]))
-    if shirt:
-        lk["shirt"] = shirt
-    skin, acc = lk["skin"], lk.get("acc")
+    name = KIND.get(kind, "exec")
     CREATED.append((p, "umbrella" if umbrella and pose == "rest" else pose))
 
     def leg(side):
         L = "L" if side < 0 else "R"
-        thigh = sh("M-14,-6 Q-15,40 -12,84 L12,84 Q15,40 14,-6 Z", lk["pants"], sw=5)
-        shin = sh("M-12,-4 Q-13,40 -12,72 L12,72 Q13,40 12,-4 Z", lk["pants"], sw=5)
-        if kind == "leo":
-            shin += path("M-14,60 L14,60 L15,72 L-15,72 Z", "#3a5cae", OUTL, 4)
-        shoe = ("M-16,64 Q-22,88 -14,94 L30,94 Q40,93 38,82 Q32,70 12,66 Z" if side > 0 else
-                "M16,64 Q22,88 14,94 L-30,94 Q-40,93 -38,82 Q-32,70 -12,66 Z")
-        shoe_g = sh(shoe, lk["shoe"], sw=5, rim=False)
-        shoe_g += path(("M-15,84 L38,84 Q38,94 30,95 L-14,95 Z" if side > 0 else "M15,84 L-38,84 Q-38,94 -30,95 L14,95 Z"), "#f4f1ea", OUTL, 3.5)
-        shoe_g += line(("M2,70 l12,4 M0,76 l12,4" if side > 0 else "M-2,70 l-12,4 M0,76 l-12,4"), "#ffffff", 3)
-        knee = g(g(shin + shoe_g, id=f"{p}-leg{L}2"), tr="translate(0,84)")
-        return g(g(thigh + knee, id=f"{p}-leg{L}"), tr=f"translate({side*16},{HIP})")
-    legs = leg(-1) + leg(1)
-
-    hem = HIP + 14
-    if lk.get("robe"):
-        torso = sh(f"M-44,{SH+6} Q-48,{SH-6} -26,{SH-10} L26,{SH-10} Q48,{SH-6} 44,{SH+6} L60,{HIP+80} L-60,{HIP+80} Z", lk["shirt"])
-        for sx, sy in ((-26, SH + 40), (20, SH + 80), (-30, HIP + 30), (34, HIP + 50), (0, HIP + 64)):
-            torso += star(sx, sy)
-        torso += line(f"M0,{SH-4} L0,{HIP+80}", OUTL, 4) + rect(-60, HIP + 72, 120, 10, "#ffffff", stroke=OUTL, sw=3)
-    else:
-        torso = sh(f"M-42,{SH+8} Q-46,{SH-6} -26,{SH-10} L26,{SH-10} Q46,{SH-6} 42,{SH+8} Q38,{SH+60} 34,{hem-20} L36,{hem} "
-                   f"Q0,{hem+8} -36,{hem} L-34,{hem-20} Q-38,{SH+60} -42,{SH+8} Z", lk["shirt"])
-        torso += line(f"M-24,{SH+50} Q-16,{SH+70} -22,{SH+90}", OUTL, 2.5, extra='opacity=".35"')
-    if lk.get("hoodie"):
-        torso += path(f"M-30,{SH-8} Q0,{SH+30} 30,{SH-8} Q20,{SH-22} 0,{SH-20} Q-20,{SH-22} -30,{SH-8} Z", "#6a33a8", OUTL, 4)
-        torso += line(f"M-6,{SH+6} l-2,30 M6,{SH+6} l2,30", "#ffffff", 3) + rect(-26, HIP - 40, 52, 30, "none", rx=6, stroke=OUTL, sw=3)
-    torso += path(f"M-15,{SH-10} Q0,{SH+6} 15,{SH-10}", "none", OUTL, 4)
-    if kind == "leo":
-        torso += path(f"M6,{SH+20} L-16,{SH+58} L0,{SH+58} L-8,{SH+94} L20,{SH+46} L3,{SH+46} Z", "#d8262c", OUTL, 3.5)
-    if acc == "tie":
-        torso += path(f"M-18,{SH-10} L0,{SH+44} L18,{SH-10} Z", "#f2f2f4", OUTL, 3)
-        torso += path(f"M0,{SH-4} L-9,{SH+12} L0,{SH+84} L9,{SH+12} Z", "#c0182a", OUTL, 3)
-        torso += line(f"M-18,{SH-10} L-6,{SH+70} M18,{SH-10} L6,{SH+70}", OUTL, 3)
-    if kind == "atleta":
-        torso += text(0, SH + 82, "10", 46, fill="#ffffff", font=FONT_COND, stroke=OUTL, sw=6)
-    if lk.get("coat"):
-        torso += line(f"M0,{SH-4} L0,{hem}", OUTL, 3.5) + "".join(circ(9, SH + 26 + k * 30, 5, "#f0c040", OUTL, 2) for k in range(4))
-        torso += path(f"M-18,{SH-10} L-4,{SH+30} L-26,{SH+14} Z M18,{SH-10} L4,{SH+30} L26,{SH+14} Z", "#8a1424", OUTL, 3)
-    if kind == "guard":
-        torso += text(0, SH + 70, "SEGURANÇA", 18, fill="#f0c040", font=FONT_COND)
-    neck = sh(f"M-11,{NECK-10} L11,{NECK-10} L12,{SH-4} L-12,{SH-4} Z", skin, sw=4.5, rim=False)
+        m = side > 0
+        knee = g(g(img(name, "shin", "shin", m), id=f"{p}-leg{L}2"), tr="translate(0,84)")
+        return g(g(knee + img(name, "thigh", "thigh", m), id=f"{p}-leg{L}"), tr=f"translate({side*16},{HIP})")
 
     def arm(side):
         L = "L" if side < 0 else "R"
-        long_sl = kind in LONG_SLEEVE
-        upper = sh("M-9,-4 Q-10,34 -8,66 L8,66 Q10,34 9,-4 Z", lk["shirt"] if long_sl else skin, sw=5)
-        if not lk.get("bare") and not long_sl:
-            upper += sh("M-15,-10 L15,-10 L14,34 L-14,34 Z", lk["shirt"], sw=5)
-        fore = sh("M-8,-4 Q-9,30 -7,58 L7,58 Q9,30 8,-4 Z", lk["shirt"] if long_sl else skin, sw=5)
-        if long_sl:
-            fore += path("M-10,48 L10,48 L10,58 L-10,58 Z", "#ffffff" if kind == "exec" else lk["shirt"], OUTL, 3)
-        if kind == "leo":
-            fore += rect(-9, 40, 18, 9, "#151515", rx=3, stroke=OUTL, sw=2.5)
-        hand = g(hand_shapes(p, side, skin), id=f"{p}-hand{L}")
+        m = side > 0
+        hands = "".join(img(name, f"hand_{h}", "hand", m, id=f"{p}-h{L}-{h}", hidden=(h != "open")) for h in HANDS)
         extra = ""
         if umbrella and side > 0:
-            extra += line("M0,16 L0,-260", "#222", 6)
-            extra += path("M-170,-260 Q0,-390 170,-260 Q85,-282 0,-260 Q-85,-282 -170,-260 Z", "#18161f", OUTL, 5) + \
-                line("M-100,-322 Q0,-370 100,-322", "#4a4660", 3, extra='opacity=".7"')
+            extra += g(line("M0,16 L0,-260", "#222", 6) +
+                       path("M-170,-260 Q0,-390 170,-260 Q85,-282 0,-260 Q-85,-282 -170,-260 Z", "#18161f", OUTL, 5) +
+                       line("M-100,-322 Q0,-370 100,-322", "#4a4660", 3, extra='opacity=".7"'), tr="rotate(-90)")
         if briefcase and side < 0:
-            extra += sh("M-42,30 L42,30 L42,86 L-42,86 Z", "#6b4423", sw=5) + rect(-12, 18, 24, 14, "none", stroke=OUTL, sw=3.5)
-        if umbrella and side > 0:
-            extra = g(extra, tr="rotate(-90)")     # guarda-chuva fica de pé com o braço na pose "umbrella"
-        wrist = g(g(extra + hand, id=f"{p}-w{L}"), tr="translate(0,58)")
-        elbow = g(g(fore + wrist, id=f"{p}-arm{L}2"), tr="translate(0,66)")
-        return g(g(upper + elbow, id=f"{p}-arm{L}"), tr=f"translate({side*38},{SH+2})")
-    armL, armR = arm(-1), arm(1)
+            extra += sh("M-42,30 L42,30 L42,86 L-42,86 Z", "#6b4423", sw=5, rim=False) + rect(-12, 18, 24, 14, "none", stroke=OUTL, sw=3.5)
+        wrist = g(g(hands + extra, id=f"{p}-w{L}"), tr="translate(0,58)")
+        elbow = g(g(wrist + img(name, "fore", "fore", m), id=f"{p}-arm{L}2"), tr="translate(0,66)")
+        return g(g(elbow + img(name, "arm", "arm", m), id=f"{p}-arm{L}"), tr=f"translate({side*38},{SH+2})")
 
-    head = g(g(g(g(head_art(p, kind, expr, alt, lk, helmet), tr="translate(0,-66)"), id=f"{p}-hb"), id=f"{p}-head"), tr=f"translate(0,{NECK})")
-    body = legs + torso + neck + armL + armR + head
+    faces = img(name, f"head_{expr}", "head", id=f"{p}-fx-{expr}")
+    for e in alt:
+        faces += img(name, f"head_{e}", "head", id=f"{p}-fx-{e}", hidden=True)
+    faces += img(name, "blink", "head", id=f"{p}-blink", hidden=True)
+    if helmet:
+        faces += circ(0, -74, 112, "#bfe8ff", "#e8f6ff", 6, extra='fill-opacity=".13"')
+        faces += line("M-74,-132 Q-50,-162 -8,-172", "#ffffff", 11, extra='opacity=".7"') + line("M72,-20 Q86,-54 84,-90", "#ffffff", 5, extra='opacity=".35"')
+    head = g(g(g(faces, id=f"{p}-hb"), id=f"{p}-head"), tr=f"translate(0,{NECK})")
+    body = leg(-1) + leg(1) + img(name, "torso", "torso") + arm(-1) + arm(1) + head
     inner = '<ellipse cx="0" cy="4" rx="70" ry="12" fill="url(#fx-contact)"/>' + g(g(body, id=f"{p}-br"), id=f"{p}-j")
     sc = f"scale({-s if flip else s},{s})"
     st = f' style="filter:{AMB}"' if AMB else ""
