@@ -4,7 +4,7 @@
 set -e
 cd "$(dirname "$0")"
 python3 roteiro.py > /dev/null
-if [ "$1" = "--hq" ]; then DIR=renders/frames_hq; else DIR=renders/frames; fi
+if [ "$1" = "--hq" ]; then DIR=renders/frames_hq; elif [ "$1" = "--fast" ]; then DIR=renders/frames_fast; else DIR=renders/frames; fi
 LIST=$(mktemp)
 for s in $(python3 -c "import roteiro; print(' '.join(x['id'] for x in roteiro.SCENES))"); do
   for f in "$DIR/$s"/[0-9][0-9][0-9][0-9][0-9].jpg; do echo "file '$PWD/$f'"; echo "duration 0.0333333"; done
