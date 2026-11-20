@@ -152,7 +152,7 @@ def toon(base, shade=None, rim=True, flat=False):
     return m
 
 
-def finish(o, m, part, expr=None, hand=None, line=True, sub=1, lw=3.2):
+def finish(o, m, part, expr=None, hand=None, line=True, sub=1, lw=2.6):
     o.data.materials.clear()
     o.data.materials.append(m)
     if sub:
@@ -220,6 +220,26 @@ def blob(part, m, x0, x1, y0, y1, d0, d1, taper=0.0, **kw):
     return finish(o, m, part, sub=kw.pop("sub", 1), **kw)
 
 
+def band(part, m, x, y, d, R, h, sc=(1, 1), tilt=(0, 0), **kw):
+    """faixa (cilindro aberto, sem tampas) contornando a cabeça"""
+    bpy.ops.mesh.primitive_cylinder_add(radius=R * U, depth=h * U, location=P(x, y, d), vertices=64, end_fill_type="NOTHING")
+    o = bpy.context.active_object
+    o.scale = (sc[0], sc[1], 1)
+    o.rotation_euler = (math.radians(tilt[0]), math.radians(tilt[1]), 0)
+    md = o.modifiers.new("e", "SOLIDIFY")
+    md.thickness = 3 * U
+    return finish(o, m, part, sub=0, **kw)
+
+
+def ring(part, m, x, y, d, R, r, sc=(1, 1), tilt=(0, 0), **kw):
+    """anel em volta da cabeça (faixa): horizontal, levemente inclinado"""
+    bpy.ops.mesh.primitive_torus_add(major_radius=R * U, minor_radius=r * U, location=P(x, y, d), major_segments=64, minor_segments=12)
+    o = bpy.context.active_object
+    o.scale = (sc[0], sc[1], 1)
+    o.rotation_euler = (math.radians(tilt[0]), math.radians(tilt[1]), 0)
+    return finish(o, m, part, sub=0, **kw)
+
+
 def tube(part, m, pts, r, d=0, cyclic=False, **kw):
     """linha 3D (sobrancelhas, boca, cílios) — pontos no rig"""
     cu = bpy.data.curves.new("c", "CURVE")
@@ -261,17 +281,18 @@ def eyes(C, expr):
             tube("head", toon(INK, flat=True), [(ex - 14, hy + 3), (ex, hy - 10), (ex + 14, hy + 3)], 3.2, d=fd + 6, expr=expr)
             continue
         big = expr == "shock"
-        sph("head", white, ex, hy, fd, 18 if big else 16, sc=(1, 1.22, .45), expr=expr, lw=2.2)
-        ir = 8 if big else 11
-        sph("head", iris, ex - side * 1.5, hy + 3, fd + 5, ir, sc=(1, 1.08, .35), expr=expr, line=False)
-        sph("head", black, ex - side * 1.5, hy + 3, fd + 7, ir * .55, sc=(1, 1.08, .3), expr=expr, line=False)
-        sph("head", shine, ex + 3, hy - 3, fd + 9, 3.6, sc=(1, 1, .3), expr=expr, line=False)
-        sph("head", shine, ex - 4, hy + 8, fd + 9, 1.7, sc=(1, 1, .3), expr=expr, line=False)
+        sph("head", white, ex, hy, fd, 15 if big else 13.5, sc=(1, 1.18, .45), expr=expr, lw=1.8)
+        ir = 7.5 if big else 10
+        sph("head", iris, ex - side * 1.2, hy + 2, fd + 5, ir, sc=(1, 1.06, .35), expr=expr, line=False)
+        sph("head", black, ex - side * 1.2, hy + 2, fd + 7, ir * .52, sc=(1, 1.06, .3), expr=expr, line=False)
+        sph("head", shine, ex + 3, hy - 3, fd + 9, 3.2, sc=(1, 1, .3), expr=expr, line=False)
+        sph("head", shine, ex - 3.5, hy + 7, fd + 9, 1.5, sc=(1, 1, .3), expr=expr, line=False)
         if expr in ("sad", "determined", "angry"):
             tilt = (14 if expr == "sad" else -12) * side
-            sph("head", skin, ex, hy - 17, fd + 4, 19, sc=(1.1, .55, .5), rot=(0, 0, tilt), expr=expr, lw=2.2)
-        tube("head", toon(INK, flat=True), [(ex - 17, hy - 6), (ex - 4, hy - 20), (ex + 12, hy - 18), (ex + side * 22, hy - 14)],
-             2.8, d=fd + 9, expr=expr)
+            sph("head", skin, ex, hy - 15, fd + 4, 16, sc=(1.1, .55, .5), rot=(0, 0, tilt), expr=expr, line=False)
+        tube("head", toon(INK, flat=True), [(ex - 13, hy - 6), (ex - 6, hy - 15), (ex + 5, hy - 16), (ex + 13, hy - 8)],
+             2.0, d=fd + 9, expr=expr)
+        tube("head", toon(INK, flat=True), [(ex + side * 12, hy - 10), (ex + side * 18, hy - 15)], 1.5, d=fd + 9, expr=expr)
 
 
 def brows(C, expr):
@@ -282,8 +303,8 @@ def brows(C, expr):
         inner, outer = o[1], o[0]
         if expr == "sad":
             inner, outer = -8, 4
-        tube("head", m, [(side * (bx + 14), by + outer), (side * bx, by - 4 + min(inner, outer)), (side * (bx - 14), by + inner)],
-             4.2, d=fd, expr=expr)
+        tube("head", m, [(side * (bx + 13), by + outer), (side * bx, by - 4 + min(inner, outer)), (side * (bx - 12), by + inner)],
+             3.0, d=fd, expr=expr)
 
 
 def mouth(C, expr):
@@ -311,7 +332,7 @@ def mouth(C, expr):
 def blink_lids(C):
     skin = toon(C["skin"])
     for side in (-1, 1):
-        sph("blink", skin, side * C["eye_x"], C["eye_y"], C["face_d"] + 6, 19, sc=(1.05, 1.25, .45), lw=2.2)
+        sph("blink", skin, side * C["eye_x"], C["eye_y"], C["face_d"] + 6, 16, sc=(1.05, 1.25, .45), lw=1.8)
         tube("blink", toon(INK, flat=True), [(side * C["eye_x"] - 15, C["eye_y"] + 4), (side * C["eye_x"], C["eye_y"] + 8),
                                              (side * C["eye_x"] + 15, C["eye_y"] + 4)], 2.8, d=C["face_d"] + 14)
 
@@ -320,10 +341,16 @@ def blink_lids(C):
 def head_base(C):
     hy = -362
     skin = toon(C["skin"])
-    sph("head", skin, 0, hy, 0, 62, sc=(1, 1.08, .95), sub=0)
+    hd = sph("head", skin, 0, hy, 0, 62, sc=(1, 1.08, .95), sub=0)
+    r = 62 * U
+    for v in hd.data.vertices:          # queixo um pouco mais fino
+        if v.co.z < 0:
+            t = -v.co.z / r
+            v.co.x *= 1 - .16 * t * t
+            v.co.y *= 1 - .08 * t
     for side in (-1, 1):
-        sph("head", skin, side * 60, hy + 6, -6, 13, sc=(.7, 1.1, .6))
-    sph("head", toon(mixhex(C["skin"], "#a04040", .15)), 3, hy + 18, 58, 7, sc=(1, .9, .8), lw=2.2)   # nariz
+        sph("head", skin, side * 60, hy + 6, -6, 12, sc=(.7, 1.1, .6), lw=2.2)
+    sph("head", toon(mixhex(C["skin"], "#7a3030", .12)), 2, hy + 18, 57, 5, sc=(1.1, .8, .7), lw=1.6)   # nariz
     # bochechas rosadas
     for side in (-1, 1):
         sph("head", toon(mixhex(C["skin"], "#ff6060", .35), rim=False), side * 34, hy + 22, 50, 10, sc=(1.3, .7, .2), line=False)
@@ -414,14 +441,18 @@ def leo():
     head_base(C)
     hy = -362
     hair = toon(C["hair"])
-    for (x, y, r) in ((0, hy - 70, 48), (-42, hy - 56, 36), (42, hy - 56, 36), (-26, hy - 86, 34), (26, hy - 86, 34),
-                      (-56, hy - 26, 26), (56, hy - 26, 26), (0, hy - 96, 30)):
-        sph("head", hair, x, y, -10, r, sc=(1, .9, .9))
-    blob("head", toon("#ff7a1a"), -64, 64, hy - 52, hy - 38, -40, 62, sub=1)            # faixa de suor laranja
+    sph("head", hair, 0, hy - 40, -20, 76, sc=(1.1, .98, .92), lw=2.6)                      # volume do black power
+    for k in range(15):                                                                    # cachos na borda
+        a = math.radians(160 + k * 220 / 14)
+        sph("head", hair, 84 * math.cos(a), hy - 40 + 76 * math.sin(a), -16, 19 + (k % 3) * 2, lw=2.2)
+    for side in (-1, 1):
+        sph("head", hair, side * 62, hy - 6, -12, 20, lw=2.2)                              # costeletas
+    band("head", toon("#ff7a1a"), 0, hy - 40, -4, 64, 14, sc=(1.0, .97), tilt=(-7, -4), lw=2)     # faixa de suor
     # tronco: moletom largão + capuz + bolso + remendo de moeda + bermuda
     blob("torso", toon(C["top"]), -46, 46, -294, -150, -26, 30, taper=.08)
     blob("torso", toon("#1a7777"), -36, 36, -306, -282, -34, 4)                          # capuz dobrado
-    blob("torso", toon("#1a7777"), -28, 28, -200, -168, 20, 34, line=True)              # bolso canguru
+    blob("torso", toon("#1c8282"), -28, 28, -202, -170, 22, 32, line=False)             # bolso canguru
+    tube("torso", toon("#155f5f", flat=True), [(-28, -202), (28, -202)], 1.4, d=33)
     sph("torso", toon("#f2c33a"), 22, -250, 32, 11, sc=(1, 1, .3), lw=2.4)              # remendo: moeda
     tube("torso", toon("#c99a1f", flat=True), [(18, -255), (22, -245), (26, -255)], 1.6, d=36)
     blob("torso", toon(C["shorts"]), -40, 40, -168, -128, -24, 26)
