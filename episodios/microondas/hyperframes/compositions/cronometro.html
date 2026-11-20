@@ -1,0 +1,29 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    .tm { position:absolute; left:0; top:190px; width:100%; display:flex; justify-content:center; }
+    .pill { display:flex; align-items:center; gap:14px; padding:14px 40px; background:#FFD93D; border:8px solid #1E1B2E;
+             border-radius:60px; box-shadow:0 12px 0 #1E1B2E; font-family:Nunito; font-weight:900; font-size:92px; color:#1E1B2E; }
+    .pill { font-size:72px }
+    .hook { background:#FF3B3B; color:#FFFFFF; font-size:120px; padding:18px 56px; -webkit-text-stroke:4px #1E1B2E; paint-order:stroke fill; }
+    .hook-wrap { top:300px }
+  </style>
+  <div id="root" data-composition-id="cronometro" data-width="1080" data-height="1920">
+    <div id="tm-0" class="clip tm" data-start="0.050" data-duration="2.400"><div id="tmb-0" class="pill hook">SEM FOGO?!</div></div>
+<div id="tm-1" class="clip tm" data-start="4.936" data-duration="5.209"><div id="tmb-1" class="pill">1 · MAGNETRON</div></div>
+<div id="tm-2" class="clip tm" data-start="10.145" data-duration="5.580"><div id="tmb-2" class="pill">2 · ÁGUA</div></div>
+<div id="tm-3" class="clip tm" data-start="15.725" data-duration="4.036"><div id="tmb-3" class="pill">3 · CALOR</div></div>
+<div id="tm-4" class="clip tm" data-start="19.761" data-duration="5.703"><div id="tmb-4" class="pill">4 · O PRATO GIRA</div></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#tmb-0",{scale:3.2,rotation:-18,opacity:0},{scale:1,rotation:-4,opacity:1,duration:0.22,ease:"back.out(3)"},0.050);
+tl.fromTo("#tmb-0",{x:-10},{x:10,duration:0.05,yoyo:true,repeat:5,ease:"none"},0.270);
+tl.fromTo("#tmb-1",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},4.936);
+tl.fromTo("#tmb-2",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},10.145);
+tl.fromTo("#tmb-3",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},15.725);
+tl.fromTo("#tmb-4",{scale:1.6,rotation:-12},{scale:1,rotation:0,duration:0.3,ease:"back.out(2.6)"},19.761);
+    tl.set({}, {}, 32.137);
+    window.__timelines["cronometro"] = tl;
+  </script>
+</template>

@@ -76,3 +76,21 @@ Frases curtas, sujeito "você", verbo no presente. Uma imagem por frase.
 3. Monte as cenas em `cenas.py` com `Rig` + `Shot` (uma batida por frase; close nas reações).
 4. Gere stills e confira o enquadramento: `python3 episodios/<tema>/render.py -- s3 still 0.1,0.5,0.9`.
 5. `episodios/<tema>/render_todas.sh` e depois `episodios/<tema>/montar.sh`.
+
+## 7. Os 5 primeiros segundos (gancho) — vale para toda série
+Quem decide se assiste é o primeiro segundo. Regras:
+1. **Primeiro quadro já é a cena mais forte**: rosto em choque + o objeto/absurdo no mesmo quadro (vira a miniatura).
+   Nada de abertura, logo ou plano vazio. A câmera já começa com tremida/zoom (impacto em t=0).
+2. **Frase 1 = afirmação surpreendente sobre algo comum** ("Seu micro-ondas esquenta comida sem fogo nenhum").
+   **Frase 2 = pergunta curta** ("Sabe como?"). **Frase 3 = promessa da resposta** ("O segredo tá na água").
+3. **4 batidas de câmera em 5 s** (uma a cada ~1,2 s): rosto → objeto → close → mergulho no "segredo".
+4. **Selo gigante no topo** com a ideia do gancho ("SEM FOGO?!"), vermelho, entra como carimbo e treme.
+5. Narração começa em 0,1 s — sem respiro antes da primeira palavra.
+
+## 8. Série "Como funciona" (objetos do dia a dia)
+- Mesma câmera e legenda do "E se…". Apresentador: o Léo.
+- Linguagem de conversa: frases curtas, palavras do dia a dia, uma comparação caseira por passo
+  ("tipo as do wi-fi", "igual esfregar as mãos no frio"). Termo técnico só um por vídeo, e explicado na hora.
+- Estrutura: gancho (5 s) → 3–4 passos numerados com selo no topo ("1 · MAGNETRON") → por que isso importa
+  no seu dia → escolha do próximo objeto nos comentários.
+- Modelo: `episodios/microondas/`.
