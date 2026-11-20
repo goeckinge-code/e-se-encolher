@@ -130,6 +130,31 @@ def jt(t):
     return f"{t:.3f}"
 
 
+# ------------------------------------------------------------------ fundos do Blender
+LIGHT = {   # luz de contorno + ambiente dos personagens por cenário
+    "rua": ("#b9b4ff", "brightness(.86) saturate(.92)"), "rua_alta": ("#b9b4ff", "brightness(.82) saturate(.9)"),
+    "rua_close": ("#ffc98a", "brightness(.9)"), "beco": ("#8f9dff", "brightness(.84) saturate(.9)"),
+    "beco_close": ("#8f9dff", "brightness(.86)"), "elevador": ("#dfe8ff", "brightness(.9) saturate(.85)"),
+    "escola": ("#c0b0ff", "brightness(.88)"), "quadra": ("#e8eeff", "brightness(1.02)"),
+    "quintal": ("#ff6a6a", "brightness(.85)"), "ceu": ("#cfe6ff", "brightness(.8)"), "ceu_lua": ("#fff4d0", "brightness(.6)"),
+    "telhado": ("#fff4d0", "brightness(.85)"), "sala": ("#ffc98a", "brightness(.95) sepia(.08)"),
+    "ferrovelho": ("#ffb07a", "brightness(.86)"), "circo": ("#ffd08a", "brightness(.88)"),
+    "circo_dentro": ("#fff0d0", "brightness(.95)"), "circo_alto": ("#fff0d0", "brightness(.98)"),
+    "foguete": ("#e0ecff", "brightness(.88)"), "lua": ("#ffffff", "brightness(1.0)"), "espaco": ("#cfe6ff", "brightness(.95)"),
+}
+
+
+def bg(name, dark=0.0):
+    """fundo renderizado no Blender (assets/plates/<name>.jpg) com sobra para o zoom de câmera;
+    também ajusta a luz de contorno/ambiente dos personagens desse plano"""
+    rim, amb = LIGHT.get(name, ("#b9b4ff", ""))
+    set_rim(rim, amb)
+    o = f'<image href="../assets/plates/{name}.jpg" x="-54" y="-96" width="1188" height="2112" preserveAspectRatio="xMidYMid slice"/>'
+    if dark:
+        o += rect(-300, -300, W + 600, H + 600, "#05030a", extra=f'opacity="{dark}"')
+    return o
+
+
 # ------------------------------------------------------------------ cenários compostos
 def city(p, seed, signs, ground=1530, lamps=(160, 900), far=True):
     r = random.Random(seed)
@@ -238,7 +263,7 @@ def splash(id, x, y):
 
 def s1_rua(S):
     p = S.p
-    o = city(p, 11, [("PADARIA", "#ff4fa3", "p"), ("FARMÁCIA", "#3cff5a", "g"), ("LANCHES", "#39e5ff", "c")])
+    o = bg("rua")
     o += person(f"{p}a", "exec", 540, 1610, 1.55, "smile", umbrella=True)
     o += money(f"{p}m", 560, 860, "+R$ 40", 110)
     t = S.T("pular")
@@ -250,8 +275,7 @@ def s1_rua(S):
 
 def s1_cidade(S):
     p = S.p
-    o = city(p, 21, [("BANCO", "#39e5ff", "c"), ("JOIAS", "#ffd36b", ""), ("HOTEL", "#ff4fa3", "p")], ground=1500,
-             lamps=(120, 960))
+    o = bg("rua_alta")
     cr, ids = crowd(f"{p}c", 4, 9, 1560, s=(.62, .8), umbrella=.35, briefcase=.3)
     o += cr
     r = random.Random(3)
@@ -270,8 +294,7 @@ def s1_cidade(S):
 
 def s1_pulo(S):
     p = S.p
-    o = city(p, 12, [("FARMÁCIA", "#3cff5a", "g"), ("LANCHES", "#39e5ff", "c")], lamps=(300,))
-    o += bokeh(p, 2, 8)
+    o = bg("rua_close")
     o += person(f"{p}a", "exec", 520, 2050, 2.9, "happy", briefcase=True)
     o += money(f"{p}m", 560, 520, "+R$ 40", 150)
     S(f"J('{p}a',{jt(S.t0+.02)},90,.3)")
@@ -283,7 +306,7 @@ def s1_pulo(S):
 def s1_celular(S):
     p = S.p
     S.rain = False
-    o = rect(-300, -300, W + 600, H + 600, "#150f1f") + bokeh(p, 5, 18)
+    o = bg("rua_close", .35) + bokeh(p, 5, 10)
     o += phone(f"{p}ph", 540, 1020, 2.0, value="+R$ 40,00", sub="DE: CHÃO", clock="23:47")
     S(f"tl.from('#{p}ph',{{y:'+=260',duration:.35,ease:'power3.out'}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 900), .06
@@ -292,9 +315,7 @@ def s1_celular(S):
 
 def s2_regua(S):
     p = S.p
-    o = brick_wall(-300, -300, W + 300, 1560, seed=7)
-    o += glow(p, 760, 300, 520, "", .55)
-    o += street(p, 1560)
+    o = bg("beco")
     o += ruler(780, 180, 1560, 5, 6, 20)
     o += plate(540, 170, "1 cm = R$ 1", 72, bg="#0b2414", fg="#3cff5a", border="#3cff5a")
     o += person(f"{p}a", "girl", 470, 1560, 1.6, "happy")
@@ -312,7 +333,7 @@ def s2_regua(S):
 
 def s2_trabalho(S):
     p = S.p
-    o = city(p, 31, [("ESCRITÓRIO", "#39e5ff", "c"), ("CAFÉ", "#ffd36b", "")], ground=1520, lamps=(980,))
+    o = bg("rua")
     o += plate(820, 660, "PONTO", 44, bg="#2b55c9")
     cr, ids = crowd(f"{p}c", 9, 7, 1620, s=(.9, 1.05), umbrella=.2, briefcase=.9)
     o += cr
@@ -332,14 +353,8 @@ def s2_trabalho(S):
 def s2_elevador(S):
     p = S.p
     S.rain = False
-    o = rect(-300, -300, W + 600, H + 600, "#2d2738")
-    o += rect(-300, 1500, W + 600, 700, "#1d1824")
-    o += rect(250, 420, 580, 1080, "#4b4458", stroke=INK, sw=8)
-    o += rect(280, 520, 255, 980, "#8b93a5", stroke=INK, sw=6) + rect(545, 520, 255, 980, "#8b93a5", stroke=INK, sw=6)
-    o += plate(540, 480, "ELEVADOR", 58, bg="#1a1422", fg="#ffd36b", border="#ffd36b")
-    o += line("M300,620 L780,1300 M780,620 L300,1300", "#ffd23a", 34) + line("M300,620 L780,1300 M780,620 L300,1300", INK, 6, extra='stroke-dasharray="30 30"')
-    o += line("M250,420 q60,40 120,10 M250,420 q30,60 20,120", "#c9ccd6", 3, extra='opacity=".6"')
-    o += glow(p, 540, 200, 420, "", .4)
+    o = bg("elevador")
+    o += line("M330,700 L750,1340 M750,700 L330,1340", "#ffd23a", 30) + line("M330,700 L750,1340 M750,700 L330,1340", INK, 5, extra='stroke-dasharray="30 30"')
     stamp = g(rect(-230, -80, 460, 160, "none", rx=14, stroke="#e63946", sw=12) +
               text(0, 52, "FALIU", 150, fill="#e63946", font=FONT_COND),
               id=f"{p}st", extra='opacity="0"')
@@ -351,10 +366,7 @@ def s2_elevador(S):
 
 def s2_procurado(S):
     p = S.p
-    o = brick_wall(-300, -300, W + 300, 1700, seed=8)
-    o += glow(p, 540, 300, 700, "", .5)
-    o += cone(p, 540, -100, 80, 900, 1500, "", .6)
-    o += street(p, 1700)
+    o = bg("beco_close")
     o += wanted(f"{p}w", 540, 900, "PROCURADO", ("INVENTOR DO", "TETO BAIXO"), 1.55)
     S.focus, S.zoom = (540, 900), .055
     return o
@@ -362,11 +374,8 @@ def s2_procurado(S):
 
 def s3_corda(S):
     p = S.p
-    o = sky(p) + stars(4, 30, 600)
-    o += building(60, 520, 960, 1100, "#3b2f52", 3, lit=.6, cols=6)
+    o = bg("escola")
     o += plate(540, 600, "ESCOLA", 80, bg="#2b55c9")
-    o += street(p, 1560)
-    o += lamp(p, 980, 820, 1560, side=-1)
     o += person(f"{p}a", "girl", 540, 1600, 1.7, "happy")
     rope_up = line("M420,1420 Q540,820 660,1420", "#ffffff", 7)
     rope_dn = line("M420,1420 Q540,1700 660,1420", "#ffffff", 7)
@@ -393,16 +402,7 @@ def s3_corda(S):
 def s3_volei(S):
     p = S.p
     S.rain = False
-    o = rect(-300, -300, W + 600, H + 600, "#120e1e")
-    for x in (120, 960):   # refletores
-        o += rect(x - 70, 150, 140, 80, "#d8dbe6", rx=8, stroke=INK, sw=5)
-        o += cone(p, x, 230, 120, 900, 1400, "c", .5)
-        o += glow(p, x, 190, 200, "c", .9)
-    o += rect(-300, 1180, W + 600, 1000, "#d58a3a") + rect(-300, 1180, W + 600, 14, "#fff")
-    o += rect(80, 900, 920, 18, "#fff", extra='opacity=".9"')
-    for k in range(10):
-        o += line(f"M{80+k*92},918 L{80+k*92},1180", "#ffffff", 2, extra='opacity=".4"')
-    o += rect(70, 880, 16, 600, "#888") + rect(994, 880, 16, 600, "#888")
+    o = bg("quadra")
     o += person(f"{p}a", "atleta", 540, 1500, 1.5, "determined")
     o += g(circ(0, 0, 38, "#ffe066", INK, 6) + line("M-36,-8 Q0,6 36,-8 M-10,-36 Q4,0 -10,36", INK, 4), id=f"{p}ball",
            extra='transform="translate(700,700)"')
@@ -420,23 +420,7 @@ def s3_volei(S):
 
 def s3_cama(S):
     p = S.p
-    o = sky(p) + stars(6, 30, 600)
-    o += rect(-300, 500, W + 600, 900, "#2c2438")
-    o += building(-100, 560, 600, 900, "#33293f", 2, lit=.5)
-    o += rect(-300, 1400, W + 600, 800, "#1d2a1f")
-    o += lamp(p, 900, 700, 1400, side=-1)
-    # cama elástica dentro de jaula
-    o += ell(540, 1330, 330, 70, "#1b1622", INK, 7) + ell(540, 1320, 280, 52, "#3a3f8f")
-    for x in (240, 380, 700, 840):
-        o += line(f"M{x},1360 L{x+(10 if x>540 else -10)},1430", INK, 10)
-    for k in range(13):
-        x = 180 + k * 60
-        o += line(f"M{x},720 L{x},1400", "#c9ccd6", 6, extra='opacity=".85"')
-    o += line("M170,720 L910,720", "#c9ccd6", 10)
-    o += rect(500, 980, 80, 70, "#ffd23a", rx=8, stroke=INK, sw=5) + path("M515,980 Q540,930 565,980", "none", INK, 8)
-    for k in range(4):
-        o += line(f"M150,{800+k*120} L930,{860+k*120}", "#ff3b3b", 4, extra='opacity=".85"')
-    o += glow(p, 540, 1000, 420, "r", .35)
+    o = bg("quintal")
     o += person(f"{p}g1", "guard", 110, 1560, 1.25, "angry")
     o += person(f"{p}g2", "guard", 980, 1560, 1.25, "angry", flip=True)
     o += plate(540, 640, "PROPRIEDADE PRIVADA", 54, bg="#8a1c12", border="#ffd23a")
@@ -446,8 +430,7 @@ def s3_cama(S):
 
 def s3_ceu(S):
     p = S.p
-    o = sky(p) + stars(8, 160, 1100)
-    o += moon(860, 300, 90)
+    o = bg("ceu")
     for x, a in ((180, 18), (900, -18), (360, 6), (720, -6)):
         o += g(cone(p, 0, 0, 60, 380, 1500, "c", .45), tr=f"translate({x},1560) rotate({180+a})")
     o += skyline(14, 1400, 150, 520, "#120e1a", lit=.25)
@@ -460,7 +443,7 @@ def s3_ceu(S):
 
 def s3_ranking(S):
     p = S.p
-    o = sky(p) + stars(9, 100, 1900)
+    o = bg("ceu", .45)
     o += ranking(f"{p}rk", 540, 330, [("1º", "O CANGURU", "R$ 900.000.000", "?"), ("2º", "A ATLETA", "R$ 48.000.000", "atleta"),
                                       ("3º", "DONO DO CIRCO", "R$ 12.000.000", "dono")], s=1.25, hi=0)
     o += glow(p, 540, 640, 520, "g", .35)
@@ -472,11 +455,7 @@ def s3_ranking(S):
 
 def s3_lenda(S):
     p = S.p
-    o = sky(p) + stars(10, 120, 1300)
-    o += moon(540, 560, 330)
-    o += circ(540, 560, 420, "#fff7cf", extra=f'opacity=".12" filter="url(#fx-soft)"')
-    o += skyline(15, 1500, 100, 420, "#0d0a14", lit=.2)
-    o += rect(300, 1380, 480, 600, "#0d0a14")
+    o = bg("ceu_lua")
     sil = person(f"{p}a", "canguru", 540, 1380, 1.0, "smile")
     o += g(sil, id=f"{p}sil", extra='style="filter:brightness(0)"')
     o += g("".join(ell(x, y, rx, 50, "#2a2440", extra='opacity=".9"') for x, y, rx in ((200, 240, 260), (820, 180, 300), (520, 90, 340))),
@@ -489,7 +468,7 @@ def s3_lenda(S):
 
 def s4_ultimo(S):
     p = S.p
-    o = sky(p) + stars(11, 100, 1900)
+    o = bg("ceu", .45)
     o += ranking(f"{p}rk", 540, 300, [("7.999.998º", "SEU JORGE", "R$ 5", None), ("7.999.999º", "TIA NENA", "R$ 4", None),
                                       ("8.000.000º", "LÉO", "R$ 3", "leo")], s=1.25, hi=2)
     S(f"tl.from('#{p}rk',{{y:'-=900',duration:.7,ease:'power3.out'}},{jt(S.t0)})")
@@ -500,10 +479,7 @@ def s4_ultimo(S):
 
 def s4_leo(S):
     p = S.p
-    o = brick_wall(-300, -300, W + 300, 1560, base="#3b2a33", seed=12)
-    o += lamp(p, 880, 700, 1560, side=-1)
-    o += street(p, 1560)
-    o += rect(80, 1380, 110, 180, "#2f6b3a", rx=8, stroke=INK, sw=6)   # lixeira
+    o = bg("beco")
     o += person(f"{p}a", "leo", 520, 1620, 2.1, "sad")
     o += tag(f"{p}tg", 520, 680, "LÉO", 64)
     S(f"tl.fromTo('#{p}tg',{{opacity:0,scale:.4}},{{opacity:1,scale:1,duration:.2,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.T('Léo'))})")
@@ -513,9 +489,7 @@ def s4_leo(S):
 
 def s4_pulinho(S):
     p = S.p
-    o = brick_wall(-300, -300, W + 300, 1560, base="#3b2a33", seed=13)
-    o += glow(p, 700, 400, 500, "", .45)
-    o += street(p, 1560)
+    o = bg("beco")
     o += ruler(820, 1080, 1560, 1, 16, 5)
     o += person(f"{p}a", "leo", 520, 1600, 1.9, "sad", alt=("neutral",))
     o += money(f"{p}m", 560, 700, "+R$ 3", 90)
@@ -531,7 +505,7 @@ def s4_pulinho(S):
 def s4_vo(S):
     p = S.p
     S.rain = False
-    o = room(p, "#3a2e4f")
+    o = bg("sala")
     o += rect(80, 420, 300, 260, "#6b4a24", stroke=INK, sw=8) + rect(100, 440, 260, 220, "#d9c8a0")
     o += person(f"{p}f", "vo", 230, 640, .45, "happy")
     o += text(230, 650, "1985", 30, fill="#5a3a1c", font=FONT_COND)
@@ -557,7 +531,7 @@ def s4_vo(S):
 def s4_joelho(S):
     p = S.p
     S.rain = False
-    o = room(p, "#33284a") + bokeh(p, 7, 10, cols=("#ffd36b", "#ff9f6b", "#a77bff"))
+    o = bg("sala", .2) + bokeh(p, 7, 8, cols=("#ffd36b", "#ff9f6b"))
     o += person(f"{p}a", "vo", 540, 2350, 3.9, "sad")
     o += path("M100,1640 Q100,1500 220,1500 L860,1500 Q980,1500 980,1640 L980,2100 L100,2100 Z", "#7a2f3a", INK, 10)
     o += circ(700, 640, 10, "#9fd3ff", extra='opacity=".9"')
@@ -569,7 +543,7 @@ def s4_joelho(S):
 
 def s4_decidi(S):
     p = S.p
-    o = brick_wall(-300, -300, W + 300, 2000, base="#2e2330", seed=14) + bokeh(p, 8, 16)
+    o = bg("beco_close")
     o += person(f"{p}a", "leo", 540, 2420, 4.2, "sad", alt=("determined",))
     t = S.T("decidi")
     S(f"F('{p}a','sad','determined',{jt(t)})")
@@ -580,17 +554,7 @@ def s4_decidi(S):
 
 def s5_ferrovelho(S):
     p = S.p
-    o = sky(p) + stars(12, 50, 800)
-    o += skyline(16, 1000, 100, 300, "#1a1526", lit=.2)
-    r = random.Random(3)
-    for k in range(7):     # pilhas de sucata
-        x, y = r.uniform(-100, 1100), r.uniform(1150, 1350)
-        o += path(f"M{x-260},{y+300} L{x-120},{y} L{x+40},{y+60} L{x+200},{y-40} L{x+300},{y+300} Z",
-                  r.choice(["#2c2535", "#332a3d", "#28212f"]), INK, 5)
-        o += circ(x + r.uniform(-80, 80), y + 140, 50, "#1a1620", INK, 8) + circ(x + r.uniform(-80, 80), y + 140, 20, "#3a3440")
-    o += rect(-300, 1480, W + 600, 700, "#221c27")
-    o += g(rect(-210, -70, 420, 110, "#1a1422", rx=8) + neon(p, 0, 20, "FERRO-VELHO", 78, "#ff8a3d"), tr="translate(540,520) rotate(-3)")
-    o += lamp(p, 160, 760, 1480, side=1)
+    o = bg("ferrovelho")
     o += person(f"{p}a", "leo", 480, 1600, 1.9, "neutral", alt=("happy",))
     o += pogo(f"{p}pg", 720, 1600, 1.6)
     S(f"tl.from('#{p}pg',{{y:300,rotation:30,duration:.5,ease:'back.out(2)',transformOrigin:'50% 50%'}},{jt(S.t0+.2)})")
@@ -601,9 +565,7 @@ def s5_ferrovelho(S):
 
 def s5_pogo(S):
     p = S.p
-    o = sky(p) + stars(13, 40, 800) + skyline(17, 1100, 100, 300, "#1a1526", lit=.2)
-    o += rect(-300, 1480, W + 600, 700, "#221c27")
-    o += lamp(p, 900, 760, 1480, side=-1)
+    o = bg("ferrovelho")
     o += g(pogo(f"{p}pg", 540, 1620, 1.7) + person(f"{p}a", "leo", 540, 1440, 1.6, "happy"), id=f"{p}grp")
     o += money(f"{p}m", 540, 560, "+R$ 50", 110)
     t, k = S.t0 + .05, 0
@@ -620,8 +582,7 @@ def s5_pogo(S):
 
 def s5_quebra(S):
     p = S.p
-    o = sky(p) + stars(14, 40, 800) + skyline(18, 1100, 100, 300, "#1a1526", lit=.2)
-    o += rect(-300, 1480, W + 600, 700, "#221c27")
+    o = bg("ferrovelho")
     o += ell(640, 1590, 300, 50, "#4b5a8a", extra='opacity=".8"') + ell(640, 1590, 240, 30, "#7f93c9", extra='opacity=".5"')
     o += pogo(f"{p}pg", 300, 1600, 1.5)
     o += person(f"{p}a", "leo", 300, 1420, 1.5, "happy", alt=("shock",))
@@ -640,18 +601,10 @@ def s5_quebra(S):
 
 def s6_lona(S):
     p = S.p
-    o = sky(p) + stars(15, 80, 900)
-    o += tent(540, 520, 1380, 1100)
-    for k in range(14):
-        x = 40 + k * 75
-        o += circ(x, 1120 + abs(7 - k) * -30, 10, "#ffe27a") + glow(p, x, 1120 + abs(7 - k) * -30, 40, "", .7)
-    o += path("M480,1380 L540,1060 L600,1380 Z", "#140f1a")
-    o += glow(p, 540, 1300, 220, "", .6)
-    o += rect(-300, 1380, W + 600, 800, "#1f2a1c")
-    o += plate(540, 1000, "CIRCO", 70, bg="#c8243a", border="#ffd23a")
+    o = bg("circo")
     o += person(f"{p}a", "leo", 140, 1560, 1.35, "determined")
     S(f"tl.fromTo('#{p}a-j',{{x:0}},{{x:270,duration:{S.d-.2:.2f},ease:'none'}},{jt(S.t0)})")
-    S(f"tl.fromTo('#{p}a-legL',{{rotation:-20}},{{rotation:20,duration:.25,repeat:{int(S.d/.25)},yoyo:true,transformOrigin:'50% 100%'}},{jt(S.t0)})")
+    S(f"tl.fromTo('#{p}a-legL',{{rotation:-20}},{{rotation:20,duration:.25,repeat:{int(S.d/.25)},yoyo:true,transformOrigin:'50% 0%'}},{jt(S.t0)})")
     S(f"tl.fromTo('#{p}a-legR',{{rotation:20}},{{rotation:-20,duration:.25,repeat:{int(S.d/.25)},yoyo:true,transformOrigin:'50% 0%'}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 1200), .04
     return o
@@ -660,13 +613,7 @@ def s6_lona(S):
 def s6_cama(S):
     p = S.p
     S.rain = False
-    o = rect(-300, -300, W + 600, H + 600, "#140e1c")
-    for k in range(9):
-        o += path(f"M540,-300 L{-400+k*240},1400 L{-280+k*240},1400 Z", "#c8243a" if k % 2 else "#2a1d2e", extra='opacity=".35"')
-    o += cone(p, 540, -100, 100, 700, 1700, "", .55)
-    o += rect(-300, 1400, W + 600, 800, "#2a1d2e")
-    o += ell(540, 1460, 300, 60, "#1b1622", INK, 7) + ell(540, 1450, 250, 44, "#3a3f8f")
-    o += line("M260,1470 L230,1560 M820,1470 L850,1560", INK, 12)
+    o = bg("circo_dentro")
     o += person(f"{p}a", "leo", 540, 1450, 1.2, "happy")
     o += money(f"{p}m", 540, 380, "+R$ 1.200", 110)
     t = S.t0 + .1
@@ -681,9 +628,7 @@ def s6_cama(S):
 def s6_alto(S):
     p = S.p
     S.rain = False
-    o = rect(-300, -300, W + 600, H + 600, "#140e1c")
-    o += line("M300,-300 L300,700 M780,-300 L780,700", "#c9ccd6", 5) + rect(300, 690, 480, 16, "#c9a24a", rx=6, stroke=INK, sw=4)
-    o += cone(p, 540, -300, 100, 800, 2200, "", .5)
+    o = bg("circo_alto")
     o += rect(120, 300, 20, 1600, "#ffd23a") + "".join(line(f"M120,{300+k*130} l40,0", INK, 5) for k in range(13))
     o += text(240, 330, "12 m", 90, fill="#ffd23a", font=FONT_COND, stroke=INK, sw=12)
     o += person(f"{p}a", "leo", 540, 1080, 1.7, "happy")
@@ -691,7 +636,7 @@ def s6_alto(S):
         o += money(f"{p}m{i}", (250, 840, 830)[i], (900, 760, 1040)[i], "+R$ 1.200", 86)
         S(f"M('{p}m{i}',{jt(S.T('Mil')+i*.35)},.6)")
     S(f"tl.fromTo('#{p}a-j',{{y:200}},{{y:-40,duration:.6,ease:'power2.out'}},{jt(S.t0)});tl.to('#{p}a-j',{{y:900,duration:.9,ease:'power2.in'}},{jt(S.t1-1.0)})")
-    S(f"tl.set('#{p}a-armL',{{rotation:150,transformOrigin:'50% 100%'}},{jt(S.t0)});tl.set('#{p}a-armR',{{rotation:-150,transformOrigin:'50% 0%'}},{jt(S.t0)})")
+    S(f"tl.set('#{p}a-armL',{{rotation:150,transformOrigin:'50% 0%'}},{jt(S.t0)});tl.set('#{p}a-armR',{{rotation:-150,transformOrigin:'50% 0%'}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 800), .05
     return o
 
@@ -699,8 +644,7 @@ def s6_alto(S):
 def s6_dono(S):
     p = S.p
     S.rain = False
-    o = rect(-300, -300, W + 600, H + 600, "#1c1222") + bokeh(p, 9, 14, cols=("#ffd36b", "#ff4fa3", "#c8243a"))
-    o += cone(p, 540, -200, 100, 900, 2000, "", .35)
+    o = bg("circo_dentro", .25) + bokeh(p, 9, 10, cols=("#ffd36b", "#ff9a5a"))
     o += person(f"{p}a", "dono", 540, 2250, 3.4, "angry")
     o += tag(f"{p}tg", 540, 430, "DONO DO CIRCO", 60)
     badge = g(rect(-200, -60, 400, 110, "#0b2414", rx=12, stroke="#3cff5a", sw=6) +
@@ -714,7 +658,7 @@ def s6_dono(S):
 
 def s6_rua(S):
     p = S.p
-    o = city(p, 41, [("CIRCO", "#ff4fa3", "p"), ("HOTEL", "#39e5ff", "c")], ground=1500, lamps=(980,))
+    o = bg("rua")
     o += person(f"{p}a", "leo", 260, 1640, 1.5, "shock")
     o += splash(f"{p}spl", 760, 1640)
     t = S.t0 + .1
@@ -727,7 +671,7 @@ def s6_rua(S):
 def s7_contas(S):
     p = S.p
     S.rain = False
-    o = room(p, "#2f2a45")
+    o = bg("sala")
     o += rect(80, 300, 520, 640, "#1f3a2c", rx=8, stroke="#6b4423", sw=16)   # quadro
     for i, (t_, y) in enumerate((("R$ 1 = 1 cm", 400), ("EU = 3 cm", 500), ("3 cm = R$ 3", 600), ("PRECISO: +ALTO", 720))):
         o += g(text(110, y, t_, 52, fill="#f4f1e6", font=FONT_COND, anchor="start"), id=f"{p}l{i}", extra='opacity="0"')
@@ -743,8 +687,7 @@ def s7_contas(S):
 def s7_gravidade(S):
     p = S.p
     S.rain = False
-    o = rect(-300, -300, W + 600, H + 600, "#1b1430") + bokeh(p, 10, 10, cols=("#a77bff", "#39e5ff"))
-    o += rect(-300, 1500, W + 600, 700, "#120e1e")
+    o = bg("sala", .55) + bokeh(p, 10, 8, cols=("#a77bff", "#ff4fa3"))
     o += g(text(540, 420, "GRAVIDADE", 150, fill="#ff4fa3", font=FONT_COND, stroke=INK, sw=14), id=f"{p}gt")
     for x in (240, 540, 840):
         o += g(path(f"M{x-40},560 L{x+40},560 L{x+40},760 L{x+80},760 L{x},860 L{x-80},760 L{x-40},760 Z", "#ff4fa3", INK, 6),
@@ -759,13 +702,8 @@ def s7_gravidade(S):
 
 def s7_lua(S):
     p = S.p
-    o = sky(p) + stars(16, 160, 1400)
-    o += circ(540, 620, 520, "#fff7cf", extra=f'opacity=".14" filter="url(#fx-soft)"')
-    o += moon(540, 620, 400)
+    o = bg("telhado")
     o += g(text(540, 690, "x6", 220, fill="#3cff5a", font=FONT_COND, stroke=INK, sw=16), id=f"{p}x6", extra='opacity="0"')
-    o += skyline(19, 1500, 60, 200, "#0d0a14", lit=.2)
-    o += rect(-300, 1460, W + 600, 700, "#1a1422") + rect(-300, 1460, W + 600, 20, "#2a2233")
-    o += rect(760, 1180, 180, 280, "#2a2233", stroke=INK, sw=6) + rect(740, 1160, 220, 40, "#2a2233", stroke=INK, sw=6)
     o += person(f"{p}a", "leo", 380, 1620, 1.6, "happy", flip=False)
     S(f"tl.to('#{p}a-head',{{rotation:-12,duration:.4,transformOrigin:'50% 50%'}},{jt(S.t0+.1)})")
     S(f"tl.fromTo('#{p}x6',{{opacity:0,scale:.3}},{{opacity:1,scale:1,duration:.25,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.T('seis'))})")
@@ -776,7 +714,7 @@ def s7_lua(S):
 def s7_cofrinho(S):
     p = S.p
     S.rain = False
-    o = room(p, "#2f2a45") + bokeh(p, 11, 8, cols=("#ffd36b",))
+    o = bg("sala") + bokeh(p, 11, 6, cols=("#ffd36b",))
     o += rect(-300, 1300, W + 600, 40, "#6b4423") + rect(-300, 1340, W + 600, 700, "#4a2f1a")
     pig = (ell(0, 0, 180, 140, "#ff8fb8", INK, 8) + circ(150, -20, 60, "#ff8fb8", INK, 7) + ell(190, -10, 22, 18, "#ff6f9f", INK, 4) +
            circ(140, -50, 9, INK) + path("M-60,-140 L-10,-140 L-20,-120 L-50,-120 Z", INK) +
@@ -797,22 +735,10 @@ def s7_cofrinho(S):
 
 def s7_foguete(S):
     p = S.p
-    o = sky(p) + stars(17, 160, 1300) + moon(840, 260, 110)
-    for x, a in ((120, 20), (960, -20)):
-        o += g(cone(p, 0, 0, 60, 420, 1700, "c", .35), tr=f"translate({x},1600) rotate({180+a})")
-    o += rect(-300, 1520, W + 600, 700, "#1d1a24")
-    o += rect(700, 520, 40, 1000, "#5b5f6b", stroke=INK, sw=5) + "".join(line(f"M700,{560+k*100} L620,{600+k*100}", "#5b5f6b", 10) for k in range(9))
-    rk = (path("M540,360 Q640,520 640,820 L640,1360 L440,1360 L440,820 Q440,520 540,360 Z", "#e9e6ef", INK, 8) +
-          circ(540, 780, 60, "#7fd3ff", INK, 8) + path("M440,1160 L340,1420 L440,1360 Z", "#e63946", INK, 7) +
-          path("M640,1160 L740,1420 L640,1360 Z", "#e63946", INK, 7) +
-          rect(470, 960, 140, 40, "#b9b9b9", stroke=INK, sw=4, extra='transform="rotate(-20 540 980)"') +
-          rect(490, 1080, 120, 34, "#b9b9b9", stroke=INK, sw=4, extra='transform="rotate(15 540 1100)"') +
-          path("M460,1360 L620,1360 L600,1420 L480,1420 Z", "#555", INK, 6))
-    o += g(rk, id=f"{p}rk")
+    o = bg("foguete")
     o += tag(f"{p}tg", 540, 290, "PROMOÇÃO: SÓ IDA", 60)
     o += person(f"{p}a", "leo", 260, 1640, 1.1, "happy")
     S(f"tl.fromTo('#{p}tg',{{opacity:0,scale:.4}},{{opacity:1,scale:1,duration:.2,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.T('barato'))})")
-    S(f"tl.to('#{p}rk',{{x:3,duration:.05,repeat:{int(S.d/.05)},yoyo:true}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 900), .04
     return o
 
@@ -828,9 +754,7 @@ def moon_ground(p, y=1450):
 
 def s8_lua(S):
     p = S.p
-    o = space(p, 21) + earth(260, 400, 170)
-    o += moon_ground(p, 1420)
-    o += path("M780,1440 Q840,1100 900,1440 Z", "#e9e6ef", INK, 7)
+    o = bg("lua")
     o += person(f"{p}a", "leo", 520, 1620, 1.6, "happy", helmet=True)
     o += g(ell(0, 0, 40, 14, "#6f6c7d"), id=f"{p}pe", extra='opacity="0" transform="translate(500,1640)"')
     S(f"tl.fromTo('#{p}a-j',{{y:-120}},{{y:0,duration:.6,ease:'power2.in'}},{jt(S.t0)})")
@@ -841,8 +765,7 @@ def s8_lua(S):
 
 def s8_agacha(S):
     p = S.p
-    o = space(p, 22) + earth(840, 300, 130)
-    o += moon_ground(p, 1600)
+    o = bg("lua")
     o += person(f"{p}a", "leo", 540, 2050, 3.0, "determined", helmet=True)
     S(f"tl.to('#{p}a-j',{{scaleY:.82,duration:.6,ease:'power2.out',transformOrigin:'50% 50%'}},{jt(S.t0+.1)})")
     S(f"tl.to('#{p}a-armL',{{rotation:30,duration:.4,transformOrigin:'50% 0%'}},{jt(S.t0+.1)});tl.to('#{p}a-armR',{{rotation:-30,duration:.4,transformOrigin:'50% 0%'}},{jt(S.t0+.1)})")
@@ -852,15 +775,14 @@ def s8_agacha(S):
 
 def s8_salto(S):
     p = S.p
-    o = space(p, 23) + earth(220, 380, 140)
-    o += moon_ground(p, 1500)
+    o = bg("lua")
     o += g("".join(circ(540 + math.cos(a) * 140, 1520, 40, "#c9c6d4", INK, 4) for a in (0, 1, 2, 3, 4, 5)), id=f"{p}dust",
            extra='opacity="0"')
     o += person(f"{p}a", "leo", 540, 1560, 1.6, "determined", helmet=True)
     t = S.T("pulei")
     S(f"tl.to('#{p}a-j',{{scaleY:.8,duration:.15,transformOrigin:'50% 100%'}},{jt(t-.15)})")
     S(f"tl.to('#{p}a-j',{{scaleY:1.1,y:-1400,duration:1.1,ease:'power2.in'}},{jt(t)})")
-    S(f"tl.set('#{p}a-armL',{{rotation:160,transformOrigin:'50% 100%'}},{jt(t)});tl.set('#{p}a-armR',{{rotation:-160,transformOrigin:'50% 0%'}},{jt(t)})")
+    S(f"tl.set('#{p}a-armL',{{rotation:160,transformOrigin:'50% 0%'}},{jt(t)});tl.set('#{p}a-armR',{{rotation:-160,transformOrigin:'50% 0%'}},{jt(t)})")
     S(f"tl.fromTo('#{p}dust',{{opacity:1,scale:.5}},{{opacity:0,scale:1.8,duration:.6,transformOrigin:'50% 50%'}},{jt(t)})")
     S.push = (max(S.t0 + .05, t - .75), .6, 1.3, 540, 1050)
     S.focus, S.zoom = (540, 1200), .03
@@ -869,7 +791,7 @@ def s8_salto(S):
 
 def s8_celular(S):
     p = S.p
-    o = space(p, 24) + bokeh(p, 12, 10, cols=("#3cff5a", "#39e5ff"))
+    o = bg("espaco", .3) + bokeh(p, 12, 8, cols=("#3cff5a", "#39e5ff"))
     o += phone(f"{p}ph", 540, 1000, 2.0, title="PIX RECEBIDO", value="", sub="DE: A LUA", clock="03:33")
     vals = [("dez mil", "+R$ 10.000"), ("cem mil", "+R$ 100.000"), ("milhão", "+R$ 1.000.000")]
     for i, (nd, v) in enumerate(vals):
@@ -885,7 +807,7 @@ def s8_celular(S):
 
 def s8_subindo(S):
     p = S.p
-    o = space(p, 25)
+    o = bg("espaco")
     o += g(moon(540, 1900, 700), id=f"{p}mn")
     o += g("".join(line(f"M{x},{y} l0,{L}", "#ffffff", 3, extra='opacity=".5"') for x, y, L in
                    [(random.Random(i).uniform(0, W), random.Random(i + 50).uniform(0, H), 160) for i in range(30)]), id=f"{p}st")
@@ -899,7 +821,7 @@ def s8_subindo(S):
 
 def s9_flutua(S):
     p = S.p
-    o = space(p, 26) + earth(540, 2050, 700)
+    o = bg("espaco")
     o += g(person(f"{p}a", "leo", 540, 1150, 1.6, "happy", helmet=True), id=f"{p}fl")
     S(f"tl.fromTo('#{p}fl',{{rotation:-8}},{{rotation:14,duration:{S.d:.2f},ease:'sine.inOut',svgOrigin:'540 950'}},{jt(S.t0)})")
     r = random.Random(2)
@@ -916,7 +838,7 @@ def s9_flutua(S):
 
 def s9_ranking(S):
     p = S.p
-    o = space(p, 27) + earth(540, 2150, 800)
+    o = bg("espaco")
     o += ranking(f"{p}rk", 540, 340, [("1º", "LÉO", "R$ 900.000.001", "leo"), ("2º", "O CANGURU", "R$ 900.000.000", "?"),
                                       ("3º", "A ATLETA", "R$ 48.000.000", "atleta")], s=1.25, hi=0)
     S(f"tl.from('#{p}rk',{{scale:1.6,opacity:0,duration:.3,ease:'power3.out',transformOrigin:'50% 0%'}},{jt(S.t0)})")
@@ -926,7 +848,7 @@ def s9_ranking(S):
 
 def s9_viu(S):
     p = S.p
-    o = space(p, 28) + bokeh(p, 13, 10, cols=("#a77bff", "#39e5ff", "#ffd36b"))
+    o = bg("espaco", .2)
     o += person(f"{p}a", "leo", 540, 2350, 4.0, "happy", helmet=True, alt=("shock",))
     S(f"F('{p}a','happy','shock',{jt(S.T('vi'))})")
     S(f"tl.to('#{p}a-head',{{rotation:10,duration:.3,transformOrigin:'50% 50%'}},{jt(S.T('vi'))})")
@@ -936,7 +858,7 @@ def s9_viu(S):
 
 def s9_canguru(S):
     p = S.p
-    o = space(p, 29) + bokeh(p, 14, 8, cols=("#a77bff", "#39e5ff"))
+    o = bg("espaco", .2)
     o += g(person(f"{p}a", "canguru", 540, 1650, 2.2, "smile") +
            g(phone(f"{p}ph", 0, 0, .35, title="PIX RECEBIDO", value="+R$ 5.000", hand=False), tr="translate(640,1150) rotate(10)"),
            id=f"{p}fl")
@@ -950,7 +872,7 @@ def s9_canguru(S):
 
 def s9_juntos(S):
     p = S.p
-    o = space(p, 30) + earth(540, 2150, 760)
+    o = bg("espaco")
     # empilhado na vertical: Canguru em cima, Léo embaixo
     o += g(person(f"{p}c", "canguru", 420, 900, 1.4, "smile", alt=("happy",)), id=f"{p}fc")
     o += g(person(f"{p}a", "leo", 660, 1560, 1.4, "shock", helmet=True, alt=("neutral",)), id=f"{p}fa")
@@ -969,7 +891,7 @@ def s9_juntos(S):
 
 def s10_olha(S):
     p = S.p
-    o = space(p, 31) + earth(540, 2300, 900)
+    o = bg("espaco")
     o += person(f"{p}a", "leo", 540, 2050, 3.2, "sad", helmet=True)
     r = random.Random(4)
     for k in range(8):
@@ -983,7 +905,7 @@ def s10_olha(S):
 
 def s10_escolha(S):
     p = S.p
-    o = space(p, 32) + earth(540, 2200, 820)
+    o = bg("espaco", .2)
     o += person(f"{p}c", "canguru", 300, 1560, .9, "smile")
     o += person(f"{p}a", "leo", 780, 1600, .9, "neutral", helmet=True)
     card = (text(540, 330, "E AGORA?", 120, fill="#ffd23a", font=FONT_COND, stroke=INK, sw=18) +

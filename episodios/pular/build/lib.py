@@ -48,7 +48,7 @@ def limb(d, color, w=11):
 
 
 def text(x, y, s, size, fill="#fff", font=FONT_COND, anchor="middle", stroke=None, sw=8, extra="", weight=700):
-    extra += " data-layout-allow-overlap"
+    extra += " data-layout-allow-overlap=\"\""
     st = f' stroke="{stroke}" stroke-width="{sw}" paint-order="stroke" stroke-linejoin="round"' if stroke else ""
     return (f'<text x="{f(x)}" y="{f(y)}" font-family="{font}" font-weight="{weight}" font-size="{size}" '
             f'text-anchor="{anchor}" fill="{fill}"{st} {extra}>{s}</text>')
@@ -61,6 +61,8 @@ def g(inner, id=None, tr=None, extra=""):
 
 # ------------------------------------------------------------------ defs comuns (um por cena)
 def defs(p):
+    from chars import char_defs
+    CHAR_DEFS = char_defs()
     return f"""<defs>
 <radialGradient id="fx-glow"><stop offset="0" stop-color="#fff3c4" stop-opacity=".85"/><stop offset=".35" stop-color="#ffd36b" stop-opacity=".35"/><stop offset="1" stop-color="#ffb84a" stop-opacity="0"/></radialGradient>
 <radialGradient id="fx-glowc"><stop offset="0" stop-color="#d9fbff" stop-opacity=".8"/><stop offset=".4" stop-color="#5fe2ff" stop-opacity=".3"/><stop offset="1" stop-color="#5fe2ff" stop-opacity="0"/></radialGradient>
@@ -73,7 +75,7 @@ def defs(p):
 <linearGradient id="fx-wet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2438"/><stop offset="1" stop-color="#15111d"/></linearGradient>
 <filter id="fx-neon" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <filter id="fx-soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
-<filter id="fx-dof" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.2"/></filter>
+{CHAR_DEFS}<filter id="fx-dof" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.2"/></filter>
 </defs>"""
 
 
@@ -470,3 +472,7 @@ def crowd(prefix, seed, n, y, x0=-60, x1=W + 60, s=(0.55, 0.75), umbrella=.25, b
                       flip=r.random() < .5, shirt=r.choice(CROWD_SHIRTS),
                       umbrella=r.random() < umbrella, briefcase=r.random() < briefcase, hidden=hidden)
     return out, ids
+
+
+# personagens redesenhados (2D semi-realista) substituem os de palito
+from chars import person, LOOKS, set_rim  # noqa: E402,F401
