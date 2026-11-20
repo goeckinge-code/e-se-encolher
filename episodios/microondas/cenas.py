@@ -172,7 +172,7 @@ def build_s2(sc, W):
     waves = [wave_tube(f"w{k}", 6.0, 0.18, 0.7, "#FF5A7A", r=0.04) for k in range(3)]
     lines = [cube(f"sh{k}", "#1E1B2E", (0, 0, -50), (0.03, 0.01, 0.16), bevel=0) for k in range(10)]
     cam = camera(40)
-    TA, TQ, TC, TP = W("água"), W("Quando"), W("chacoalhar"), W("parar")
+    TA, TQ, TC, TP = W("água"), W("Quando"), W("chacoalhar"), W("segundo")
     D = sc["dur"]
     shots = [Shot(0, 0, 1.4, 3.4),
              Shot(TA - 0.05, -0.75, 0.75, 1.3, roll=-6),        # close numa gotinha
