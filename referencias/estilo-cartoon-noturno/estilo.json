@@ -1,0 +1,50 @@
+{
+  "fonte": "TikTok @historiasdertr (referencia de linguagem, nao copiar conteudo)",
+  "formato": { "largura": 1080, "altura": 1920, "fps": 30, "duracao_ref_s": 151.2 },
+  "montagem": {
+    "planos": 69,
+    "duracao_plano_media_s": 2.19,
+    "duracao_plano_mediana_s": 1.77,
+    "transicao_padrao": "corte seco",
+    "arquivo_cortes": "cortes.txt"
+  },
+  "camera": {
+    "zoom_lento_pct_por_s": [2, 9],
+    "zoom_lento_tipico_pct_por_s": 5,
+    "subida_no_plano_px": [40, 150],
+    "push_in_rapido_pct_por_s": [15, 75],
+    "push_in_rapido_dur_s": [1.5, 3.5],
+    "travelling_2_5d_dur_s": [5, 8],
+    "arquivo_medidas": "camera_por_plano.txt"
+  },
+  "legenda": {
+    "palavras_por_vez": [1, 2],
+    "caixa": "alta",
+    "fonte": "Open Sans ExtraBold (ou Nunito Black)",
+    "cor": "#ffffff",
+    "contorno": { "cor": "#1a1420", "px": 3 },
+    "sombra": "0 4px 10px rgba(0,0,0,0.6)",
+    "altura_maiuscula_px": 43,
+    "tamanho_fonte_px": 58,
+    "centro_y_px": 1374,
+    "centro_y_pct": 71.5,
+    "troca": "seca"
+  },
+  "paleta": {
+    "fundo_noite": ["#0d0912", "#201b2b", "#37364b", "#5a546c"],
+    "pele": "#d4a889",
+    "protagonista_amarelo": "#d8ad32",
+    "marrom_madeira": ["#52271c", "#965536"],
+    "dinheiro_verde": "#3cff5a",
+    "contorno": "#000000"
+  },
+  "personagem": {
+    "cabeca": "circulo grande, ~1/4 da altura",
+    "membros": "palitos finos de largura constante",
+    "contorno_px_em_1080": 6,
+    "expressao": "troca de desenho, sem interpolar",
+    "etiqueta_nome": "caixa amarela com texto preto"
+  },
+  "atmosfera": ["chuva em riscos", "bokeh colorido nos closes", "luz volumetrica de poste/holofote", "neon com halo", "profundidade de campo", "vinheta", "degrade escuro embaixo"],
+  "graficos": ["contador +R$ verde neon com pop", "painel/ranking de terminal verde", "cartaz de alerta vermelho com faixas", "placas de lugar", "celular com notificacao", "etiqueta de nome"]
+}

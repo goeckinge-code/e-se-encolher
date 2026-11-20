@@ -21,3 +21,10 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
 - Antes de renderizar tudo, gere stills da cena alterada e confira o enquadramento: o quadro é vertical,
   então empilhe os elementos na vertical (personagem embaixo, criatura em cima) em vez de lado a lado.
 - Falas em português do Brasil.
+
+## Estilo novo: cartoon de palito noturno
+- Guia completo em `referencias/estilo-cartoon-noturno/ESTILO.md` (+ `estilo.json` com os números medidos).
+- Use para os próximos episódios em vez do estilo 3D do Léo: personagens de cabeça grande e membros de palito,
+  cenário noturno com chuva, neon, bokeh e luz volumétrica, zoom lento em todo plano, corte a cada ~2 s,
+  legenda de 1-2 palavras a 71,5% da altura.
+- Contar histórias próprias: não copiar personagens, nomes ou cenas do vídeo de referência.
