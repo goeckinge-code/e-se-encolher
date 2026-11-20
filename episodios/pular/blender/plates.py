@@ -338,7 +338,10 @@ def brick_mat(name, c1="#5a2f28", c2="#6e3a2f", mortar="#2a2222", scale=6.0):
     br.inputs["Mortar"].default_value = hexc(mortar)
     br.inputs["Scale"].default_value = scale
     br.inputs["Mortar Size"].default_value = .015
-    nt.links.new(tc.outputs["Object"], br.inputs["Vector"])
+    mp = nt.nodes.new("ShaderNodeMapping")
+    mp.inputs["Rotation"].default_value = (math.radians(90), 0, 0)   # tijolos no plano X-Z (paredes)
+    nt.links.new(tc.outputs["Object"], mp.inputs["Vector"])
+    nt.links.new(mp.outputs["Vector"], br.inputs["Vector"])
     nz = nt.nodes.new("ShaderNodeTexNoise")
     nz.inputs["Scale"].default_value = 3
     nt.links.new(tc.outputs["Object"], nz.inputs["Vector"])
@@ -448,7 +451,7 @@ def plate_rua_close():
 def plate_beco(close=False):
     reset()
     rnd = random.Random(21)
-    world("#06040a", fog=.06, fog_col="#8f7fb8", strength=.4)
+    world("#06040a", fog=.018, fog_col="#8f7fb8", strength=.5)
     ground("#100d14", "#201a24", rough=(.08, .5))
     wall = brick_mat("tijolo", "#4f2a25", "#643429", "#231c1f", scale=5)
     box("muro", wall, (0, 4, 6), (30, .6, 12))
@@ -456,9 +459,10 @@ def plate_beco(close=False):
     box("lixeira", tmat("lix", "#24452a", "#1a2f1e", scale=4), (-3.6, 3.1, .55), (1.1, .9, 1.1))
     box("caixa", tmat("cx", "#5a4228", "#3a2a18", scale=5), (3.9, 3.2, .4), (.9, .8, .8))
     box("arandela", mat("arand", "#000000", .3, emit="#ffd28a", estr=35), (1.6, 3.55, 4.6), (.5, .3, .2))
-    light("SPOT", (1.6, 3.3, 4.45), 1600, "#ffc77a", rot=(math.radians(15), 0, 0), spot=95, blend=.8, size=.3)
-    light("AREA", (-12, -2, 6), 2600, "#7f8dff", rot=(0, math.radians(-70), 0), size=8)   # contraluz azul vindo da esquerda
-    light("AREA", (0, -8, 3), 120, "#6a5a9a", rot=(math.radians(90), 0, 0), size=12)
+    light("SPOT", (1.6, 3.3, 4.45), 2600, "#ffc77a", rot=(math.radians(15), 0, 0), spot=110, blend=.8, size=.3)
+    light("SPOT", (-1.5, -3, 6), 2400, "#ffb46a", rot=(math.radians(55), 0, 0), spot=60, blend=.9, size=1)   # luz quente lavando o muro
+    light("AREA", (-12, 1, 5), 1800, "#7f8dff", rot=(0, math.radians(-80), 0), size=6)   # contraluz azul vindo da esquerda
+    light("AREA", (0, -8, 3), 260, "#8a7ab8", rot=(math.radians(90), 0, 0), size=12)
     puddle = mat("poca", "#07060a", .0, metal=.1)
     for _ in range(6):
         plane("poca", puddle, (rnd.uniform(-4, 4), rnd.uniform(-2, 3), .006), (rnd.uniform(.6, 2), rnd.uniform(.3, .9)))
@@ -508,7 +512,7 @@ def plate_escola():
     for k in range(3):
         for i in range(7):
             lit = rnd.random() < .7
-            m = mat("sala", "#000000", .3, emit=rnd.choice(["#fff1c9", "#ffe0a0", "#e8f0ff"]), estr=rnd.uniform(2, 4)) if lit else mat("sd", "#0d0b12", .2)
+            m = mat("sala", "#000000", .3, emit=rnd.choice(["#fff1c9", "#ffe0a0", "#e8f0ff"]), estr=rnd.uniform(.8, 1.5)) if lit else mat("sd", "#0d0b12", .2)
             plane("janela", m, (-9 + i * 3, 10.45, 2.2 + k * 3.3), (1.9, 1.7), rot=(math.pi / 2, 0, 0))
     box("portao", mat("port", "#1a1820", .4, metal=.7), (0, 10.4, 1.4), (3.2, .1, 2.8))
     for x in (-6, 6):
@@ -521,7 +525,7 @@ def plate_escola():
 
 def plate_quadra():
     reset()
-    world("#040306", fog=.05, fog_col="#c8d4ff", strength=.2)
+    world("#040306", fog=.018, fog_col="#c8d4ff", strength=.2)
     floor = tmat("madeira", "#a8642c", "#8a4e20", rough=(.15, .35), scale=1.5, bump=.05)
     plane("quadra", floor, (0, 5, 0), (40, 40))
     for x in (-5, 5):
@@ -531,9 +535,11 @@ def plate_quadra():
     for x in (-5.2, 5.2):
         cyl("poste", mat("pr", "#888c96", .3, metal=.8), (x, 6, 1.45), .07, 2.9)
     box("arquib", tmat("arq", "#1a1820", "#24222a", scale=3), (0, 22, 3), (40, 6, 6), rot=(math.radians(-25), 0, 0))
-    for x in (-8, 8):
-        light("SPOT", (x, 8, 14), 30000, "#e8eeff", rot=(math.radians(-25), math.radians(-20 if x > 0 else 20), 0), spot=40, blend=.4, size=.5)
-        box("refletor", mat("rf", "#000000", .3, emit="#ffffff", estr=60), (x, 8.3, 14.2), (1.2, .2, .6))
+    for x in (-6, 6):
+        for y in (2, 10):
+            light("AREA", (x, y, 11), 2200, "#e8eeff", size=3)
+            box("refletor", mat("rf", "#000000", .3, emit="#ffffff", estr=40), (x, y, 11.2), (2.4, 1.0, .1))
+    light("AREA", (0, -6, 4), 800, "#9fb4ff", rot=(math.radians(80), 0, 0), size=10)
     camera((0, -7.5, 1.6), (0, 6, 3.4), lens=24, dof=9, fstop=6)
 
 
@@ -565,17 +571,17 @@ def plate_quintal():
 def plate_ceu(moon=True, beams=True, roof=False, big_moon=False):
     reset()
     rnd = random.Random(51)
-    world("#05040b", fog=.02, fog_col="#8f84c8", strength=.4)
+    world("#05040b", fog=.035 if beams else .02, fog_col="#8f84c8", strength=.4)
     sky_plane((0, 120, 40), (300, 160), estr=1.2, mid="#2a1f48", bot="#7a4a6a")
     skyline_far(rnd, y=60, n=14, x0=-40, x1=40, h=(10, 40), p=.6)
     if moon:
-        r = 9 if big_moon else 3
-        mo = obj(bpy.ops.mesh.primitive_uv_sphere_add, "lua", tmat("lua", "#f4efd8", "#c9c2a2", scale=4, bump=.3), location=(6 if not big_moon else 0, 110, 45 if not big_moon else 30), radius=r)
+        r = 20 if big_moon else 3
+        mo = obj(bpy.ops.mesh.primitive_uv_sphere_add, "lua", tmat("lua", "#f4efd8", "#c9c2a2", scale=4, bump=.3), location=(6 if not big_moon else 0, 110 if not big_moon else 90, 45 if not big_moon else 34), radius=r)
         mo.data.materials[0].node_tree.nodes["Principled BSDF"].inputs["Emission Color"].default_value = hexc("#fff4d0")
         mo.data.materials[0].node_tree.nodes["Principled BSDF"].inputs["Emission Strength"].default_value = 2.5
     if beams:
         for x, a in ((-14, 18), (14, -18), (-5, 6), (5, -6)):
-            light("SPOT", (x, 45, 0), 90000, "#cfe6ff", rot=(math.radians(-a * .2), math.radians(a), 0), spot=6, blend=.2, size=.4)
+            light("SPOT", (x, 45, 0), 150000, "#cfe6ff", rot=(math.radians(180), math.radians(a), 0), spot=5, blend=.2, size=.4)
     if roof:
         box("telhado", tmat("teto", "#1a1520", "#241e2a", scale=3), (0, 2, -.1), (30, 14, .2))
         box("caixa", tmat("cxa", "#2a2430", "#1a1520", scale=3), (4, 4, 1.4), (2, 2, 2.8))
@@ -704,10 +710,13 @@ def plate_circo_ext():
 
 def plate_circo_int(high=False):
     reset()
-    world("#030205", fog=.06, fog_col="#ffd9b0", strength=.2)
+    world("#030205", fog=.03, fog_col="#ffd9b0", strength=.3)
     lona = stripe_mat("lonai", "#5a1020", "#2a1218", n=24)
-    obj(bpy.ops.mesh.primitive_cylinder_add, "parede", lona, location=(0, 0, 4), radius=14, depth=8, vertices=64)
-    obj(bpy.ops.mesh.primitive_cone_add, "teto", lona, location=(0, 0, 13), radius1=14.5, radius2=.3, depth=10, vertices=64)
+    obj(bpy.ops.mesh.primitive_cylinder_add, "parede", lona, location=(0, 0, 4), radius=14, depth=8, vertices=64, end_fill_type="NOTHING")
+    obj(bpy.ops.mesh.primitive_cone_add, "teto", lona, location=(0, 0, 13), radius1=14.5, radius2=.3, depth=10, vertices=64, end_fill_type="NOTHING")
+    for k in range(6):
+        a = k / 6 * 2 * math.pi
+        light("AREA", (9 * math.cos(a), 9 * math.sin(a), 7), 2500, "#ffb070", size=3)
     plane("picadeiro", tmat("serragem", "#6a4426", "#4a2e18", rough=(.8, 1), scale=4), (0, 0, .01), (40, 40))
     cyl("anel", mat("anel", "#b81f34", .5), (0, 3, .2), 5.2, .4, v=64)
     cyl("anel2", mat("anel2", "#2a1218", .7), (0, 3, .22), 4.9, .42, v=64)
@@ -716,7 +725,8 @@ def plate_circo_int(high=False):
     box("trapezio", mat("trap", "#c9a24a", .3, metal=.8), (0, 3, 11), (2.2, .08, .08))
     for x in (-1.1, 1.1):
         box("corda", mat("cor", "#d8d0c0", .6), (x, 3, 13), (.03, .03, 4))
-    light("SPOT", (0, 3, 17), 60000, "#fff0d0", spot=18, blend=.3, size=.3)
+    light("SPOT", (0, 3, 16), 30000, "#fff0d0", spot=22, blend=.3, size=.3)
+    light("AREA", (0, -6, 5), 1500, "#ffcf9a", rot=(math.radians(75), 0, 0), size=8)
     for x, a in ((-8, 30), (8, -30)):
         light("SPOT", (x, -4, 10), 15000, "#ff8a5a", rot=(math.radians(45), math.radians(a), 0), spot=14, blend=.3)
     if high:
@@ -746,6 +756,8 @@ def plate_foguete():
     for x in (-8, 8):
         light("SPOT", (x, 2, .5), 12000, "#e0ecff", rot=(math.radians(70), math.radians(-25 if x > 0 else 25), 0), spot=20, blend=.4)
     mo = obj(bpy.ops.mesh.primitive_uv_sphere_add, "lua", mat("lua", "#f4efd8", .8, emit="#fff4d0", estr=2.5), location=(14, 80, 40), radius=4)
+    light("AREA", (-4, 2, 4), 3000, "#e0ecff", rot=(math.radians(70), 0, math.radians(-30)), size=4)
+    light("AREA", (5, 14, 6), 4000, "#9fb4ff", rot=(math.radians(-70), 0, math.radians(20)), size=6)
     camera((0, -7, 1.5), (0, 8, 6.0), lens=24, dof=14, fstop=8)
 
 
@@ -759,8 +771,8 @@ def planet(name, loc, r, sea="#1f5fbf", land="#3fae5a", atm="#8fd0ff"):
     cr = nt.nodes.new("ShaderNodeValToRGB")
     cr.color_ramp.elements[0].color = hexc(sea)
     cr.color_ramp.elements[1].color = hexc(land)
-    cr.color_ramp.elements[0].position = .52
-    cr.color_ramp.elements[1].position = .56
+    cr.color_ramp.elements[0].position = .46
+    cr.color_ramp.elements[1].position = .5
     nt.links.new(nz.outputs["Fac"], cr.inputs["Fac"])
     nt.links.new(cr.outputs["Color"], nt.nodes["Principled BSDF"].inputs["Base Color"])
     nt.nodes["Principled BSDF"].inputs["Roughness"].default_value = .5

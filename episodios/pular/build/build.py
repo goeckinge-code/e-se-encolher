@@ -4,6 +4,7 @@ Estilo: referencias/estilo-cartoon-noturno/ESTILO.md"""
 import os, sys, random, math
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lib import *
+import chars
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -295,7 +296,7 @@ def s1_cidade(S):
 def s1_pulo(S):
     p = S.p
     o = bg("rua_close")
-    o += person(f"{p}a", "exec", 520, 2050, 2.9, "happy", briefcase=True)
+    o += person(f"{p}a", "exec", 520, 2050, 2.9, "happy", briefcase=True, pose="up")
     o += money(f"{p}m", 560, 520, "+R$ 40", 150)
     S(f"J('{p}a',{jt(S.t0+.02)},90,.3)")
     S(f"M('{p}m',{jt(S.t0+.25)},.9)")
@@ -318,7 +319,7 @@ def s2_regua(S):
     o = bg("beco")
     o += ruler(780, 180, 1560, 5, 6, 20)
     o += plate(540, 170, "1 cm = R$ 1", 72, bg="#0b2414", fg="#3cff5a", border="#3cff5a")
-    o += person(f"{p}a", "girl", 470, 1560, 1.6, "happy")
+    o += person(f"{p}a", "girl", 470, 1560, 1.6, "happy", pose="peace")
     o += money(f"{p}m1", 470, 640, "+R$ 40", 100)
     o += money(f"{p}m2", 470, 300, "+R$ 100", 110)
     t1 = S.T("quarenta")
@@ -376,7 +377,7 @@ def s3_corda(S):
     p = S.p
     o = bg("escola")
     o += plate(540, 600, "ESCOLA", 80, bg="#2b55c9")
-    o += person(f"{p}a", "girl", 540, 1600, 1.7, "happy")
+    o += person(f"{p}a", "girl", 540, 1600, 1.7, "happy", pose="fists")
     rope_up = line("M420,1420 Q540,820 660,1420", "#ffffff", 7)
     rope_dn = line("M420,1420 Q540,1700 660,1420", "#ffffff", 7)
     o += g(rope_up, id=f"{p}r1") + g(rope_dn, id=f"{p}r2", extra='opacity="0"')
@@ -410,7 +411,7 @@ def s3_volei(S):
     o += tag(f"{p}tg", 540, 300, "BILIONÁRIO", 60)
     t = S.t0 + .05
     S(f"J('{p}a',{jt(t)},260,.42)")
-    S(f"tl.to('#{p}a-armR',{{rotation:-200,duration:.12,transformOrigin:'50% 0%'}},{jt(t+.4)})")
+    S(f"tl.to('#{p}a-armR',{{rotation:-200,duration:.12,svgOrigin:'0 0'}},{jt(t+.4)})")
     S(f"tl.to('#{p}ball',{{x:200,y:1400,duration:.35,ease:'power2.in'}},{jt(t+.5)})")
     S(f"M('{p}m',{jt(t+.55)},.8)")
     S(f"tl.fromTo('#{p}tg',{{opacity:0,scale:.4}},{{opacity:1,scale:1,duration:.2,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.T('bilionário'))})")
@@ -421,8 +422,8 @@ def s3_volei(S):
 def s3_cama(S):
     p = S.p
     o = bg("quintal")
-    o += person(f"{p}g1", "guard", 110, 1560, 1.25, "angry")
-    o += person(f"{p}g2", "guard", 980, 1560, 1.25, "angry", flip=True)
+    o += person(f"{p}g1", "guard", 110, 1560, 1.25, "angry", pose="cross")
+    o += person(f"{p}g2", "guard", 980, 1560, 1.25, "angry", flip=True, pose="cross")
     o += plate(540, 640, "PROPRIEDADE PRIVADA", 54, bg="#8a1c12", border="#ffd23a")
     S.focus, S.zoom = (540, 1050), .045
     return o
@@ -535,7 +536,7 @@ def s4_joelho(S):
     o += person(f"{p}a", "vo", 540, 2350, 3.9, "sad")
     o += path("M100,1640 Q100,1500 220,1500 L860,1500 Q980,1500 980,1640 L980,2100 L100,2100 Z", "#7a2f3a", INK, 10)
     o += circ(700, 640, 10, "#9fd3ff", extra='opacity=".9"')
-    S(f"tl.fromTo('#{p}a-head',{{rotation:0}},{{rotation:-5,duration:{S.d:.2f},ease:'sine.inOut',transformOrigin:'50% 60%'}},{jt(S.t0)})")
+    S(f"tl.fromTo('#{p}a-head',{{rotation:0}},{{rotation:-5,duration:{S.d:.2f},ease:'sine.inOut',svgOrigin:'0 0'}},{jt(S.t0)})")
     S(f"tl.fromTo('#{p} circle[r=\"10\"]',{{y:0,opacity:0}},{{y:90,opacity:1,duration:.8}},{jt(S.t0+.6)})")
     S.focus, S.zoom = (540, 1000), .05
     return o
@@ -546,7 +547,7 @@ def s4_decidi(S):
     o = bg("beco_close")
     o += person(f"{p}a", "leo", 540, 2420, 4.2, "sad", alt=("determined",))
     t = S.T("decidi")
-    S(f"F('{p}a','sad','determined',{jt(t)})")
+    S(f"F('{p}a','sad','determined',{jt(t)});PZ('{p}a','fists',{jt(t)},.3)")
     S.push = (t, .9, 1.35, 540, 900)
     S.focus, S.zoom = (540, 900), .03
     return o
@@ -558,7 +559,7 @@ def s5_ferrovelho(S):
     o += person(f"{p}a", "leo", 480, 1600, 1.9, "neutral", alt=("happy",))
     o += pogo(f"{p}pg", 720, 1600, 1.6)
     S(f"tl.from('#{p}pg',{{y:300,rotation:30,duration:.5,ease:'back.out(2)',transformOrigin:'50% 50%'}},{jt(S.t0+.2)})")
-    S(f"F('{p}a','neutral','happy',{jt(S.T('pula-pula'))})")
+    S(f"F('{p}a','neutral','happy',{jt(S.T('pula-pula'))});PZ('{p}a','thumbs',{jt(S.T('pula-pula'))})")
     S.focus, S.zoom = (560, 1200), .05
     return o
 
@@ -571,7 +572,7 @@ def s5_pogo(S):
     t, k = S.t0 + .05, 0
     while t < S.t1 - .5:
         S(f"tl.to('#{p}grp',{{y:-300,duration:.28,ease:'power2.out'}},{jt(t)});tl.to('#{p}grp',{{y:0,duration:.28,ease:'power2.in'}},{jt(t+.28)})")
-        S(f"tl.to('#{p}a-armL',{{rotation:40,duration:.1,transformOrigin:'50% 50%'}},{jt(t)});tl.to('#{p}a-armR',{{rotation:-40,duration:.1,transformOrigin:'50% 0%'}},{jt(t)})")
+        S(f"tl.to('#{p}a-armL',{{rotation:40,duration:.1,transformOrigin:'50% 50%'}},{jt(t)});tl.to('#{p}a-armR',{{rotation:-40,duration:.1,svgOrigin:'0 0'}},{jt(t)})")
         if k < 3:
             S(f"M('{p}m',{jt(t+.2)},.3)")
         t += .62
@@ -602,10 +603,10 @@ def s5_quebra(S):
 def s6_lona(S):
     p = S.p
     o = bg("circo")
-    o += person(f"{p}a", "leo", 140, 1560, 1.35, "determined")
+    o += person(f"{p}a", "leo", 140, 1560, 1.35, "determined", pose="crouch")
     S(f"tl.fromTo('#{p}a-j',{{x:0}},{{x:270,duration:{S.d-.2:.2f},ease:'none'}},{jt(S.t0)})")
-    S(f"tl.fromTo('#{p}a-legL',{{rotation:-20}},{{rotation:20,duration:.25,repeat:{int(S.d/.25)},yoyo:true,transformOrigin:'50% 0%'}},{jt(S.t0)})")
-    S(f"tl.fromTo('#{p}a-legR',{{rotation:20}},{{rotation:-20,duration:.25,repeat:{int(S.d/.25)},yoyo:true,transformOrigin:'50% 0%'}},{jt(S.t0)})")
+    S(f"tl.fromTo('#{p}a-legL',{{rotation:-20}},{{rotation:20,duration:.25,repeat:{int(S.d/.25)},yoyo:true,svgOrigin:'0 0'}},{jt(S.t0)})")
+    S(f"tl.fromTo('#{p}a-legR',{{rotation:20}},{{rotation:-20,duration:.25,repeat:{int(S.d/.25)},yoyo:true,svgOrigin:'0 0'}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 1200), .04
     return o
 
@@ -636,7 +637,7 @@ def s6_alto(S):
         o += money(f"{p}m{i}", (250, 840, 830)[i], (900, 760, 1040)[i], "+R$ 1.200", 86)
         S(f"M('{p}m{i}',{jt(S.T('Mil')+i*.35)},.6)")
     S(f"tl.fromTo('#{p}a-j',{{y:200}},{{y:-40,duration:.6,ease:'power2.out'}},{jt(S.t0)});tl.to('#{p}a-j',{{y:900,duration:.9,ease:'power2.in'}},{jt(S.t1-1.0)})")
-    S(f"tl.set('#{p}a-armL',{{rotation:150,transformOrigin:'50% 0%'}},{jt(S.t0)});tl.set('#{p}a-armR',{{rotation:-150,transformOrigin:'50% 0%'}},{jt(S.t0)})")
+    S(f"tl.set('#{p}a-armL',{{rotation:150,svgOrigin:'0 0'}},{jt(S.t0)});tl.set('#{p}a-armR',{{rotation:-150,svgOrigin:'0 0'}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 800), .05
     return o
 
@@ -645,7 +646,7 @@ def s6_dono(S):
     p = S.p
     S.rain = False
     o = bg("circo_dentro", .25) + bokeh(p, 9, 10, cols=("#ffd36b", "#ff9a5a"))
-    o += person(f"{p}a", "dono", 540, 2250, 3.4, "angry")
+    o += person(f"{p}a", "dono", 540, 2250, 3.4, "angry", pose="hips")
     o += tag(f"{p}tg", 540, 430, "DONO DO CIRCO", 60)
     badge = g(rect(-200, -60, 400, 110, "#0b2414", rx=12, stroke="#3cff5a", sw=6) +
               text(0, 26, "3º NO RANKING", 56, fill="#3cff5a", font=FONT_COND), id=f"{p}bd", extra='opacity="0"')
@@ -659,7 +660,7 @@ def s6_dono(S):
 def s6_rua(S):
     p = S.p
     o = bg("rua")
-    o += person(f"{p}a", "leo", 260, 1640, 1.5, "shock")
+    o += person(f"{p}a", "leo", 260, 1640, 1.5, "shock", pose="fall")
     o += splash(f"{p}spl", 760, 1640)
     t = S.t0 + .1
     S(f"tl.fromTo('#{p}a-j',{{x:-260,y:-330,rotation:-60}},{{x:330,y:0,rotation:80,duration:.75,ease:'power1.in',transformOrigin:'50% 50%'}},{jt(t)})")
@@ -677,9 +678,8 @@ def s7_contas(S):
         o += g(text(110, y, t_, 52, fill="#f4f1e6", font=FONT_COND, anchor="start"), id=f"{p}l{i}", extra='opacity="0"')
         S(f"tl.to('#{p}l{i}',{{opacity:1,duration:.15}},{jt(S.t0+.15+i*.45)})")
     o += line("M140,760 L520,760", "#ffd23a", 8)
-    o += person(f"{p}a", "leo", 760, 1600, 1.8, "neutral", alt=("determined",))
-    S(f"tl.to('#{p}a-armL',{{rotation:110,duration:.2,transformOrigin:'50% 50%'}},{jt(S.t0+.1)})")
-    S(f"F('{p}a','neutral','determined',{jt(S.T('perna'))})")
+    o += person(f"{p}a", "leo", 760, 1600, 1.8, "neutral", alt=("determined",), pose="point")
+    S(f"F('{p}a','neutral','determined',{jt(S.T('perna'))});PZ('{p}a','chin',{jt(S.T('perna'))})")
     S.focus, S.zoom = (480, 900), .05
     return o
 
@@ -693,7 +693,7 @@ def s7_gravidade(S):
         o += g(path(f"M{x-40},560 L{x+40},560 L{x+40},760 L{x+80},760 L{x},860 L{x-80},760 L{x-40},760 Z", "#ff4fa3", INK, 6),
                id=f"{p}ar{x}")
         S(f"tl.fromTo('#{p}ar{x}',{{y:-30}},{{y:30,duration:.3,repeat:{int(S.d/.3)},yoyo:true}},{jt(S.t0)})")
-    o += person(f"{p}a", "leo", 540, 1580, 1.6, "angry")
+    o += person(f"{p}a", "leo", 540, 1580, 1.6, "angry", pose="shrug")
     S(f"tl.fromTo('#{p}a-j',{{scaleY:1}},{{scaleY:.78,scaleX:1.12,duration:.35,ease:'power2.in',transformOrigin:'50% 50%'}},{jt(S.t0+.1)})")
     S(f"tl.fromTo('#{p}gt',{{scale:1.6,opacity:0}},{{scale:1,opacity:1,duration:.2,ease:'power3.in',transformOrigin:'50% 50%'}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 1000), .05
@@ -703,9 +703,10 @@ def s7_gravidade(S):
 def s7_lua(S):
     p = S.p
     o = bg("telhado")
-    o += g(text(540, 690, "x6", 220, fill="#3cff5a", font=FONT_COND, stroke=INK, sw=16), id=f"{p}x6", extra='opacity="0"')
+    o += g(text(620, 680, "x6", 150, fill="#3cff5a", font=FONT_COND, stroke=INK, sw=14), id=f"{p}x6", extra='opacity="0"')
     o += person(f"{p}a", "leo", 380, 1620, 1.6, "happy", flip=False)
     S(f"tl.to('#{p}a-head',{{rotation:-12,duration:.4,transformOrigin:'50% 50%'}},{jt(S.t0+.1)})")
+    S(f"PZ('{p}a','pointup',{jt(S.T('Lua'))})")
     S(f"tl.fromTo('#{p}x6',{{opacity:0,scale:.3}},{{opacity:1,scale:1,duration:.25,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.T('seis'))})")
     S.focus, S.zoom = (540, 700), .04
     return o
@@ -737,7 +738,7 @@ def s7_foguete(S):
     p = S.p
     o = bg("foguete")
     o += tag(f"{p}tg", 540, 290, "PROMOÇÃO: SÓ IDA", 60)
-    o += person(f"{p}a", "leo", 260, 1640, 1.1, "happy")
+    o += person(f"{p}a", "leo", 260, 1640, 1.1, "happy", pose="thumbs")
     S(f"tl.fromTo('#{p}tg',{{opacity:0,scale:.4}},{{opacity:1,scale:1,duration:.2,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.T('barato'))})")
     S.focus, S.zoom = (540, 900), .04
     return o
@@ -755,7 +756,7 @@ def moon_ground(p, y=1450):
 def s8_lua(S):
     p = S.p
     o = bg("lua")
-    o += person(f"{p}a", "leo", 520, 1620, 1.6, "happy", helmet=True)
+    o += person(f"{p}a", "leo", 520, 1620, 1.6, "happy", helmet=True, pose="wave")
     o += g(ell(0, 0, 40, 14, "#6f6c7d"), id=f"{p}pe", extra='opacity="0" transform="translate(500,1640)"')
     S(f"tl.fromTo('#{p}a-j',{{y:-120}},{{y:0,duration:.6,ease:'power2.in'}},{jt(S.t0)})")
     S(f"tl.to('#{p}pe',{{opacity:1,duration:.1}},{jt(S.t0+.6)})")
@@ -766,9 +767,8 @@ def s8_lua(S):
 def s8_agacha(S):
     p = S.p
     o = bg("lua")
-    o += person(f"{p}a", "leo", 540, 2050, 3.0, "determined", helmet=True)
+    o += person(f"{p}a", "leo", 540, 2050, 3.0, "determined", helmet=True, pose="crouch")
     S(f"tl.to('#{p}a-j',{{scaleY:.82,duration:.6,ease:'power2.out',transformOrigin:'50% 50%'}},{jt(S.t0+.1)})")
-    S(f"tl.to('#{p}a-armL',{{rotation:30,duration:.4,transformOrigin:'50% 0%'}},{jt(S.t0+.1)});tl.to('#{p}a-armR',{{rotation:-30,duration:.4,transformOrigin:'50% 0%'}},{jt(S.t0+.1)})")
     S.focus, S.zoom = (540, 1000), .06
     return o
 
@@ -780,9 +780,9 @@ def s8_salto(S):
            extra='opacity="0"')
     o += person(f"{p}a", "leo", 540, 1560, 1.6, "determined", helmet=True)
     t = S.T("pulei")
-    S(f"tl.to('#{p}a-j',{{scaleY:.8,duration:.15,transformOrigin:'50% 100%'}},{jt(t-.15)})")
+    S(f"tl.to('#{p}a-j',{{scaleY:.8,duration:.15,svgOrigin:'0 0'}},{jt(t-.15)})")
     S(f"tl.to('#{p}a-j',{{scaleY:1.1,y:-1400,duration:1.1,ease:'power2.in'}},{jt(t)})")
-    S(f"tl.set('#{p}a-armL',{{rotation:160,transformOrigin:'50% 0%'}},{jt(t)});tl.set('#{p}a-armR',{{rotation:-160,transformOrigin:'50% 0%'}},{jt(t)})")
+    S(f"tl.set('#{p}a-armL',{{rotation:160,svgOrigin:'0 0'}},{jt(t)});tl.set('#{p}a-armR',{{rotation:-160,svgOrigin:'0 0'}},{jt(t)})")
     S(f"tl.fromTo('#{p}dust',{{opacity:1,scale:.5}},{{opacity:0,scale:1.8,duration:.6,transformOrigin:'50% 50%'}},{jt(t)})")
     S.push = (max(S.t0 + .05, t - .75), .6, 1.3, 540, 1050)
     S.focus, S.zoom = (540, 1200), .03
@@ -811,8 +811,8 @@ def s8_subindo(S):
     o += g(moon(540, 1900, 700), id=f"{p}mn")
     o += g("".join(line(f"M{x},{y} l0,{L}", "#ffffff", 3, extra='opacity=".5"') for x, y, L in
                    [(random.Random(i).uniform(0, W), random.Random(i + 50).uniform(0, H), 160) for i in range(30)]), id=f"{p}st")
-    o += person(f"{p}a", "leo", 540, 1050, 1.3, "happy", helmet=True)
-    S(f"tl.set('#{p}a-armL',{{rotation:160,transformOrigin:'50% 50%'}},{jt(S.t0)});tl.set('#{p}a-armR',{{rotation:-160,transformOrigin:'50% 0%'}},{jt(S.t0)})")
+    o += person(f"{p}a", "leo", 540, 1050, 1.3, "happy", helmet=True, pose="up")
+    S(f"tl.set('#{p}a-armL',{{rotation:160,transformOrigin:'50% 50%'}},{jt(S.t0)});tl.set('#{p}a-armR',{{rotation:-160,svgOrigin:'0 0'}},{jt(S.t0)})")
     S(f"tl.fromTo('#{p}mn',{{scale:1}},{{scale:.15,duration:{S.d:.2f},ease:'power1.out',transformOrigin:'50% 50%'}},{jt(S.t0)})")
     S(f"tl.fromTo('#{p}st',{{y:-400}},{{y:400,duration:.5,ease:'none',repeat:{int(S.d/.5)}}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 900), .02
@@ -822,7 +822,7 @@ def s8_subindo(S):
 def s9_flutua(S):
     p = S.p
     o = bg("espaco")
-    o += g(person(f"{p}a", "leo", 540, 1150, 1.6, "happy", helmet=True), id=f"{p}fl")
+    o += g(person(f"{p}a", "leo", 540, 1150, 1.6, "happy", helmet=True, pose="float"), id=f"{p}fl")
     S(f"tl.fromTo('#{p}fl',{{rotation:-8}},{{rotation:14,duration:{S.d:.2f},ease:'sine.inOut',svgOrigin:'540 950'}},{jt(S.t0)})")
     r = random.Random(2)
     k = 0
@@ -863,7 +863,7 @@ def s9_canguru(S):
            g(phone(f"{p}ph", 0, 0, .35, title="PIX RECEBIDO", value="+R$ 5.000", hand=False), tr="translate(640,1150) rotate(10)"),
            id=f"{p}fl")
     o += tag(f"{p}tg", 540, 400, "O CANGURU", 70)
-    S(f"tl.to('#{p}a-armR',{{rotation:-60,duration:.01,transformOrigin:'50% 0%'}},{jt(S.t0)})")
+    S(f"PZ('{p}a','phone',{jt(S.t0)},0)")
     S(f"tl.fromTo('#{p}fl',{{y:30,rotation:-4}},{{y:-30,rotation:4,duration:{S.d:.2f},ease:'sine.inOut',svgOrigin:'540 1100'}},{jt(S.t0)})")
     S(f"tl.fromTo('#{p}tg',{{opacity:0,scale:.4}},{{opacity:1,scale:1,duration:.2,ease:'back.out(3)',transformOrigin:'50% 50%'}},{jt(S.T('Canguru'))})")
     S.focus, S.zoom = (540, 1000), .045
@@ -874,15 +874,15 @@ def s9_juntos(S):
     p = S.p
     o = bg("espaco")
     # empilhado na vertical: Canguru em cima, Léo embaixo
-    o += g(person(f"{p}c", "canguru", 420, 900, 1.4, "smile", alt=("happy",)), id=f"{p}fc")
-    o += g(person(f"{p}a", "leo", 660, 1560, 1.4, "shock", helmet=True, alt=("neutral",)), id=f"{p}fa")
+    o += g(person(f"{p}c", "canguru", 420, 900, 1.4, "smile", alt=("happy",), pose="wave"), id=f"{p}fc")
+    o += g(person(f"{p}a", "leo", 660, 1560, 1.4, "shock", helmet=True, alt=("neutral",), pose="float"), id=f"{p}fa")
     bal = g(path("M-330,-110 L330,-110 Q360,-110 360,-80 L360,60 Q360,90 330,90 L-90,90 L-150,150 L-140,90 L-330,90 Q-360,90 -360,60 L-360,-80 Q-360,-110 -330,-110 Z",
                  "#ffffff", INK, 7) + text(0, -12, "TRINTA ANOS,", 62, fill=INK) + text(0, 62, "GAROTO.", 62, fill=INK),
             id=f"{p}bal", extra='opacity="0"')
     o += g(bal, tr="translate(560,380)")
     S(f"F('{p}c','smile','happy',{jt(S.T('sorriu'))})")
     S(f"tl.fromTo('#{p}bal',{{opacity:0,scale:.3}},{{opacity:1,scale:1,duration:.22,ease:'back.out(2.5)',transformOrigin:'20% 100%'}},{jt(S.T('Trinta'))})")
-    S(f"F('{p}a','shock','neutral',{jt(S.T('esperando'))})")
+    S(f"F('{p}a','shock','neutral',{jt(S.T('esperando'))});PZ('{p}a','shrug',{jt(S.T('esperando'))})")
     S(f"tl.fromTo('#{p}fc',{{y:-20}},{{y:20,duration:1.6,repeat:{int(S.d/1.6)},yoyo:true,ease:'sine.inOut'}},{jt(S.t0)})")
     S(f"tl.fromTo('#{p}fa',{{y:20}},{{y:-20,duration:1.4,repeat:{int(S.d/1.4)},yoyo:true,ease:'sine.inOut'}},{jt(S.t0)})")
     S.focus, S.zoom = (540, 1000), .025
@@ -906,8 +906,8 @@ def s10_olha(S):
 def s10_escolha(S):
     p = S.p
     o = bg("espaco", .2)
-    o += person(f"{p}c", "canguru", 300, 1560, .9, "smile")
-    o += person(f"{p}a", "leo", 780, 1600, .9, "neutral", helmet=True)
+    o += person(f"{p}c", "canguru", 300, 1560, .9, "smile", pose="wave")
+    o += person(f"{p}a", "leo", 780, 1600, .9, "neutral", helmet=True, pose="chin")
     card = (text(540, 330, "E AGORA?", 120, fill="#ffd23a", font=FONT_COND, stroke=INK, sw=18) +
             g(rect(-230, -170, 460, 340, "#2b55c9", rx=36, stroke=INK, sw=8) +
               text(0, -30, "VOLTAR", 92, fill="#fff", font=FONT_COND, stroke=INK, sw=10) +
@@ -930,13 +930,48 @@ FONTFACE = """@font-face{font-family:OSans;src:url(../assets/fonts/OpenSans-Extr
 @font-face{font-family:Nunito;src:url(../assets/fonts/Nunito-Black.woff2) format('woff2');font-weight:900}"""
 
 JS_HELPERS = """
+const POSES={
+ rest:{aL:[8,-14],aR:[-8,14],lL:[3,-3],lR:[-3,3],h:['fist','fist']},
+ umbrella:{aL:[8,-14],aR:[-10,100],lL:[3,-3],lR:[-3,3],h:['open','fist']},
+ up:{aL:[160,12],aR:[-160,-12],lL:[6,-4],lR:[-6,4],h:['open','open']},
+ thumbs:{aL:[8,-14],aR:[-35,-115],lL:[3,-3],lR:[-3,3],h:['open','thumb']},
+ cross:{aL:[-14,-100],aR:[14,100],lL:[4,-3],lR:[-4,3],h:['fist','fist']},
+ chin:{aL:[-14,-96],aR:[22,150],lL:[3,-3],lR:[-3,3],h:['fist','fist']},
+ point:{aL:[8,-14],aR:[-82,-6],lL:[3,-3],lR:[-3,3],h:['open','point']},
+ pointup:{aL:[8,-14],aR:[-150,-18],lL:[3,-3],lR:[-3,3],h:['open','point']},
+ hips:{aL:[38,-80],aR:[-38,80],lL:[8,-4],lR:[-8,4],h:['fist','fist']},
+ wave:{aL:[8,-14],aR:[-125,-35],lL:[3,-3],lR:[-3,3],h:['open','open']},
+ peace:{aL:[30,-70],aR:[-125,-30],lL:[3,-3],lR:[-3,3],h:['fist','peace']},
+ shrug:{aL:[50,-112],aR:[-50,112],lL:[3,-3],lR:[-3,3],h:['open','open']},
+ fists:{aL:[14,-70],aR:[-14,70],lL:[8,-4],lR:[-8,4],h:['fist','fist']},
+ phone:{aL:[8,-14],aR:[6,118],lL:[3,-3],lR:[-3,3],h:['open','fist']},
+ crouch:{aL:[30,-40],aR:[-30,40],lL:[24,-24],lR:[-24,24],h:['fist','fist']},
+ float:{aL:[70,-30],aR:[-70,30],lL:[14,-30],lR:[-10,24],h:['open','open']},
+ fall:{aL:[150,-40],aR:[-120,30],lL:[30,-16],lR:[-18,30],h:['open','open']},
+};
+const CUR={};const HS=['open','fist','point','thumb','peace'];
+const RO={svgOrigin:'0 0',smoothOrigin:false};
+function PZ(p,name,t,d){d=(d===undefined)?.25:d;const P=POSES[name];const s='#'+p;CUR[p]=name;
+ const set=(sel,v)=>{ if(d>0) tl.to(sel,Object.assign({rotation:v,duration:d,ease:'power2.inOut'},RO),t); else tl.set(sel,Object.assign({rotation:v},RO),t);};
+ set(s+'-armL',P.aL[0]);set(s+'-armL2',P.aL[1]);set(s+'-armR',P.aR[0]);set(s+'-armR2',P.aR[1]);
+ set(s+'-legL',P.lL[0]);set(s+'-legL2',P.lL[1]);set(s+'-legR',P.lR[0]);set(s+'-legR2',P.lR[1]);
+ ['L','R'].forEach((k,i)=>HS.forEach(h=>tl.set(s+'-h'+k+'-'+h,{opacity:h===P.h[i]?1:0},t+d*.5)));}
 function J(p,t,h,up){up=up||Math.max(.22,Math.sqrt(h)/42);const j='#'+p+'-j',a='#'+p+'-armL',b='#'+p+'-armR';
- tl.to(j,{scaleY:.86,duration:.07,transformOrigin:'50% 100%'},t);
- tl.to(j,{scaleY:1.05,y:-h,duration:up,ease:'power2.out',transformOrigin:'50% 100%'},t+.07);
- tl.to(a,{rotation:150,duration:.14,transformOrigin:'50% 0%'},t+.05);tl.to(b,{rotation:-150,duration:.14,transformOrigin:'50% 0%'},t+.05);
- tl.to(j,{scaleY:1,y:0,duration:up,ease:'power2.in',transformOrigin:'50% 100%'},t+.07+up);
- tl.to([a,b],{rotation:0,duration:.18,transformOrigin:'50% 0%'},t+.07+up*1.3);
- tl.to(j,{scaleY:.9,duration:.05,transformOrigin:'50% 100%'},t+.07+2*up);tl.to(j,{scaleY:1,duration:.1,transformOrigin:'50% 100%'},t+.12+2*up);}
+ const P=POSES[CUR[p]||'rest'];
+ tl.to(j,Object.assign({scaleY:.86,duration:.07},RO),t);
+ tl.to(['#'+p+'-legL2','#'+p+'-legR2'],{rotation:(i)=>i?28:-28,duration:.07,svgOrigin:'0 0',smoothOrigin:false},t);
+ tl.to(j,Object.assign({scaleY:1.05,y:-h,duration:up,ease:'power2.out'},RO),t+.07);
+ tl.to(['#'+p+'-legL2','#'+p+'-legR2'],{rotation:(i)=>i?-10:10,duration:up*.6,svgOrigin:'0 0',smoothOrigin:false},t+.07);
+ tl.to(a,Object.assign({rotation:150,duration:.14},RO),t+.05);tl.to(b,Object.assign({rotation:-150,duration:.14},RO),t+.05);
+ tl.to(j,Object.assign({scaleY:1,y:0,duration:up,ease:'power2.in'},RO),t+.07+up);
+ tl.to(a,Object.assign({rotation:P.aL[0],duration:.18},RO),t+.07+up*1.3);tl.to(b,Object.assign({rotation:P.aR[0],duration:.18},RO),t+.07+up*1.3);
+ tl.to(['#'+p+'-legL2','#'+p+'-legR2'],{rotation:(i)=>i?P.lR[1]:P.lL[1],duration:.2,svgOrigin:'0 0',smoothOrigin:false},t+.07+2*up);
+ tl.to(j,Object.assign({scaleY:.9,duration:.05},RO),t+.07+2*up);tl.to(j,Object.assign({scaleY:1,duration:.1},RO),t+.12+2*up);}
+function IDLE(p,t0,t1,ph,blink){const n=(per)=>Math.max(1,Math.floor((t1-t0)/per));
+ tl.fromTo('#'+p+'-br',{scaleY:1},Object.assign({scaleY:1.016,duration:1.3,repeat:n(1.3),yoyo:true,ease:'sine.inOut',immediateRender:false},RO),t0+ph*.5);
+ tl.fromTo('#'+p+'-hb',{rotation:-2.2},Object.assign({rotation:2.2,duration:1.7,repeat:n(1.7),yoyo:true,ease:'sine.inOut',immediateRender:false},RO),t0+ph);
+ tl.fromTo(['#'+p+'-wL','#'+p+'-wR'],{rotation:-5},Object.assign({rotation:5,duration:1.1,repeat:n(1.1),yoyo:true,ease:'sine.inOut',immediateRender:false},RO),t0+ph*.7);
+ if(blink){for(let t=t0+.6+ph;t<t1-.2;t+=2.6+ph){tl.to('#'+p+' .eyes',{scaleY:.1,duration:.06,yoyo:true,repeat:1,svgOrigin:'0 2',smoothOrigin:false},t);}}}
 function M(id,t,hold){const s='#'+id;
  tl.fromTo(s,{opacity:0,scale:.5,y:0},{opacity:1,scale:1.15,duration:.12,ease:'back.out(3)',transformOrigin:'50% 50%',immediateRender:false},t);
  tl.to(s,{scale:1,duration:.08,transformOrigin:'50% 50%'},t+.12);
@@ -962,7 +997,9 @@ def build_scene(sc):
     for i, (t0, fn) in enumerate(starts):
         t1 = starts[i + 1][0] if i + 1 < len(starts) else sc["dur"]
         S = Shot(sc, fn, t0, t1, f"{sc['id']}{chr(97+i)}")
+        chars.CREATED.clear()
         S.svg = globals()[fn](S)
+        S.people = list(chars.CREATED)
         shots.append(S)
     p = sc["id"]
     D = sc["dur"]
@@ -989,6 +1026,10 @@ def build_scene(sc):
             js.append(f"tl.fromTo({cam},{{scale:{z(m)*1.22:.4f},y:{S.dy/2:.1f}}},{{scale:{z(S.t1)*1.22:.4f},y:{S.dy},duration:{S.t1-m:.3f},ease:'none',svgOrigin:'{fx} {fy}',immediateRender:false}},{jt(m)});")
         else:
             js.append(f"tl.fromTo({cam},{{scale:1,y:0}},{{scale:{z(S.t1):.4f},y:{S.dy},duration:{S.d:.3f},ease:'none',svgOrigin:'{fx} {fy}'}},{jt(S.t0)});")
+        rr = random.Random(S.p)
+        for k, (pid, pose) in enumerate(S.people):
+            js.append(f"PZ('{pid}','{pose}',{jt(S.t0)},0);")
+            js.append(f"IDLE('{pid}',{jt(S.t0)},{jt(S.t1)},{rr.uniform(0,.8):.2f},{'true' if k < 4 else 'false'});")
         js.extend(x + ";" for x in S.js)
     if sc.get("rain"):
         svg.append(rain(p, hash(p) % 100, D))
@@ -997,6 +1038,7 @@ def build_scene(sc):
     js.append(f"tl.set({{}},{{}},{D:.3f});")
     js.append(f'window.__timelines["{p}"]=tl;')
     js = [x.replace("transformOrigin:", "smoothOrigin:false,transformOrigin:") for x in js]
+    js = [x if "-cam" in x else x.replace("svgOrigin:", "smoothOrigin:false,svgOrigin:") for x in js]
     html = f"""<template>
 <style>{FONTFACE}
 #root{{position:absolute;inset:0;overflow:hidden;background:#0d0912}}
