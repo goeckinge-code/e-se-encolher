@@ -9,3 +9,7 @@ node_modules/
 __pycache__/
 *.blend1
 .DS_Store
+renders/beco/frames/
+renders/beco/frames_hq/
+renders/beco/still/
+renders/beco/render.log
