@@ -21,3 +21,7 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
 - Antes de renderizar tudo, gere stills da cena alterada e confira o enquadramento: o quadro é vertical,
   então empilhe os elementos na vertical (personagem embaixo, criatura em cima) em vez de lado a lado.
 - Falas em português do Brasil.
+
+## Outros estilos do canal
+- `estilo-cartoon/GUIA.md`: análise de dois cartoons 2D narrados (regra mágica, roteiro de 2 min, legenda karaokê) e prompts para refazer.
+- `beco3d/`: animação 3D realista de 30s (Blender/Cycles), personagens fictícios.
