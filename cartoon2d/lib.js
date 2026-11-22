@@ -150,14 +150,20 @@ function setChar(id, st) {
   // braços: ângulos (graus) a partir de "pendurado"; positivo abre para fora
   const sx = g.tw / 2 - 6;
   const sw = st.walk ? Math.sin(t * st.walk * Math.PI * 2) * 14 : Math.sin(t * 2.1 + (st.seed || 0)) * 2;
-  $(id + '-armR').setAttribute('transform', `rotate(${(st.armR ?? 8) + sw},${-sx},${g.shY})`);
-  $(id + '-armL').setAttribute('transform', `rotate(${-((st.armL ?? 8) + sw)},${sx},${g.shY})`);
+  // braços: ângulo + esticar (armRlen/armLlen = fator de comprimento, efeito borracha)
+  const stretch = (k, x) => k && k !== 1 ? ` translate(${x},${g.shY}) scale(${Math.pow(k, -.12)},${k}) translate(${-x},${-g.shY})` : '';
+  $(id + '-armR').setAttribute('transform', `rotate(${(st.armR ?? 8) + sw},${-sx},${g.shY})${stretch(st.armRlen, -sx)}`);
+  $(id + '-armL').setAttribute('transform', `rotate(${-((st.armL ?? 8) + sw)},${sx},${g.shY})${stretch(st.armLlen, sx)}`);
   // pernas (caminhada)
   const lx = g.kid ? 34 : 40;
   if (st.walk) {
     const w = Math.sin(t * st.walk * Math.PI * 2);
     $(id + '-legL').setAttribute('transform', `rotate(${w * 16},${lx},${g.hipY}) translate(0,${Math.min(0, w) * 8})`);
     $(id + '-legR').setAttribute('transform', `rotate(${-w * 16},${-lx},${g.hipY}) translate(0,${Math.min(0, -w) * 8})`);
+  } else if (st.legL || st.legLlen) {   // chute: perna da direita da tela gira para fora e estica
+    const k = st.legLlen || 1;
+    $(id + '-legL').setAttribute('transform', `rotate(${-(st.legL || 0)},${lx},${g.hipY}) translate(${lx},${g.hipY}) scale(${Math.pow(k, -.12)},${k}) translate(${-lx},${-g.hipY})`);
+    $(id + '-legR').removeAttribute('transform');
   } else { $(id + '-legL').removeAttribute('transform'); $(id + '-legR').removeAttribute('transform'); }
   // olhos: piscar + tipo
   const eyes = st.eyes || 'open';
