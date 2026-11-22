@@ -18,7 +18,10 @@ sys.path.insert(0, HERE); sys.path.insert(0, EPD)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 import roteiro as R, cenas
 sh = R.shot(sid)
-frame, anchors = cenas.BUILD[sid](sh)
+_frame, anchors = cenas.BUILD[sid](sh)
+def frame(t):
+    cenas.kit.look.t = t          # tempo para o leve tremido de câmera
+    _frame(t)
 scn = bpy.context.scene
 scn.render.resolution_x, scn.render.resolution_y = int(R.W * RES), int(R.H * RES)
 scn.render.image_settings.file_format = 'JPEG'; scn.render.image_settings.quality = 92

@@ -105,7 +105,10 @@ def camera(lens=40):
     o = bpy.data.objects.new("cam", c); link(o); bpy.context.scene.camera = o
     return o
 
-def look(cam, pos, target, roll=0.0):
+def look(cam, pos, target, roll=0.0, shake=1.0, t=None):
+    if t is None: t = getattr(look, "t", 0.0)
+    pos = Vector(pos) + Vector((math.sin(t * 1.3) * 0.03, math.sin(t * 0.9) * 0.02, math.sin(t * 1.7 + 1) * 0.025)) * shake
+    target = Vector(target) + Vector((math.sin(t * 1.1 + 2) * 0.02, 0, math.sin(t * 1.5) * 0.015)) * shake
     cam.location = Vector(pos)
     d = Vector(target) - Vector(pos)
     q = d.to_track_quat('-Z', 'Y'); cam.rotation_euler = q.to_euler()
@@ -138,7 +141,8 @@ def pop(o, t, t0, d=0.28, base=None):
     base = base or o.get("_base")
     if base is None: base = tuple(o.scale); o["_base"] = base
     k = back(ramp(t, t0, d)) if t >= t0 else 0
-    o.scale = tuple(max(1e-4, b * k) for b in base)
+    sq = 1 + 0.18 * math.sin(clamp((t - t0) / (d * 1.6)) * math.pi) if t >= t0 else 1   # estica e achata
+    o.scale = (max(1e-4, base[0] * k / sq ** 0.5), max(1e-4, base[1] * k / sq ** 0.5), max(1e-4, base[2] * k * sq))
     o.hide_render = t < t0
 
 def show(o, on):
@@ -182,12 +186,16 @@ class Person:
                 box(f"{name}_lapel{sx}", _shade(st["top"], 0.8), (0.07, 0.02, 0.36), (sx * 0.14, -0.195, 0.52), b,
                     rot=(0, sx * 0.35, 0), bevel=0.005)
             box(name + "_btn", "#1E1E24", (0.05, 0.02, 0.05), (0, -0.195, 0.24), b, bevel=0.01)
-        self.arms = []
+        self.arms, self.elbows, self.hands = [], [], []
         for i, x in enumerate((-0.44, 0.44)):
-            p = empty(f"{name}_arm{i}", (x, 0, 0.68), b)
-            box(f"{name}_armm{i}", st["top"], (0.2, 0.24, 0.6), (0, 0, -0.27), p)
-            box(f"{name}_hand{i}", st["skin"], (0.18, 0.21, 0.17), (0, 0, -0.64), p, bevel=0.04)
-            self.arms.append(p)
+            p = empty(f"{name}_arm{i}", (x, 0, 0.68), b)                     # ombro
+            box(f"{name}_armm{i}", st["top"], (0.2, 0.24, 0.36), (0, 0, -0.15), p)
+            e = empty(f"{name}_elb{i}", (0, 0, -0.3), p)                     # cotovelo
+            box(f"{name}_fore{i}", st["top"], (0.19, 0.23, 0.32), (0, 0, -0.13), e)
+            box(f"{name}_hand{i}", st["skin"], (0.18, 0.21, 0.17), (0, 0, -0.34), e, bevel=0.04)
+            hd = empty(f"{name}_hd{i}", (0, 0, -0.36), e)                    # ponto da mão (para segurar coisas)
+            self.arms.append(p); self.elbows.append(e); self.hands.append(hd)
+        self._lt = None; self._cur = None
         self.head = empty(name + "_head", (0, 0, 0.76), b)
         h = self.head
         box(name + "_headm", st["skin"], (0.6, 0.56, 0.58), (0, 0, 0.3), h, bevel=0.05)
@@ -263,14 +271,37 @@ class Person:
             br.rotation_euler = (0, {"sad": sx * 0.35, "angry": -sx * 0.35, "up": 0, "flat": 0}[b], 0)
             br.location.z = 0.47 if b == "up" else 0.45
 
-    def pose(self, t, armL=0.0, armR=0.0, armLs=0.0, armRs=0.0, head=(0, 0, 0), bob=1.0, walk=0.0, phase=0.0):
-        """armX: rotação para a frente (rad); armXs: abrir para o lado; walk: velocidade do passo."""
-        w = math.sin(t * 9 + phase) * 0.55 * walk
+    def pose(self, t, armL=0.0, armR=0.0, armLs=0.0, armRs=0.0, head=(0, 0, 0), bob=1.0, walk=0.0, phase=0.0,
+             elbL=None, elbR=None, lean=0.0):
+        """armX: braço para a frente (rad); armXs: abrir para o lado; elbX: dobra do cotovelo; walk: passo.
+        As mudanças de pose são suavizadas no tempo (quadro a quadro), então trocas bruscas viram movimento."""
+        tgt = [armL, armR, armLs, armRs, head[0], head[1], head[2], lean,
+               0.35 if elbL is None else elbL, 0.35 if elbR is None else elbR]
+        dt = None if self._lt is None else t - self._lt
+        if self._cur is None or dt is None or not (0 < dt <= 0.07):
+            cur = list(tgt)
+        else:
+            a = 1 - math.exp(-dt / 0.085)                                     # ~0,1 s para chegar na pose
+            cur = [c + (g - c) * a for c, g in zip(self._cur, tgt)]
+        self._cur, self._lt = cur, t
+        aL, aR, sL, sR, hx, hy, hz, ln, eL, eR = cur
+        ph = phase + hash(self.name) % 7
+        w = math.sin(t * 9 + ph) * 0.55 * walk
+        breathe = math.sin(t * 2.2 + ph)
         self.legs[0].rotation_euler.x = w; self.legs[1].rotation_euler.x = -w
-        self.arms[0].rotation_euler = (-armL - w * 0.8, -armLs, 0)
-        self.arms[1].rotation_euler = (-armR + w * 0.8, armRs, 0)
-        self.body.location.z = abs(math.sin(t * 9 + phase)) * 0.05 * walk + math.sin(t * 2.6 + phase) * 0.012 * bob
-        self.head.rotation_euler = head
+        sway = math.sin(t * 1.3 + ph) * 0.05 * bob
+        self.arms[0].rotation_euler = (-aL - w * 0.8 + sway * 0.6, -sL - 0.04 - 0.02 * breathe, 0)
+        self.arms[1].rotation_euler = (-aR + w * 0.8 - sway * 0.6, sR + 0.04 + 0.02 * breathe, 0)
+        # cotovelo: dobra natural, menos dobrado com o braço esticado para cima, balança ao andar
+        for el, base, arm in ((self.elbows[0], eL, aL), (self.elbows[1], eR, aR)):
+            straight = clamp((arm - 1.6) / 1.2)
+            el.rotation_euler.x = -(base * (1 - 0.7 * straight) + 0.25 * walk * (1 + math.sin(t * 9 + ph)) / 2)
+        self.body.location.z = abs(math.sin(t * 9 + ph)) * 0.06 * walk + breathe * 0.012 * bob
+        self.body.rotation_euler = (ln + 0.04 * walk, 0, math.sin(t * 1.1 + ph) * 0.04 * bob + math.sin(t * 9 + ph) * 0.08 * walk)
+        self.hip.rotation_euler.z = -math.sin(t * 9 + ph) * 0.06 * walk
+        # cabeça viva: pequeno aceno e olhar
+        self.head.rotation_euler = (hx + math.sin(t * 2.9 + ph) * 0.035 * bob, hy + math.sin(t * 0.9 + ph) * 0.03 * bob,
+                                    hz + math.sin(t * 0.7 + ph * 2) * 0.08 * bob)
 
     def blink(self, t, every=3.1, off=0.0):
         k = ((t + off + 1.5) % every) < 0.09
