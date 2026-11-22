@@ -24,14 +24,14 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
 
 ## Série do Caio (cartoon 2D) — regras fixas
 - Sempre o **mesmo protagonista: Caio** (9 anos, boné vermelho virado, camiseta laranja com bolso, bermuda azul, tênis amarelo).
-- Sempre **30 segundos** (900 quadros a 30 fps), vertical 1080x1920, **sem voz**, com legenda karaokê e o texto da narração com tempos.
+- Padrão de **30 segundos** (900 quadros a 30 fps; se o usuário pedir outra duração, o episódio define `DUR = 45` etc.), vertical 1080x1920, **sem voz**, com legenda karaokê e o texto da narração com tempos.
 - **Sempre entregar o roteiro pronto para o ElevenLabs** num bloco de copiar e colar (só o texto, uma fala por linha, **sem códigos de pausa**; `node cartoon2d/narracao.js epNN-tema` gera).
 - Tema sempre ligado a **dinheiro: o Caio ganha ou perde** por uma regra do mundo ("Na minha cidade, cada X custa/rende Y") ou por escolha dele.
 - **Início chamativo** (regra mágica nos primeiros 3 s, com imagem forte e zoom-out borrado) e história com **começo, meio e fim** + final com piada.
 - Dinheiro na tela: cartão de SALDO, notas/moedas voando, "-R$" / "+R$" saltando, contadores grandes.
 - Código em `cartoon2d/`: motor `engine.js` + `lib.js`; cada episódio é `cartoon2d/episodios/epNN-tema.js` (LINES + planos).
   Render: `cartoon2d/montar.sh epNN-tema` → `renders/epNN-tema.mp4`; narração: `node cartoon2d/narracao.js epNN-tema`.
-- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10; ep03 abraço de verdade vale R$ 10 (falso custa). Não repetir temas.
+- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10; ep03 abraço de verdade vale R$ 10 (falso custa); ep04 batalha de imaginação, aposta R$ 200 (45s). Não repetir temas.
 - Temas preferidos: sentimentos e emoções do dia a dia (com humor), animação fluida (use `K()` para poses suaves, `walk`, `lean`, `hug`).
 
 ## Outros estilos do canal

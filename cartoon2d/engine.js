@@ -1,6 +1,6 @@
 // Motor dos episódios do Caio: personagens, planos, câmera, legenda karaokê.
 // Cada episódio (episodios/epNN-*.js) define LINES (narração com tempos) e chama shot(t0, t1, build).
-const DUR = 30;
+let DUR = 30;   // o episódio pode mudar (ex.: DUR = 45)
 let LINES = [];
 // palavras com tempo proporcional ao tamanho; grupos de até 3 palavras (quebra na pontuação)
 let WORDS = [], GROUPS = [];

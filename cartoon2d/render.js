@@ -19,10 +19,12 @@ const path = require('path'), fs = require('fs');
       await p.screenshot({ path: path.join(__dirname, `out/${EP}/still/t${t.toFixed(2).padStart(5, '0')}.png`) });
     }
   } else {
-    const fps = Number(arg) || 30, n = Math.round(30 * fps), dir = path.join(__dirname, `out/${EP}/frames`);
+    const dur = await p.evaluate(() => DUR);
+    const fps = Number(arg) || 30, n = Math.round(dur * fps), dir = path.join(__dirname, `out/${EP}/frames`);
     fs.mkdirSync(dir, { recursive: true });
     const t0 = Date.now();
     for (let f = 0; f < n; f++) {
+      if (fs.existsSync(`${dir}/${String(f).padStart(5, '0')}.jpg`) && !process.env.REFAZ) continue;
       await p.evaluate(t => render(t), f / fps);
       await p.screenshot({ path: `${dir}/${String(f).padStart(5, '0')}.jpg`, type: 'jpeg', quality: 93 });
       if (f % 60 === 0) console.log(`quadro ${f}/${n}  ${((Date.now() - t0) / 1000).toFixed(0)}s`);
