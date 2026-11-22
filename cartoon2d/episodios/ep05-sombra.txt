@@ -1,0 +1,49 @@
+Episódio 5: "Na minha cidade, a sua sombra pode trabalhar por você."
+
+ELEVENLABS (copiar e colar)
+Na minha cidade, a sua sombra pode trabalhar por você.
+Ela trabalha… e você recebe.
+Eu sou o Caio. E mandei a minha sombra trabalhar.
+Ela entregou pão.
+Passeou com cachorro.
+Lavou carro.
+E eu, na rede, ficando rico.
+Até que ela pediu aumento.
+Eu disse: "Não."
+Ela fez as malas… e foi embora.
+Agora ela trabalha pro Bruno.
+E eu? Fiquei sem sombra.
+Comprei um guarda-chuva: cinquenta reais.
+E a sombra dele já chegou cobrando aluguel.
+
+TEXTO
+Na minha cidade, a sua sombra pode trabalhar por você.
+Ela trabalha… e você recebe.
+Eu sou o Caio. E mandei a minha sombra trabalhar.
+Ela entregou pão.
+Passeou com cachorro.
+Lavou carro.
+E eu, na rede, ficando rico.
+Até que ela pediu aumento.
+Eu disse: “Não.”
+Ela fez as malas… e foi embora.
+Agora ela trabalha pro Bruno.
+E eu? Fiquei sem sombra.
+Comprei um guarda-chuva: cinquenta reais.
+E a sombra dele já chegou cobrando aluguel.
+
+COM TEMPOS
+[0:00.3 - 0:02.8] Na minha cidade, a sua sombra pode trabalhar por você.
+[0:03.0 - 0:04.8] Ela trabalha… e você recebe.
+[0:05.0 - 0:07.4] Eu sou o Caio. E mandei a minha sombra trabalhar.
+[0:07.6 - 0:08.4] Ela entregou pão.
+[0:08.6 - 0:09.4] Passeou com cachorro.
+[0:09.6 - 0:10.4] Lavou carro.
+[0:10.6 - 0:12.8] E eu, na rede, ficando rico.
+[0:13.0 - 0:15.0] Até que ela pediu aumento.
+[0:15.2 - 0:16.8] Eu disse: “Não.”
+[0:17.0 - 0:19.4] Ela fez as malas… e foi embora.
+[0:19.6 - 0:22.0] Agora ela trabalha pro Bruno.
+[0:22.2 - 0:24.6] E eu? Fiquei sem sombra.
+[0:24.8 - 0:26.8] Comprei um guarda-chuva: cinquenta reais.
+[0:27.0 - 0:29.8] E a sombra dele já chegou cobrando aluguel.

@@ -39,7 +39,7 @@ function char(id, o) {
       P.push(`<rect x="${lx - 22}" y="${-34}" width="44" height="22" rx="11" fill="${sk}" stroke="${OL}" stroke-width="${SW}"/>`);
     } else {
       P.push(`<path d="M${lx - 30},0 L${lx - 30},${-shoeH + 12} Q${lx - 30},${-shoeH} ${lx - 14},${-shoeH} L${lx + 16},${-shoeH} Q${lx + 34},${-shoeH} ${lx + 34},${-shoeH + 18} L${lx + 34},0 Z" fill="${o.shoe || '#e04a3f'}" stroke="${OL}" stroke-width="${SW}" stroke-linejoin="round"/>`);
-      P.push(`<rect x="${lx - 30}" y="-12" width="64" height="10" fill="#fff" stroke="${OL}" stroke-width="5"/>`);
+      P.push(`<rect x="${lx - 30}" y="-12" width="64" height="10" fill="${o.sole || '#fff'}" stroke="${OL}" stroke-width="5"/>`);
     }
     P.push(`</g>`);
   }
@@ -104,7 +104,8 @@ function char(id, o) {
   if (o.glasses) for (const s of [-1, 1]) P.push(`<circle cx="${s * ex}" cy="${ey}" r="${erx + 10}" fill="rgba(200,230,255,.18)" stroke="${OL}" stroke-width="6"/>`);
   if (o.glasses) P.push(`<path d="M${-ex + erx + 10},${ey - 4} Q0,${ey - 14} ${ex - erx - 10},${ey - 4}" fill="none" stroke="${OL}" stroke-width="6"/>`);
   for (const s of [-1, 1]) P.push(`<path id="${id}-brow${s > 0 ? 'L' : 'R'}" d="M${s * ex - 22},${ey - ery - 16} Q${s * ex},${ey - ery - 28} ${s * ex + 22},${ey - ery - 16}" fill="none" stroke="${OL}" stroke-width="9" stroke-linecap="round"/>`);
-  for (const s of [-1, 1]) P.push(`<ellipse cx="${s * (ex + 30)}" cy="${ey + 44}" rx="22" ry="12" fill="#ff8f9a" opacity=".55"/>`);
+  if (!o.noCheeks) for (const s of [-1, 1]) P.push(`<ellipse cx="${s * (ex + 30)}" cy="${ey + 44}" rx="22" ry="12" fill="#ff8f9a" opacity=".55"/>`);
+  P.push(`<g id="${id}-shades" display="none">${[-1, 1].map(s => `<rect x="${s * ex - erx - 6}" y="${ey - 22}" width="${2 * erx + 12}" height="44" rx="16" fill="#1b1730" stroke="${OL}" stroke-width="6"/><path d="M${s * ex - erx + 4},${ey - 10} l18,0" stroke="#fff" stroke-width="6" opacity=".6"/>`).join('')}<path d="M${-ex + erx + 6},${ey - 8} L${ex - erx - 6},${ey - 8}" stroke="#1b1730" stroke-width="8"/></g>`);
   P.push(`<path d="M-8,${ey + 36} Q0,${ey + 44} 8,${ey + 36}" fill="none" stroke="${OL}" stroke-width="6" stroke-linecap="round"/>`);
   // bocas
   const my = hy + (kid ? 62 : 56);
@@ -189,6 +190,7 @@ function setChar(id, st) {
   $(id + '-sweat').setAttribute('display', st.sweat ? 'inline' : 'none');
   if (st.sweat) $(id + '-sweat').setAttribute('transform', `translate(0,${(t * 90) % 40})`);
   $(id + '-tears').setAttribute('display', st.tears ? 'inline' : 'none');
+  $(id + '-shades').setAttribute('display', st.shades ? 'inline' : 'none');
   const md = $(id + '-mad'); md.setAttribute('display', st.mad ? 'inline' : 'none');
   if (st.mad) md.setAttribute('transform', `translate(${g.R * .62},${g.hy - g.R * .72}) scale(${1 + Math.abs(Math.sin(t * 9)) * .25})`);
   const cap = $(id + '-cap');
