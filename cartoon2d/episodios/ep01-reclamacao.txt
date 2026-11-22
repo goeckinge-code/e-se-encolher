@@ -1,5 +1,23 @@
 Episódio 1: "Na minha cidade, cada reclamação custa um real."
 
+ELEVENLABS (copiar e colar)
+Na minha cidade, cada reclamação custa um real. <break time="0.3s" />
+Seu Jair reclamou do calor. <break time="0.3s" />
+Dona Cida reclamou do tomate.
+Depois, reclamou do preço de reclamar. <break time="0.3s" />
+Eu sou o Caio, tenho nove anos e cinquenta reais. <break time="0.3s" />
+Choveu.
+Brócolis.
+Dever de casa.
+A internet caiu.
+Em uma semana: três reais. <break time="0.3s" />
+Aí eu reparei no meu avô. <break time="0.3s" />
+Ele nunca reclama. E tem um milhão.
+O segredo? Uma plaquinha.
+Todo mundo paga pra reclamar pra ele.
+No outro dia, eu abri a minha.
+Ninguém veio. "Que injustiça!" Menos um real.
+
 TEXTO
 Na minha cidade, cada reclamação custa um real.
 Seu Jair reclamou do calor.

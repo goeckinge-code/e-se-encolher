@@ -1,5 +1,20 @@
 Episódio 2: "Na minha cidade, cada mentira custa dez reais."
 
+ELEVENLABS (copiar e colar)
+Na minha cidade, cada mentira custa dez reais. <break time="0.3s" />
+Eu sou o Caio. Meu avô me deu cem reais. <break time="0.3s" />
+"Escovou os dentes?" "Escovei!" <break time="0.3s" />
+"Quem quebrou o vaso?" "O gato!" <break time="0.3s" />
+E foi assim o dia inteiro. <break time="0.3s" />
+Sobrou uma nota de dez. <break time="0.3s" />
+Aí minha mãe fez uma comida nova. <break time="0.3s" />
+"Gostou, filho?" <break time="0.3s" />
+Era a minha última nota. <break time="0.3s" />
+"Mãe… tá horrível." <break time="0.3s" />
+E aí eu descobri: verdade dá dinheiro! <break time="0.3s" />
+"Sua aula é chata." "Seu presente é feio." <break time="0.3s" />
+Agora eu tô rico. E de castigo até o Natal.
+
 TEXTO
 Na minha cidade, cada mentira custa dez reais.
 Eu sou o Caio. Meu avô me deu cem reais.
