@@ -286,7 +286,7 @@ if __name__ == "__main__":
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS),
                            "-i", "-", "-ss", str(a / FPS), "-i", wav, "-map", "0:v", "-map", "1:a", "-shortest",
                            "-c:v", "libx264", "-preset", "medium", "-crf", "19", "-pix_fmt", "yuv420p",
-                           "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", mp4], stdin=subprocess.PIPE)
+                           "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "160k", "-ar", "48000", "-movflags", "+faststart", mp4], stdin=subprocess.PIPE)
     starts = []
     for sh in R.SHOTS:
         for f in range(sh["frames"]): starts.append((sh, f))

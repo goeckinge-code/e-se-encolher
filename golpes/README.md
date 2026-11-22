@@ -18,7 +18,7 @@ Guia de estilo: [`../referencias/ESTILO.md`](../referencias/ESTILO.md).
 
 | # | Tema | Pasta |
 |---|---|---|
-| 1 | Pirâmide financeira | [`ep01-piramide/`](ep01-piramide/) — narração em `narracao.txt` |
+| 1 | Pirâmide financeira (30 s) | [`ep01-piramide/`](ep01-piramide/) — vídeo em `video/Piramide-Financeira-30s.mp4`, narração em `narracao.txt` |
 
 ## Como gerar
 
