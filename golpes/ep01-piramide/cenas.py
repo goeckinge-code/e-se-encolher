@@ -20,14 +20,27 @@ def street(cam_y=-7):
 # ======================================================================= GANCHO
 @shot
 def s01(sh):
-    street()
-    h = hero("hero", (0, 0.6, 0))
-    cam = camera(38)
-    t_v = R.wt(sh, "rico")
+    """GANCHO: começa colado no sorriso do golpista e recua rápido, revelando chuva de dinheiro
+    e uma multidão gigante atrás dele (o "um milhão de brasileiros")."""
+    setup("#F7C548"); cyclo("#F7C548")
+    coin_stack("pod", 7, (0, 0, 0), r=0.75)
+    h = hero("hero", (0, 0, 0.63))
+    k = 0
+    for r in range(9):
+        for cidx in range(15):
+            mini(f"m{k}", k * 7 + r, ((cidx - 7) * 0.9 + (0.45 if r % 2 else 0), 2.2 + r * 1.0, 0), 0.85); k += 1
+    rain, ranim = money_rain("rain", 45, (4.5, 2.5, 7), s=0.9)
+    cam = camera(34)
+    t_v = R.wt(sh, "você")
     def f(t):
-        h.pose(t, armR=0.15, armL=0.1); h.blink(t)
-        h.expr("grin" if t > t_v else "smile")
-        look(cam, keys(t, [(0, (0, -8.5, 2.2)), (sh["dur"], (0, -6.6, 1.9))]), (0, 0.6, 1.25))
+        point = t > t_v - 0.1
+        h.pose(t, armL=2.7 if not point else 0.2, armR=2.7 if not point else 1.55, armLs=0.3, armRs=0.3 if not point else 0,
+               bob=3); h.blink(t); h.expr("grin")
+        ranim(t, -2.0)
+        k = 1 - (1 - clamp(t / 0.9)) ** 3          # recuo rápido nos primeiros 0,9 s
+        d = lerp(1.6, 7.2, k) + 0.3 * t           # e continua abrindo devagar
+        z = lerp(2.05, 3.4, k); tz = lerp(2.0, 2.3, k)
+        look(cam, (0.0, -d, z), (0, 0.6, tz))
     return f, ["hero"]
 
 @shot
@@ -165,7 +178,7 @@ def ponzi_set(sh, wide=False):
 @shot
 def s07(sh):
     h, new, old, bills, ars = ponzi_set(sh)
-    cam = camera(32); c = pushcam(cam, sh, (0, -9.4, 6.2), (0, -8.3, 5.6), (0, 0.8, 2.0))
+    cam = camera(32); c = pushcam(cam, sh, (0, -9.8, 6.6), (0, -8.8, 6.0), (0, 0.8, 2.8))
     t_p, t_n = R.wt(sh, "primeiros"), R.wt(sh, "entrou")
     def f(t):
         h.pose(t, armL=0.6, armR=0.6); h.blink(t); h.expr("grin")
@@ -234,7 +247,7 @@ def s10(sh):
     ppl, tiers = pyramid_people([1, 2, 3], w0=1.1)
     empty("bonus", (0, tiers[0][2], tiers[0][0] + 2.6))
     coins = [coin(f"c{i}", r=0.18) for i in range(6)]
-    cam = camera(32); c = pushcam(cam, sh, (0, -10.5, 5.0), (0, -9.4, 4.6), (0, -0.6, 2.0))
+    cam = camera(32); c = pushcam(cam, sh, (0, -11.4, 5.9), (0, -10.2, 5.5), (0, -0.6, 3.7))
     t_b = R.wt(sh, "bônus")
     def f(t):
         for li, row in enumerate(ppl):
@@ -286,17 +299,16 @@ def s13(sh):
     h = hero("hero", (-0.7, -1.0, 0), rotz=-0.2)
     cr = car("car", (0.6, 1.0, 0), rotz=0.5)
     ph = phone("phone", (0, 0, 0))
-    bag = box("bag", "#2E86DE", (0.6, 0.35, 0.8), (-1.5, -0.4, 0.45), bevel=0.06)
     cam = camera(34); c = pushcam(cam, sh, (0, -8.4, 3.0), (-0.1, -7.2, 2.8), (-0.1, 0.0, 1.4))
-    t_c, t_v, t_s = R.wt(sh, "carro"), R.wt(sh, "viagem"), R.wt(sh, "saque.")
+    t_c, t_s = R.wt(sh, "carro"), R.wt(sh, "ninguém")
     ph.parent = h.arms[1]; ph.location = (0, -0.14, -0.85); ph.rotation_euler = (math.pi, 0, 0)
     def f(t):
-        up = t > t_s - 0.4
+        up = t > t_s - 0.2
         h.pose(t, armR=2.8 if up else 0.4, armL=0.2); h.blink(t); h.expr("grin")
         show(ph, up)
-        pop(cr, t, t_c - 0.1, 0.3); pop(bag, t, t_v, 0.25)
+        pop(cr, t, t_c - 0.15, 0.3)
         c(t)
-    return f, ["car", "phone"]
+    return f, ["car"]
 
 @shot
 def s14(sh):
@@ -396,7 +408,7 @@ def s18(sh):
     L = 10
     objs = big_pyramid(L)
     cam = camera(32)
-    t_tr, t_b = R.wt(sh, "traz"), R.wt(sh, "bilhões")
+    t_tr, t_b = R.wt(sh, "décimo"), R.wt(sh, "bilhões")
     def f(t):
         k = clamp((t - t_tr + 0.3) / (t_b - t_tr + 0.3))
         shown = 1 + int(k * (L - 1) + 0.0001) if t > t_tr - 0.3 else 1

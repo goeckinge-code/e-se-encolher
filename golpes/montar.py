@@ -141,6 +141,9 @@ def compose(sh, f):
         for i in range(n):
             acc += np.roll(arr, int((i - n / 2) * 26 * k + 120 * k), axis=1)
         base = Image.fromarray((acc / n).astype(np.uint8))
+    # gancho: flash branco de impacto nos primeiros quadros do vídeo
+    if sh is R.SHOTS[0] and f < 5:
+        base = Image.blend(base, Image.new("RGB", (W, H), (255, 255, 255)), (5 - f) / 6)
     im = base.convert("RGBA")
     def wt(word): return R.wt(sh, word)
     # números grandes (com contador opcional no s18)
@@ -193,8 +196,7 @@ def collect_sfx():
         for _, _, word, _ in sh.get("pills", []): SFX.append((s0 + R.wt(sh, word), "plin"))
         if sh.get("title"): SFX.append((s0 + R.wt(sh, sh["title"][1]), "boom"))
         if sh.get("x"): SFX.append((s0 + R.wt(sh, sh["x"]), "buzz"))
-        if sh["id"] == "s22": SFX.append((s0, "fanfare"))
-        if sh["id"] == "s23": SFX.append((s0 + R.wt(sh, "crime"), "clang"))
+        if sh is R.SHOTS[0]: SFX.extend([(0.0, "boom"), (0.03, "whoosh"), (0.25, "fanfare")])
         if sh["id"] == "s24": SFX.append((s0 + R.wt(sh, "bloquear"), "clang"))
 
 # ------------------------------------------------------------------ síntese dos efeitos (sem arquivos externos)
@@ -236,8 +238,8 @@ def synth(kind):
     return np.zeros(10)
 
 def music(total):
-    """Batida leve e contínua (o vídeo nunca fica em silêncio). 100 bpm, kick + hat + baixo."""
-    n = int(total * SR); out = np.zeros(n); beat = 60 / 100
+    """Batida leve e contínua (o vídeo nunca fica em silêncio). 120 bpm, kick + hat + baixo."""
+    n = int(total * SR); out = np.zeros(n); beat = 60 / 120
     kick = synth("boom")[: int(0.25 * SR)] * 0.5
     t = np.arange(int(0.06 * SR)) / SR
     hat = np.random.default_rng(1).standard_normal(len(t)) * np.exp(-t * 80) * 0.06

@@ -274,7 +274,7 @@ class Person:
         self.head.rotation_euler = head
 
     def blink(self, t, every=3.1, off=0.0):
-        k = ((t + off) % every) < 0.09
+        k = ((t + off + 1.5) % every) < 0.09
         for e in self.eyes: e.scale.z = 0.15 if k else 1.0
 
 def _shade(h, f):

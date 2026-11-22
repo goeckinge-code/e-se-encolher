@@ -1,10 +1,10 @@
 # Série "Golpes da vida real" — explicados de um jeito simples
 
-Animação vertical (9:16, 1080x1920, 30 fps) no estilo de bonecos de blocos: o espectador é colocado no lugar do
+Animação vertical de **30 segundos** (9:16, 1080x1920, 30 fps) no estilo de bonecos de blocos: o espectador é colocado no lugar do
 golpista ("Se **você** quer ficar rico…") e o golpe é montado degrau por degrau:
 
 ```
-GANCHO em 2ª pessoa
+GANCHO forte nos 3 primeiros segundos (flash + câmera recuando + número-choque) em 2ª pessoa
 DEGRAUS:  "Mas <obstáculo>."  →  "Então você <solução>."  →  "Esse é o <NOME>."  (título no topo)
 VIRADA:   "Até que…"  (a conta não fecha / a polícia chega)
 FATO REAL: lei + caso brasileiro de verdade
