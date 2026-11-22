@@ -9,6 +9,8 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
 - Estilo de referência: cartoon, personagem central grande, legenda de 1 palavra por vez no meio da tela
   (fonte arredondada branca com contorno escuro), câmera sempre em zoom lento, close no rosto nas reações,
   folhas de calendário voando nos saltos de tempo.
+- Guia de estilo completo (os dois vídeos de referência): `referencias/ESTILO.md`.
+  Análise do vídeo do @brazza3d: `referencias/brazza3d-fraude-inss/ANALISE.md`.
 
 ## Estrutura
 - `blender/` — personagem e cenas em bpy. `render.py` roda por cena (`-- sN seq|still [--hq]`).
