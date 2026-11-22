@@ -174,6 +174,9 @@ def compose(sh, f):
         else: x, y = pos[0] * W, pos[1] * H - 70
         pi = pill_img(label, dot)
         x = min(max(x, pi.width / 2 + 30), W - pi.width / 2 - 30); y = min(max(y, 330), H - 520)
+        if sh.get("title") or sh.get("big"): y = max(y, 520)          # não encosta no título/número do topo
+        cy = H * sh.get("cap", 0.68)
+        if cy - 170 < y < cy + 130: y = cy - 170                       # nem na legenda
         place(im, pi, x, y, back((t - t0) / 0.25))
     # X vermelho
     if sh.get("x") and t >= wt(sh["x"]):
