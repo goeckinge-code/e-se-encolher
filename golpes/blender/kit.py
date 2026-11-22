@@ -193,9 +193,8 @@ class Person:
         box(name + "_headm", st["skin"], (0.6, 0.56, 0.58), (0, 0, 0.3), h, bevel=0.05)
         self._face(st)
         self._hair(st)
-        self.anchor = empty(name + "_top", (0, 0, 0.78 + 0.76 + 0.72), r)   # ponto acima da cabeça (etiquetas)
-        self.anchor.name = name
         self.root.name = name + "_root"
+        self.anchor = empty(name, (0, 0, 0.78 + 0.76 + 0.72), r)   # ponto acima da cabeça (etiquetas)
         self.expr("smile")
 
     def _face(self, st):

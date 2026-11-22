@@ -32,6 +32,11 @@ if mode == "still":
         frame(t)
         scn.render.filepath = os.path.join(OUT, "still", f"{sid}_{t:05.2f}.jpg")
         bpy.ops.render.render(write_still=True)
+elif mode == "anchors":      # só recalcula onde ficam as etiquetas, sem renderizar
+    out = os.path.join(OUT, "frames", sid); meta = {}
+    for f in range(sh["frames"]):
+        frame(f / R.FPS); meta[f] = {a: cenas.kit.project(a) for a in anchors}
+    json.dump(meta, open(os.path.join(out, "anchors.json"), "w")); print("ANCHORS", sid)
 else:
     out = os.path.join(OUT, "frames", sid); os.makedirs(out, exist_ok=True)
     meta, t0 = {}, time.time()

@@ -158,7 +158,7 @@ def compose(sh, f):
                 lab = outlined(f"PESSOAS NO NÍVEL {lvl}", F_PILL, (255, 255, 255), sw=6, shadow=4)
                 place(im, lab, W / 2, H * y + 100)
         if t >= t0:
-            k = back((t - t0) / 0.25)
+            k = back((t - t0) / 0.25) * (1.6 if sh is R.SHOTS[0] else 1.0)   # no gancho o número é maior
             place(im, outlined(txt, F_BIG, COL[col]), W / 2, H * y, k)
     # título de capítulo
     if sh.get("title"):
