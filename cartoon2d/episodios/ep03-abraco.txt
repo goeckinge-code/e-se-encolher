@@ -1,17 +1,17 @@
 Episódio 3: "Na minha cidade, abraço de verdade vale dez reais. Abraço falso custa dez."
 
 ELEVENLABS (copiar e colar)
-Na minha cidade, abraço de verdade vale dez reais. <break time="0.3s" />
-Abraço falso… custa dez. <break time="0.3s" />
-Eu sou o Caio. E eu queria um videogame de trezentos reais. <break time="0.3s" />
-Então eu saí abraçando todo mundo. <break time="0.3s" />
-O carteiro. A professora. Até o cachorro. <break time="0.3s" />
-Tudo abraço falso. Sobrou vinte. <break time="0.3s" />
-Aí eu vi o meu avô, sozinho na praça. <break time="0.3s" />
-Era aniversário dele. Ninguém lembrou. <break time="0.3s" />
-Eu esqueci o videogame. E só abracei. <break time="0.3s" />
-Abraço de neto: mil reais! <break time="0.3s" />
-"Vô… mais um?" <break time="0.3s" />
+Na minha cidade, abraço de verdade vale dez reais.
+Abraço falso… custa dez.
+Eu sou o Caio. E eu queria um videogame de trezentos reais.
+Então eu saí abraçando todo mundo.
+O carteiro. A professora. Até o cachorro.
+Tudo abraço falso. Sobrou vinte.
+Aí eu vi o meu avô, sozinho na praça.
+Era aniversário dele. Ninguém lembrou.
+Eu esqueci o videogame. E só abracei.
+Abraço de neto: mil reais!
+"Vô… mais um?"
 "Esse aí já é por interesse." Menos dez.
 
 TEXTO

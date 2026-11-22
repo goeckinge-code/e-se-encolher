@@ -25,7 +25,7 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
 ## Série do Caio (cartoon 2D) — regras fixas
 - Sempre o **mesmo protagonista: Caio** (9 anos, boné vermelho virado, camiseta laranja com bolso, bermuda azul, tênis amarelo).
 - Sempre **30 segundos** (900 quadros a 30 fps), vertical 1080x1920, **sem voz**, com legenda karaokê e o texto da narração com tempos.
-- **Sempre entregar o roteiro pronto para o ElevenLabs** num bloco de copiar e colar (texto corrido com `<break time="0.3s" />` entre as falas; `node cartoon2d/narracao.js epNN-tema` gera).
+- **Sempre entregar o roteiro pronto para o ElevenLabs** num bloco de copiar e colar (só o texto, uma fala por linha, **sem códigos de pausa**; `node cartoon2d/narracao.js epNN-tema` gera).
 - Tema sempre ligado a **dinheiro: o Caio ganha ou perde** por uma regra do mundo ("Na minha cidade, cada X custa/rende Y") ou por escolha dele.
 - **Início chamativo** (regra mágica nos primeiros 3 s, com imagem forte e zoom-out borrado) e história com **começo, meio e fim** + final com piada.
 - Dinheiro na tela: cartão de SALDO, notas/moedas voando, "-R$" / "+R$" saltando, contadores grandes.
