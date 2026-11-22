@@ -26,6 +26,7 @@ const LOOK = {
   n1: { skin: SKIN.n1, shirt: '#5fb3e0', stripe: '#fff', shorts: '#6b4fa0', shoe: '#e04a3f', hair: 'short', hairCol: '#c8742c' },
   mae: { skin: '#a8693f', shirt: '#4fa3d1', dress: '#4fa3d1', shoe: '#e86fa0', hair: 'curly', hairCol: '#3a2418' },
   prof: { skin: '#e8b48c', shirt: '#7a5fc0', dress: '#7a5fc0', shoe: '#2b2745', hair: 'bun', hairCol: '#9a9aa6', glasses: 1 },
+  carteiro: { skin: '#9a6440', shirt: '#f5c531', shorts: '#2f5f9a', shoe: '#2b2745', hair: 'short', hairCol: '#1c1412', mustache: 1 },
   n2: { skin: SKIN.n2, shirt: '#9ccc4e', shorts: '#3b3b55', shoe: '#fff', hair: 'curly', hairCol: '#1c1412' },
 };
 let UID = 0;

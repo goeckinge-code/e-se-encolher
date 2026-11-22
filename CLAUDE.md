@@ -31,7 +31,8 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
 - Dinheiro na tela: cartão de SALDO, notas/moedas voando, "-R$" / "+R$" saltando, contadores grandes.
 - Código em `cartoon2d/`: motor `engine.js` + `lib.js`; cada episódio é `cartoon2d/episodios/epNN-tema.js` (LINES + planos).
   Render: `cartoon2d/montar.sh epNN-tema` → `renders/epNN-tema.mp4`; narração: `node cartoon2d/narracao.js epNN-tema`.
-- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10. Não repetir temas.
+- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10; ep03 abraço de verdade vale R$ 10 (falso custa). Não repetir temas.
+- Temas preferidos: sentimentos e emoções do dia a dia (com humor), animação fluida (use `K()` para poses suaves, `walk`, `lean`, `hug`).
 
 ## Outros estilos do canal
 - `estilo-cartoon/GUIA.md`: análise de dois cartoons 2D narrados (regra mágica, roteiro de 2 min, legenda karaokê) e prompts para refazer.

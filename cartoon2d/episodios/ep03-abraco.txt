@@ -1,0 +1,43 @@
+Episódio 3: "Na minha cidade, abraço de verdade vale dez reais. Abraço falso custa dez."
+
+ELEVENLABS (copiar e colar)
+Na minha cidade, abraço de verdade vale dez reais. <break time="0.3s" />
+Abraço falso… custa dez. <break time="0.3s" />
+Eu sou o Caio. E eu queria um videogame de trezentos reais. <break time="0.3s" />
+Então eu saí abraçando todo mundo. <break time="0.3s" />
+O carteiro. A professora. Até o cachorro. <break time="0.3s" />
+Tudo abraço falso. Sobrou vinte. <break time="0.3s" />
+Aí eu vi o meu avô, sozinho na praça. <break time="0.3s" />
+Era aniversário dele. Ninguém lembrou. <break time="0.3s" />
+Eu esqueci o videogame. E só abracei. <break time="0.3s" />
+Abraço de neto: mil reais! <break time="0.3s" />
+"Vô… mais um?" <break time="0.3s" />
+"Esse aí já é por interesse." Menos dez.
+
+TEXTO
+Na minha cidade, abraço de verdade vale dez reais.
+Abraço falso… custa dez.
+Eu sou o Caio. E eu queria um videogame de trezentos reais.
+Então eu saí abraçando todo mundo.
+O carteiro. A professora. Até o cachorro.
+Tudo abraço falso. Sobrou vinte.
+Aí eu vi o meu avô, sozinho na praça.
+Era aniversário dele. Ninguém lembrou.
+Eu esqueci o videogame. E só abracei.
+Abraço de neto: mil reais!
+“Vô… mais um?”
+“Esse aí já é por interesse.” Menos dez.
+
+COM TEMPOS
+[0:00.3 - 0:03.0] Na minha cidade, abraço de verdade vale dez reais.
+[0:03.2 - 0:05.0] Abraço falso… custa dez.
+[0:05.2 - 0:08.0] Eu sou o Caio. E eu queria um videogame de trezentos reais.
+[0:08.2 - 0:09.8] Então eu saí abraçando todo mundo.
+[0:10.0 - 0:12.4] O carteiro. A professora. Até o cachorro.
+[0:12.6 - 0:14.6] Tudo abraço falso. Sobrou vinte.
+[0:14.8 - 0:17.2] Aí eu vi o meu avô, sozinho na praça.
+[0:17.4 - 0:19.6] Era aniversário dele. Ninguém lembrou.
+[0:19.8 - 0:22.0] Eu esqueci o videogame. E só abracei.
+[0:22.2 - 0:24.4] Abraço de neto: mil reais!
+[0:24.6 - 0:26.4] “Vô… mais um?”
+[0:26.6 - 0:29.8] “Esse aí já é por interesse.” Menos dez.

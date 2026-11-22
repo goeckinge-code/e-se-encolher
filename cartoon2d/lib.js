@@ -97,7 +97,8 @@ function char(id, o) {
     P.push(`<g id="${id}-eye${s > 0 ? 'L' : 'R'}"><ellipse cx="${s * ex}" cy="${ey}" rx="${erx}" ry="${ery}" fill="#fff" stroke="${OL}" stroke-width="7"/>
       <g class="pup"><circle cx="${s * ex}" cy="${ey + 4}" r="${erx * .66}" fill="#5b3a1e"/><circle cx="${s * ex}" cy="${ey + 4}" r="${erx * .34}" fill="#1b1420"/><circle cx="${s * ex + 7}" cy="${ey - 5}" r="${erx * .24}" fill="#fff"/></g>
       <path class="lid" d="M${s * ex - erx - 3},${ey} A${erx + 3},${ery + 3} 0 0 1 ${s * ex + erx + 3},${ey} Z" fill="${sk}" stroke="${OL}" stroke-width="7" display="none"/>
-      <path class="happy" d="M${s * ex - erx + 4},${ey + 8} Q${s * ex},${ey - 26} ${s * ex + erx - 4},${ey + 8}" fill="none" stroke="${OL}" stroke-width="9" stroke-linecap="round" display="none"/></g>`);
+      <path class="happy" d="M${s * ex - erx + 4},${ey + 8} Q${s * ex},${ey - 26} ${s * ex + erx - 4},${ey + 8}" fill="none" stroke="${OL}" stroke-width="9" stroke-linecap="round" display="none"/>
+      <text class="money" x="${s * ex}" y="${ey + 18}" text-anchor="middle" font-family="Luckiest" font-size="${erx * 1.6}" fill="#2fae60" stroke="${OL}" stroke-width="4" paint-order="stroke" display="none">$</text></g>`);
   }
   P.push(`</g>`);
   if (o.glasses) for (const s of [-1, 1]) P.push(`<circle cx="${s * ex}" cy="${ey}" r="${erx + 10}" fill="rgba(200,230,255,.18)" stroke="${OL}" stroke-width="6"/>`);
@@ -140,32 +141,38 @@ function setChar(id, st) {
   // respiração (squash leve a partir dos pés) + pulinho
   const br = Math.sin(t * 3.2 + (st.seed || 0)) * .012;
   const hop = st.hop ? -Math.abs(Math.sin(t * st.hop * Math.PI)) * 26 : 0;
-  $(id + '-body').setAttribute('transform', `translate(0,${hop}) scale(${1 - br},${1 + br + (st.squash || 0)})`);
+  const wb = st.walk ? -Math.abs(Math.sin(t * st.walk * Math.PI * 2)) * 12 : 0;
+  $(id + '-body').setAttribute('transform', `rotate(${st.lean || 0},0,0) translate(0,${hop + wb}) scale(${1 - br - (st.squash || 0) * .5},${1 + br + (st.squash || 0)})`);
   // cabeça
   const tilt = (st.tilt || 0) + Math.sin(t * 1.7 + (st.seed || 0)) * 1.2;
   $(id + '-head').setAttribute('transform', `rotate(${tilt},0,${g.torsoTop}) translate(0,${st.headY || 0})`);
   // braços: ângulos (graus) a partir de "pendurado"; positivo abre para fora
   const sx = g.tw / 2 - 6;
-  $(id + '-armR').setAttribute('transform', `rotate(${(st.armR || 8)},${-sx},${g.shY})`);
-  $(id + '-armL').setAttribute('transform', `rotate(${-(st.armL || 8)},${sx},${g.shY})`);
+  const sw = st.walk ? Math.sin(t * st.walk * Math.PI * 2) * 14 : Math.sin(t * 2.1 + (st.seed || 0)) * 2;
+  $(id + '-armR').setAttribute('transform', `rotate(${(st.armR ?? 8) + sw},${-sx},${g.shY})`);
+  $(id + '-armL').setAttribute('transform', `rotate(${-((st.armL ?? 8) + sw)},${sx},${g.shY})`);
   // pernas (caminhada)
+  const lx = g.kid ? 34 : 40;
   if (st.walk) {
-    const w = Math.sin(t * st.walk * Math.PI * 2) * 7;
-    $(id + '-legL').setAttribute('transform', `translate(0,${Math.min(0, w)})`);
-    $(id + '-legR').setAttribute('transform', `translate(0,${Math.min(0, -w)})`);
-  }
+    const w = Math.sin(t * st.walk * Math.PI * 2);
+    $(id + '-legL').setAttribute('transform', `rotate(${w * 16},${lx},${g.hipY}) translate(0,${Math.min(0, w) * 8})`);
+    $(id + '-legR').setAttribute('transform', `rotate(${-w * 16},${-lx},${g.hipY}) translate(0,${Math.min(0, -w) * 8})`);
+  } else { $(id + '-legL').removeAttribute('transform'); $(id + '-legR').removeAttribute('transform'); }
   // olhos: piscar + tipo
   const eyes = st.eyes || 'open';
-  const bl = ((t + (st.seed || 0) * .7) % 2.9) < .1 && eyes !== 'happy';
+  const ph = ((t + (st.seed || 0) * .7) % 2.9);
+  const blk = eyes === 'happy' ? 1 : (ph < .14 ? .1 + .9 * Math.abs(ph - .07) / .07 : 1);
+  const bl = blk < .999;
   const k = eyes === 'wide' ? 1.25 : 1;
   for (const e of ['eyeL', 'eyeR']) {
     const ee = $(id + '-' + e);
     const cy = g.ey;
-    ee.setAttribute('transform', `translate(0,${cy}) scale(${k},${bl ? .08 : k}) translate(0,${-cy})`);
+    ee.setAttribute('transform', `translate(0,${cy}) scale(${k},${bl ? Math.max(.08, blk) * k : k}) translate(0,${-cy})`);
     ee.querySelector('.lid').setAttribute('display', eyes === 'half' ? 'inline' : 'none');
     ee.querySelector('.happy').setAttribute('display', eyes === 'happy' ? 'inline' : 'none');
     ee.querySelector('ellipse').setAttribute('display', eyes === 'happy' ? 'none' : 'inline');
-    ee.querySelector('.pup').setAttribute('display', eyes === 'happy' ? 'none' : 'inline');
+    ee.querySelector('.pup').setAttribute('display', eyes === 'happy' || eyes === 'money' ? 'none' : 'inline');
+    ee.querySelector('.money').setAttribute('display', eyes === 'money' ? 'inline' : 'none');
     ee.querySelector('.pup').setAttribute('transform', `translate(${st.lookX || 0},${st.lookY || 0})`);
   }
   // sobrancelhas
@@ -332,4 +339,46 @@ function setCat(id, lt, x, y, s = 1, shocked = false) {
   $(id + '-head').setAttribute('transform', shocked ? `translate(0,${-10 - Math.abs(Math.sin(lt * 20)) * 6})` : '');
   $(id + '-eyes').setAttribute('transform', `translate(0,-190) scale(${shocked ? 1.3 : 1},${((lt % 2.6) < .1 && !shocked) ? .1 : (shocked ? 1.3 : 1)}) translate(0,190)`);
   $(id + '-m1').setAttribute('display', shocked ? 'none' : 'inline'); $(id + '-m2').setAttribute('display', shocked ? 'inline' : 'none');
+}
+
+// ------------------------------------------------------------------ animação mais fluida: keyframes suaves, corações, cachorro
+// K(lt, [[t, v], ...]) interpola números (ou arrays) com easeInOut entre as chaves
+function K(lt, keys) {
+  if (lt <= keys[0][0]) return keys[0][1];
+  for (let i = 0; i < keys.length - 1; i++) {
+    const [t0, a] = keys[i], [t1, b] = keys[i + 1];
+    if (lt <= t1) { const q = easeInOut((lt - t0) / (t1 - t0)); return Array.isArray(a) ? a.map((x, j) => lerp(x, b[j], q)) : lerp(a, b, q); }
+  }
+  return keys[keys.length - 1][1];
+}
+function heartSvg(id, col = '#ff6b8a') {
+  return `<g id="${id}" display="none"><path d="M0,30 C-60,-10 -40,-60 0,-30 C40,-60 60,-10 0,30 Z" fill="${col}" stroke="${OL}" stroke-width="6" stroke-linejoin="round"/><ellipse cx="-18" cy="-24" rx="9" ry="6" fill="#fff" opacity=".6"/></g>`;
+}
+// corações subindo e balançando a partir de (x,y)
+function floatHearts(prefix, n, lt, t0, x, y, spread = 160, dur = 1.6) {
+  for (let i = 0; i < n; i++) {
+    const el = $(prefix + i); const p = (lt - t0 - i * .12) / dur;
+    if (p < 0 || p > 1) { el.setAttribute('display', 'none'); continue; }
+    const hx = x + ((i * 73) % spread - spread / 2) + Math.sin(p * 8 + i) * 30, hy = y - p * 520;
+    el.setAttribute('display', 'inline'); el.setAttribute('opacity', p > .75 ? (1 - p) / .25 : 1);
+    el.setAttribute('transform', `translate(${hx},${hy}) scale(${backOut(p / .2) * (.7 + (i % 3) * .2)}) rotate(${Math.sin(p * 6 + i) * 15})`);
+  }
+}
+function dogSvg(id) {
+  return `<g id="${id}"><path id="${id}-tail" d="M90,-90 Q160,-130 150,-190" fill="none" stroke="${OL}" stroke-width="30" stroke-linecap="round"/><path id="${id}-tail2" d="M90,-90 Q160,-130 150,-190" fill="none" stroke="#c9905a" stroke-width="16" stroke-linecap="round"/>
+    ${[-55, 55].map(x => `<rect x="${x - 18}" y="-70" width="36" height="70" rx="16" fill="#c9905a" stroke="${OL}" stroke-width="7"/>`).join('')}
+    <ellipse cx="0" cy="-95" rx="110" ry="65" fill="#c9905a" stroke="${OL}" stroke-width="${SW}"/><ellipse cx="-20" cy="-95" rx="40" ry="30" fill="#a86c3a"/>
+    <g id="${id}-head"><path d="M-95,-240 Q-140,-200 -110,-140 Q-80,-150 -70,-200 Z M95,-240 Q140,-200 110,-140 Q80,-150 70,-200 Z" fill="#7a4a26" stroke="${OL}" stroke-width="7" stroke-linejoin="round"/>
+    <circle cx="0" cy="-200" r="85" fill="#c9905a" stroke="${OL}" stroke-width="${SW}"/><ellipse cx="0" cy="-165" rx="46" ry="34" fill="#e8c49a" stroke="${OL}" stroke-width="6"/>
+    <g id="${id}-eyes">${[-1, 1].map(s => `<ellipse cx="${s * 32}" cy="-215" rx="18" ry="22" fill="#fff" stroke="${OL}" stroke-width="6"/><circle cx="${s * 32}" cy="-211" r="11" fill="#2b1a10"/><circle cx="${s * 32 + 4}" cy="-216" r="4" fill="#fff"/>`).join('')}</g>
+    <ellipse cx="0" cy="-180" rx="16" ry="11" fill="#2b2745"/><path d="M0,-170 L0,-152 M-18,-150 Q0,-138 18,-150" fill="none" stroke="${OL}" stroke-width="5" stroke-linecap="round"/>
+    <path id="${id}-tongue" d="M-10,-150 Q0,-118 10,-150 Z" fill="#ff7a8a" stroke="${OL}" stroke-width="4"/></g></g>`;
+}
+function setDog(id, lt, x, y, s = 1, mood = 'happy') {
+  $(id).setAttribute('transform', `translate(${x},${y}) scale(${s})`);
+  const w = Math.sin(lt * (mood === 'happy' ? 14 : 3)) * (mood === 'happy' ? 22 : 6);
+  $(id + '-tail').setAttribute('transform', `rotate(${w},90,-90)`); $(id + '-tail2').setAttribute('transform', `rotate(${w},90,-90)`);
+  $(id + '-head').setAttribute('transform', `rotate(${mood === 'confuso' ? 14 : Math.sin(lt * 3) * 3},0,-120)`);
+  $(id + '-tongue').setAttribute('display', mood === 'happy' ? 'inline' : 'none');
+  $(id + '-eyes').setAttribute('transform', `translate(0,-213) scale(1,${(lt % 2.7) < .1 ? .15 : 1}) translate(0,213)`);
 }
