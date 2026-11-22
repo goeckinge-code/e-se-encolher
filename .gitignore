@@ -13,3 +13,5 @@ renders/beco/frames/
 renders/beco/frames_hq/
 renders/beco/still/
 renders/beco/render.log
+cartoon2d/node_modules/
+cartoon2d/out/
