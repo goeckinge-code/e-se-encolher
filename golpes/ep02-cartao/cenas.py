@@ -66,12 +66,13 @@ def bag(name, loc, color="#E67E22", parent=None):
     box(name + "_h", kit._shade(color, 0.7), (0.3, 0.04, 0.2), (0, 0, 0.68), g, bevel=0.03)
     return g
 
-def street_atm(bg="#F2D7B6"):
+def street_atm(bg="#F2D7B6", sign=True):
     setup("#8FD0F5")
     box("floor", "#D5D8DC", (40, 14, 0.2), (0, 2, -0.1), bevel=0)
     box("wall", "#E8C39E", (40, 0.2, 10), (0, 2.0, 5), bevel=0)
-    box("band", "#C0392B", (40, 0.25, 0.5), (0, 1.88, 3.4), bevel=0.02)
-    text("bank", "BANCO", "#FFFFFF", 0.38, (0, 1.74, 3.4))
+    if sign:
+        box("band", "#C0392B", (40, 0.25, 0.5), (0, 1.88, 3.4), bevel=0.02)
+        text("bank", "BANCO", "#FFFFFF", 0.38, (0, 1.74, 3.4))
 
 # ======================================================================= GANCHO
 @shot
@@ -107,7 +108,7 @@ def c01(sh):
 # ======================================================================= COMO FUNCIONA
 @shot
 def c02(sh):
-    street_atm()
+    street_atm(sign=False)        # o título CHUPA-CABRA ocupa o topo
     a = atm("atm", (0, 1.0, 0))
     sk = skimmer("skim", (0, 0, 0))
     h = hero("hero", (1.0, -0.3, 0), rotz=0.9)
@@ -250,7 +251,7 @@ def c08(sh):
 def c09(sh):
     setup("#F6C6D6"); cyclo("#F6C6D6")
     g = board("alert", (0, 1.0, 0), 2.3, 2.6, header="#E74C3C", title="BANCO",
-              lines=["COMPRA DE", "R$ 4.800", "FOI VOCÊ?", "!BLOQUEAR"], tsize=0.24, lsize=0.3, legs=False)
+              lines=["COMPRA DE", "R$ 4.800", "FOI VOCÊ?"], tsize=0.24, lsize=0.3, legs=False)
     g.location.z = 0.3
     btn = box("btn", "#E74C3C", (1.4, 0.12, 0.38), (0, 0.9, 0.85), bevel=0.08)
     text("btn_t", "BLOQUEAR", "#FFFFFF", 0.22, (0, 0.82, 0.85))
