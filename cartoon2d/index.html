@@ -7,5 +7,6 @@ html,body{margin:0;background:#111}
 svg{display:block}
 </style></head><body>
 <svg id="stage" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920" overflow="hidden"></svg>
-<script src="lib.js"></script><script src="anim.js"></script>
+<script src="lib.js"></script><script src="engine.js"></script>
+<script>document.write('<script src="episodios/' + (new URLSearchParams(location.search).get('ep') || 'ep01-reclamacao') + '.js"><\/script>');</script>
 </body></html>

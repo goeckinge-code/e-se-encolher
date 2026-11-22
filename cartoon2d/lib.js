@@ -287,3 +287,49 @@ function showPop(id, lt, t0, x, y, s = 1, txt) {
   el.setAttribute('transform', `translate(${x},${y}) scale(${backOut((lt - t0) / .3) * s})`);
   if (txt !== undefined) el.querySelector('text').textContent = txt;
 }
+
+// ------------------------------------------------------------------ nota de dinheiro, balão de fala, gato
+function noteSvg(id, val = '10', col = '#8fd19e', ink = '#2f8a4e') {
+  return `<g id="${id}" display="none"><rect x="-80" y="-42" width="160" height="84" rx="10" fill="${col}" stroke="${OL}" stroke-width="7"/>
+    <rect x="-64" y="-28" width="128" height="56" rx="8" fill="none" stroke="${ink}" stroke-width="4"/><circle r="20" fill="none" stroke="${ink}" stroke-width="4"/>
+    <text x="-46" y="-6" text-anchor="middle" font-family="Luckiest" font-size="26" fill="${ink}">${val}</text><text x="46" y="26" text-anchor="middle" font-family="Luckiest" font-size="26" fill="${ink}">${val}</text></g>`;
+}
+// nota voando (sai balançando, como papel ao vento)
+function flyNote(id, lt, t0, x0, y0, x1, y1, d = 1.0) {
+  const el = $(id); const p = (lt - t0) / d;
+  if (p < 0 || p > 1.02) { el.setAttribute('display', 'none'); return; }
+  const q = easeOut(p);
+  const x = lerp(x0, x1, q) + Math.sin(p * 9) * 40, y = lerp(y0, y1, q);
+  el.setAttribute('display', 'inline');
+  el.setAttribute('transform', `translate(${x},${y}) rotate(${Math.sin(p * 11) * 28}) scale(${1 - p * .25},${Math.max(.2, Math.abs(Math.cos(p * 7)))})`);
+}
+function bubbleSvg(id, txt, w = 420, size = 54, tail = 'down') {
+  const tl = tail === 'down' ? `<path d="M-20,58 L0,104 L26,58 Z" fill="#fff" stroke="${OL}" stroke-width="7" stroke-linejoin="round"/><rect x="-28" y="46" width="62" height="18" fill="#fff"/>` : '';
+  return `<g id="${id}" display="none"><rect x="${-w / 2}" y="-62" width="${w}" height="124" rx="40" fill="#fff" stroke="${OL}" stroke-width="7"/>${tl}
+    <text y="${size * .35}" text-anchor="middle" font-family="Poppins" font-weight="800" font-size="${size}" fill="${OL}">${txt}</text></g>`;
+}
+function showBubble(id, lt, t0, t1, x, y, flip = 1) {
+  const el = $(id);
+  if (lt < t0 || lt > t1) { el.setAttribute('display', 'none'); return; }
+  el.setAttribute('display', 'inline');
+  el.setAttribute('transform', `translate(${x},${y}) scale(${backOut((lt - t0) / .22) * flip},${backOut((lt - t0) / .22)})`);
+}
+function catSvg(id) {
+  return `<g id="${id}"><path id="${id}-tail" d="M60,-30 Q150,-40 130,-150" fill="none" stroke="${OL}" stroke-width="34" stroke-linecap="round"/><path d="M60,-30 Q150,-40 130,-150" fill="none" stroke="#f0a04b" stroke-width="20" stroke-linecap="round" id="${id}-tail2"/>
+    <ellipse cx="0" cy="-70" rx="95" ry="75" fill="#f0a04b" stroke="${OL}" stroke-width="${SW}"/>
+    <path d="M-40,-60 l-6,40 M0,-56 l0,44 M40,-60 l6,40" stroke="#d9822e" stroke-width="10" stroke-linecap="round"/>
+    <g id="${id}-head"><path d="M-80,-190 L-90,-270 L-30,-225 Z M80,-190 L90,-270 L30,-225 Z" fill="#f0a04b" stroke="${OL}" stroke-width="${SW}" stroke-linejoin="round"/>
+    <circle cx="0" cy="-180" r="88" fill="#f0a04b" stroke="${OL}" stroke-width="${SW}"/>
+    <g id="${id}-eyes">${[-1, 1].map(s => `<ellipse cx="${s * 34}" cy="-190" rx="22" ry="28" fill="#fff" stroke="${OL}" stroke-width="6"/><circle cx="${s * 34}" cy="-186" r="13" fill="#2b5a2b"/><circle cx="${s * 34 + 4}" cy="-192" r="5" fill="#fff"/>`).join('')}</g>
+    <path d="M-10,-152 L10,-152 L0,-140 Z" fill="#ff8f9a" stroke="${OL}" stroke-width="4"/>
+    <path id="${id}-m1" d="M-22,-128 Q-11,-116 0,-132 Q11,-116 22,-128" fill="none" stroke="${OL}" stroke-width="6" stroke-linecap="round"/>
+    <ellipse id="${id}-m2" cx="0" cy="-118" rx="14" ry="18" fill="#5a1f2b" stroke="${OL}" stroke-width="6" display="none"/>
+    ${[-1, 1].map(s => `<path d="M${s * 40},-150 L${s * 110},-160 M${s * 40},-140 L${s * 110},-136" stroke="${OL}" stroke-width="4"/>`).join('')}</g></g>`;
+}
+function setCat(id, lt, x, y, s = 1, shocked = false) {
+  $(id).setAttribute('transform', `translate(${x},${y}) scale(${s})`);
+  $(id + '-tail').setAttribute('transform', `rotate(${Math.sin(lt * 4) * 10},60,-30)`); $(id + '-tail2').setAttribute('transform', `rotate(${Math.sin(lt * 4) * 10},60,-30)`);
+  $(id + '-head').setAttribute('transform', shocked ? `translate(0,${-10 - Math.abs(Math.sin(lt * 20)) * 6})` : '');
+  $(id + '-eyes').setAttribute('transform', `translate(0,-190) scale(${shocked ? 1.3 : 1},${((lt % 2.6) < .1 && !shocked) ? .1 : (shocked ? 1.3 : 1)}) translate(0,190)`);
+  $(id + '-m1').setAttribute('display', shocked ? 'none' : 'inline'); $(id + '-m2').setAttribute('display', shocked ? 'inline' : 'none');
+}

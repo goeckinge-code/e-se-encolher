@@ -1,24 +1,25 @@
 // Renderiza a animação quadro a quadro com o Chromium (Playwright).
-// Uso: node render.js still 1,5,9.5        -> out/still/t*.png
-//      node render.js seq [fps=30]          -> out/frames/*.jpg  (depois: ./montar.sh)
+// Uso: node render.js still 1,5,9.5 --ep ep02-mentira   -> out/<ep>/still/t*.png
+//      node render.js seq 30 --ep ep02-mentira        -> out/<ep>/frames/*.jpg  (depois: ./montar.sh <ep>)
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs');
 (async () => {
-  const [mode = 'still', arg = '1'] = process.argv.slice(2);
+  const A = process.argv.slice(2); const ei = A.indexOf('--ep'); const EP = ei >= 0 ? A.splice(ei, 2)[1] : 'ep01-reclamacao';
+  const [mode = 'still', arg = '1'] = A;
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
   p.on('pageerror', e => console.error('ERRO NA PÁGINA:', e.message));
-  await p.goto('file://' + path.join(__dirname, 'index.html'));
+  await p.goto('file://' + path.join(__dirname, 'index.html') + '?ep=' + EP);
   await p.waitForFunction(() => window.READY);
   await p.evaluate(() => document.fonts.ready);
   if (mode === 'still') {
-    fs.mkdirSync(path.join(__dirname, 'out/still'), { recursive: true });
+    fs.mkdirSync(path.join(__dirname, `out/${EP}/still`), { recursive: true });
     for (const t of arg.split(',').map(Number)) {
       await p.evaluate(t => render(t), t);
-      await p.screenshot({ path: path.join(__dirname, `out/still/t${t.toFixed(2).padStart(5, '0')}.png`) });
+      await p.screenshot({ path: path.join(__dirname, `out/${EP}/still/t${t.toFixed(2).padStart(5, '0')}.png`) });
     }
   } else {
-    const fps = Number(arg) || 30, n = Math.round(30 * fps), dir = path.join(__dirname, 'out/frames');
+    const fps = Number(arg) || 30, n = Math.round(30 * fps), dir = path.join(__dirname, `out/${EP}/frames`);
     fs.mkdirSync(dir, { recursive: true });
     const t0 = Date.now();
     for (let f = 0; f < n; f++) {

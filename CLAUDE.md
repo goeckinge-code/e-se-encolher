@@ -22,6 +22,16 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
   então empilhe os elementos na vertical (personagem embaixo, criatura em cima) em vez de lado a lado.
 - Falas em português do Brasil.
 
+## Série do Caio (cartoon 2D) — regras fixas
+- Sempre o **mesmo protagonista: Caio** (9 anos, boné vermelho virado, camiseta laranja com bolso, bermuda azul, tênis amarelo).
+- Sempre **30 segundos** (900 quadros a 30 fps), vertical 1080x1920, **sem voz**, com legenda karaokê e o texto da narração com tempos.
+- Tema sempre ligado a **dinheiro: o Caio ganha ou perde** por uma regra do mundo ("Na minha cidade, cada X custa/rende Y") ou por escolha dele.
+- **Início chamativo** (regra mágica nos primeiros 3 s, com imagem forte e zoom-out borrado) e história com **começo, meio e fim** + final com piada.
+- Dinheiro na tela: cartão de SALDO, notas/moedas voando, "-R$" / "+R$" saltando, contadores grandes.
+- Código em `cartoon2d/`: motor `engine.js` + `lib.js`; cada episódio é `cartoon2d/episodios/epNN-tema.js` (LINES + planos).
+  Render: `cartoon2d/montar.sh epNN-tema` → `renders/epNN-tema.mp4`; narração: `node cartoon2d/narracao.js epNN-tema`.
+- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10. Não repetir temas.
+
 ## Outros estilos do canal
 - `estilo-cartoon/GUIA.md`: análise de dois cartoons 2D narrados (regra mágica, roteiro de 2 min, legenda karaokê) e prompts para refazer.
 - `beco3d/`: animação 3D realista de 30s (Blender/Cycles), personagens fictícios.
