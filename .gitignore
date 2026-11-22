@@ -9,3 +9,4 @@ node_modules/
 __pycache__/
 *.blend1
 .DS_Store
+golpes/renders/
