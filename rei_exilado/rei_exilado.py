@@ -1,4 +1,4 @@
-"""O Rei Exilado — teste de animação em pixel art com rolagem lateral (v2).
+"""O Rei Exilado — capítulo 1 (v3, 25s): fuga, o cavalo, a encruzilhada.
 
 A arte é desenhada em 320x180 ("pixel de arte"). A composição roda numa grade
 3x mais fina (960x540) para a câmera e o rei deslizarem em sub-pixel, sem
@@ -21,7 +21,7 @@ S = 3                 # sub-pixel da composição
 FW, FH = W * S, H * S
 UP = 2                # ampliação final -> 1920x1080
 FPS = 30
-DUR = 18.0
+DUR = 25.0
 GROUND = 118
 BANK = 132
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rei_exilado.mp4")
@@ -87,25 +87,56 @@ def bricks(L, x0, y0, x1, y1, base, mortar, bw=6, bh=3):
 
 
 # ---------------------------------------------------------------- movimento
-WALK_END = 15.5
-SPEED = 21
+SPEED = 24
+KSTOP = 281                       # onde o rei para, ao lado do cavalo
+HORSE_X = 305                     # cavalo pastando
+CROSS_STOP = 825                  # cavalo para na encruzilhada
+WALK_END = 2.0 + (KSTOP - 84) / SPEED
+LOOK = WALK_END - 1.2             # cavalo levanta a cabeça
+MOUNT0, MOUNT1 = WALK_END + 0.6, WALK_END + 1.3
+RIDE_END = 22.0
+ACC, DEC = 1.5, 1.8
+VMAX = (CROSS_STOP - HORSE_X) / (RIDE_END - MOUNT1 - (ACC + DEC) / 2)
 
 
 def king_x(t):
     if t < 0.8:
         return 60 + SPEED * t * t / 1.6
     if t < WALK_END - 1.2:
-        return 60 + SPEED * (t - 0.4)
+        return 69.6 + SPEED * (t - 0.8)
     u = min(1.0, (t - (WALK_END - 1.2)) / 1.2)
-    return 60 + SPEED * (WALK_END - 1.6) + SPEED * 1.2 * (u - u * u / 2)
+    return 69.6 + SPEED * (WALK_END - 2.0) + SPEED * 1.2 * (u - u * u / 2)
 
 
-MAXCAM = int(king_x(DUR) - 130) + 4
+def horse_x(t):
+    if t <= MOUNT1:
+        return HORSE_X
+    T = t - MOUNT1
+    TT = RIDE_END - MOUNT1
+    if T < ACC:
+        return HORSE_X + VMAX * T * T / (2 * ACC)
+    d1 = VMAX * ACC / 2
+    if T < TT - DEC:
+        return HORSE_X + d1 + VMAX * (T - ACC)
+    u = min(DEC, T - (TT - DEC))
+    return HORSE_X + d1 + VMAX * (TT - DEC - ACC) + VMAX * (u - u * u / (2 * DEC))
+
+
+def focus_x(t):
+    if t < WALK_END:
+        return king_x(t)
+    if t > MOUNT1:
+        return horse_x(t)
+    u = (t - WALK_END) / (MOUNT1 - WALK_END)
+    u = u * u * (3 - 2 * u)
+    return KSTOP * (1 - u) + HORSE_X * u
+
+
+MAXCAM = int(focus_x(DUR) - 130) + 4
 
 
 def cam_x(t):
-    # câmera alisada: acompanha o rei com atraso suave
-    x = king_x(t) - 130
+    x = focus_x(t) - 130
     if x > 10:
         return x
     return (x + 10) ** 2 / 40 if x > -10 else 0.0
@@ -157,6 +188,13 @@ def build_far2():
         blob(L, x + rng.integers(-5, 5), rng.integers(0, 28), rng.integers(11, 18), ramp)
     for x in range(0, L.shape[1], 14):
         blob(L, x + rng.integers(-5, 5), GROUND - rng.integers(3, 9), rng.integers(6, 11), ramp)
+    vx = int(MAXCAM * 0.28) + 235                       # vila ao longe (só no fim)
+    for i, (hw, hh) in enumerate([(14, 10), (18, 13), (12, 9), (16, 11)]):
+        x0 = vx + i * 19
+        rect(L, x0, GROUND - 12 - hh, x0 + hw, GROUND - 12, c("#1b2420"))
+        for k in range(hw // 2 + 2):
+            rect(L, x0 - 1 + k, GROUND - 12 - hh - k // 1 + 0, x0 + hw + 1 - k, GROUND - 12 - hh - k + 1, c("#151d1a"))
+        FAR_EMIT.append((x0 + hw // 2 - 1, GROUND - 18, 0.28))
     return L
 
 
@@ -212,7 +250,8 @@ def build_front():                     # samambaias à frente do rei (1.2)
 
 EMIT = []      # chamas fixas: (x_mundo, y, tamanho)
 LIGHTS = []    # (x_mundo, y, raio, cor, intensidade)
-CAMP = 440     # acampamento
+CAMP = 600     # acampamento
+FAR_EMIT = []  # janelas acesas da vila distante: (x_camada, y, fator)
 
 
 def build_ground():
@@ -278,7 +317,7 @@ def build_ground():
         px(L, rng.integers(235, 257), rng.integers(76, GROUND), c("#3c6a32"))
     # ---- carroça abandonada
     wood = c("#5a3f26")
-    cx0 = 300
+    cx0 = 420
     rect(L, cx0, 100, cx0 + 30, 110, wood)
     for xx in range(cx0, cx0 + 30, 5):
         rect(L, xx, 100, xx + 1, 110, wood * 0.7)
@@ -289,10 +328,19 @@ def build_ground():
         r = math.radians(a)
         px(L, cx0 + 8 + 7 * math.cos(r), 111 + 7 * math.sin(r), wood * 0.8)
     rect(L, cx0 + 18, 113, cx0 + 27, GROUND, wood * 0.6)
-    # ---- placa
-    rect(L, 372, 92, 374, GROUND, wood)
-    rect(L, 362, 93, 386, 98, wood * 1.2)
-    rect(L, 364, 100, 381, 105, wood * 1.1)
+    # ---- torre de vigia em ruínas
+    bricks(L, 735, 60, 757, GROUND, c("#4e4c50"), c("#262428"), 6, 3)
+    for k in range(10):
+        rect(L, 735 + k * 2, 52 + (k * 5) % 9, 737 + k * 2, 60, c("#4e4c50"))
+    rect(L, 742, 80, 748, 90, c("#120d0c"))
+    # ---- encruzilhada: placa com duas setas
+    CX = 862
+    rect(L, CX, 84, CX + 2, GROUND, wood)
+    for y, x0, x1, tip in ((86, CX - 8, CX + 16, 1), (95, CX - 14, CX + 8, -1)):
+        rect(L, x0, y, x1, y + 5, wood * 1.2)
+        for k in range(3):
+            rect(L, (x1 + k) if tip > 0 else (x0 - 1 - k), y + k, (x1 + k + 1) if tip > 0 else (x0 - k), y + 5 - k, wood * 1.2)
+    rect(L, CX + 18, GROUND - 1, CX + 60, GROUND + 1, c("#4a3a26"))     # trilha
     # ---- acampamento: estranho encapuzado, fogueira, barraca
     tent = c("#6b5a3a")
     for y in range(86, GROUND):
@@ -321,7 +369,7 @@ def dim(col, f):
     return tuple(int(v * f) for v in col[:3]) + (255,)
 
 
-def king_sprite(q, moving, t):
+def king_sprite(q, moving, t, ride=False):
     """Desenha o rei (virado para a direita) em pixel de arte. q = fase da passada."""
     SW, SH = 48, 60
     im = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
@@ -329,7 +377,9 @@ def king_sprite(q, moving, t):
     TH, SHN = 9.0, 8.5                     # coxa, canela
 
     def leg(qq):
-        if moving:
+        if ride:
+            a, flex = math.radians(72), math.radians(100 + 6 * math.sin(qq))
+        elif moving:
             a = math.radians(27 * math.sin(qq))
             flex = math.radians(6 + 50 * max(0.0, math.cos(qq)) ** 1.4)
         else:
@@ -356,7 +406,7 @@ def king_sprite(q, moving, t):
         d.line([mid, fo], fill=dim(KC["boot"], f), width=3)
         d.line([fo, (fo[0] + 3, fo[1])], fill=dim(KC["boot"], f), width=2)
 
-    sw = math.sin(q) if moving else 0.15 * math.sin(t * 1.5)
+    sw = 0.3 * math.sin(q) if ride else math.sin(q) if moving else 0.15 * math.sin(t * 1.5)
     # braço de trás (balança oposto à perna da frente)
     ub = math.radians(-26 * sw)
     el = (sx - 1 + 6 * math.sin(ub), sy + 1 + 6 * math.cos(ub))
@@ -365,10 +415,11 @@ def king_sprite(q, moving, t):
     d.line([(sx - 1, sy + 1), el], fill=dim(KC["tunic"], 0.6), width=3)
     d.line([el, hd], fill=dim(KC["tunic"], 0.6), width=2)
     d.point([hd], fill=dim(KC["skin"], 0.6))
-    draw_leg(legs[1], 0.62)
+    if not ride:
+        draw_leg(legs[1], 0.62)
     # capa (atrás do corpo, ondulando)
     wv = math.sin(t * 5.0) * 1.2
-    tr = 3 if moving else 1
+    tr = 5 if ride else (3 if moving else 1)
     cape = [(sx + 1, sy - 1), (sx - 4, sy), (hx - 6 - tr + wv * 0.5, hy - 2),
             (hx - 7 - tr + wv, hy + 7), (hx - 3 - tr * 0.5 - wv * 0.5, hy + 9), (hx + 1, hy + 5)]
     d.polygon(cape, fill=KC["cape"])
@@ -404,7 +455,75 @@ def king_sprite(q, moving, t):
     d.line([(hd[0] - 0.5, hd[1] + 2), tip], fill=KC["torch"], width=1)
     d.point([hd], fill=KC["skin"])
     arr = np.asarray(im).astype(np.float32) / 255
-    return arr, hx, tip
+    return arr, hx, hy, tip
+
+
+HC = {k: tuple(int(v * 255) for v in c(h)) + (255,) for k, h in {
+    "body": "#7a4a2c", "shade": "#5a3420", "dark": "#24160f", "muzzle": "#3e2416",
+    "blaze": "#d8d0c0", "eye": "#0a0606"}.items()}
+
+
+def horse_sprite(q, moving, graze, t):
+    """Cavalo virado para a direita. q = fase do trote, graze 1 = pastando."""
+    SW, SH = 64, 52
+    im = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    UL, LL = 9.0, 13.0
+
+    def hleg(ox, oy, ph, front):
+        if moving:
+            a = math.radians(22 * math.sin(ph))
+            flex = math.radians(60 * max(0.0, math.cos(ph)) ** 1.5)
+        else:
+            a, flex = math.radians(3 if front else -3), 0.0
+        ua = a + (0 if front else math.radians(12))
+        kn = (ox + UL * math.sin(ua), oy + UL * math.cos(ua))
+        la = a - flex if front else a - flex * 0.8 - math.radians(6)
+        hf = (kn[0] + LL * math.sin(la), kn[1] + LL * math.cos(la))
+        return (ox, oy), kn, hf
+
+    # trote: pares diagonais
+    legs = {"ff": hleg(40, 25, q + math.pi, True), "fb": hleg(23, 24, q, False),
+            "nf": hleg(42, 25, q, True), "nb": hleg(25, 24, q + math.pi, False)}
+    dy = SH - 2 - max(l[2][1] for l in legs.values())
+
+    def T(p):
+        return (p[0], p[1] + dy)
+
+    def draw_hleg(l, col):
+        o, kn, hf = map(T, l)
+        d.line([o, kn], fill=col, width=5)
+        d.line([kn, hf], fill=col, width=3)
+        d.line([hf, (hf[0] + 1.5, hf[1])], fill=HC["dark"], width=2)
+
+    draw_hleg(legs["ff"], HC["shade"])
+    draw_hleg(legs["fb"], HC["shade"])
+    # cauda
+    sw = math.sin(t * 2.3) * 2
+    tail = [(17, 19), (11, 24 + (0 if moving else 4)), (8 + sw * 0.5, 31 if not moving else 27)]
+    d.line([T(p) for p in tail], fill=HC["dark"], width=3)
+    # corpo
+    d.ellipse([18, 15 + dy, 46, 31 + dy], fill=HC["body"])
+    d.ellipse([16, 15 + dy, 30, 28 + dy], fill=HC["body"])
+    d.ellipse([36, 15 + dy, 48, 28 + dy], fill=HC["body"])
+    d.line([T((22, 29)), T((42, 29))], fill=HC["shade"], width=1)
+    # pescoço e cabeça (interpola pastando <-> erguida)
+    nod = 0.8 * math.sin(2 * q) if moving else 0.4 * math.sin(t * 1.4)
+    up_j, gr_j = (51, 6 + nod), (53, 33)
+    hj = (up_j[0] * (1 - graze) + gr_j[0] * graze, up_j[1] * (1 - graze) + gr_j[1] * graze)
+    mz_up, mz_gr = (hj[0] + 7, hj[1] + 6), (hj[0] + 2, hj[1] + 8)
+    mz = (mz_up[0] * (1 - graze) + mz_gr[0] * graze, mz_up[1] * (1 - graze) + mz_gr[1] * graze)
+    d.polygon([T((38, 16)), T((47, 23)), T((hj[0] + 3, hj[1] + 3)), T((hj[0] - 2, hj[1] - 1))], fill=HC["body"])
+    d.line([T(hj), T(mz)], fill=HC["body"], width=5)
+    d.line([T(((hj[0] + mz[0] * 2) / 3, (hj[1] + mz[1] * 2) / 3)), T(mz)], fill=HC["muzzle"], width=3)
+    d.line([T((hj[0] + 1, hj[1] + 1)), T(((hj[0] + mz[0]) / 2 + 0.5, (hj[1] + mz[1]) / 2))], fill=HC["blaze"], width=1)
+    d.point([T((hj[0] - 1, hj[1] - 3)), T((hj[0], hj[1] - 3))], fill=HC["body"])       # orelha
+    d.point([T((hj[0] + 1, hj[1] + 0.5))], fill=HC["eye"])
+    d.line([T((37, 15)), T((hj[0] - 1, hj[1] - 1))], fill=HC["dark"], width=2)        # crina
+    draw_hleg(legs["nf"], HC["body"])
+    draw_hleg(legs["nb"], HC["body"])
+    arr = np.asarray(im).astype(np.float32) / 255
+    return arr, 32, (33, 15 + dy)
 
 
 # ---------------------------------------------------------------- desenho em sub-pixel
@@ -436,12 +555,6 @@ def fire(img, ax, ay, s, t, seed):
 
 # ---------------------------------------------------------------- texto
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
-CAPTIONS = [(0.6, 4.2, "O castelo caiu."),
-            (4.8, 8.6, "Expulso do próprio reino,"),
-            (9.2, 12.8, "o rei vaga pela floresta..."),
-            (13.4, 16.0, "...em busca de um novo lar.")]
-
-
 def text_mask(txt, size, cy):
     im = Image.new("L", (FW, FH), 0)
     d = ImageDraw.Draw(im)
@@ -455,9 +568,13 @@ def text_mask(txt, size, cy):
     return m, o
 
 
-TXT = [(a, b, text_mask(s, 24, 40)) for a, b, s in CAPTIONS]
-TITLE = text_mask("O REI EXILADO", 56, 200)
-SUB = text_mask("capítulo I", 22, 270)
+TITLE = text_mask("O REI EXILADO", 56, 190)
+SUB = text_mask("capítulo 1", 24, 262)
+CARD = [text_mask("COMENTE  A  ou  B", 46, 150),
+        text_mask("A  -  Procurar uma vila e recomeçar", 26, 232),
+        text_mask("B  -  Seguir o encapuzado da fogueira", 26, 278),
+        text_mask("os comentários decidem o capítulo 2", 18, 336)]
+CARD_T = RIDE_END + 0.2
 
 # ---------------------------------------------------------------- lago
 BAYER = (np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]]) + 0.5) / 16
@@ -465,7 +582,7 @@ BAY = np.tile(BAYER, (H // 4 + 1, W // 4 + 1))[:BANK, :W]
 YY, XX = np.mgrid[0:BANK, 0:W].astype(np.float32)
 AMBIENT = c("#4a5878") * 0.85
 STREAKS = [(rng.uniform(0, 900), rng.integers(BANK + 2, H), rng.integers(3, 10), rng.uniform(3, 7))
-           for _ in range(110)]
+           for _ in range(160)]
 LEAVES = [(rng.uniform(0, 900), rng.integers(BANK + 6, H - 4), rng.uniform(4, 8)) for _ in range(9)]
 
 
@@ -473,7 +590,7 @@ def fish_jumps():
     out, t = [], 1.6
     r = np.random.default_rng(3)
     while t < DUR - 1.5:
-        out.append((t, king_x(t) + r.uniform(30, 160), r.uniform(144, 168), r.choice([-1, 1])))
+        out.append((t, focus_x(t) + r.uniform(30, 170), r.uniform(144, 168), r.choice([-1, 1])))
         t += r.uniform(1.8, 3.0)
     return out
 
@@ -564,20 +681,43 @@ def main():
         for L, f, wv in layers:
             over(L, f, wv)
 
-        # ---- rei
-        kx = king_x(t)
-        moving = t < WALK_END - 0.05
-        q = 2 * math.pi * (kx - 60) / 30.0
-        spr, hx, tip = king_sprite(q, moving, t)
-        sp = up3(spr)
-        ox = int(round((kx - cam - hx) * S))
-        oy = (GROUND + 1) * S - sp.shape[0]
-        x0, x1 = max(0, ox), min(FW, ox + sp.shape[1])
-        a = sp[:, x0 - ox:x1 - ox, 3:4]
-        img[oy:oy + sp.shape[0], x0:x1] = img[oy:oy + sp.shape[0], x0:x1] * (1 - a) + sp[:, x0 - ox:x1 - ox, :3] * a
-        wgt[oy:oy + sp.shape[0], x0:x1] = np.where(a[..., 0] > 0, 1.0, wgt[oy:oy + sp.shape[0], x0:x1])
-        tax = kx - cam - hx + tip[0]                               # ponta da tocha (arte)
-        tay = GROUND + 1 - spr.shape[0] + tip[1]
+        # ---- cavalo e rei
+        def paste(spr, ax, ay):
+            sp = up3(spr)
+            ox, oy = int(round(ax * S)), int(round(ay * S))
+            x0, x1 = max(0, ox), min(FW, ox + sp.shape[1])
+            if x0 >= x1:
+                return
+            a = sp[:, x0 - ox:x1 - ox, 3:4]
+            sl = (slice(oy, oy + sp.shape[0]), slice(x0, x1))
+            img[sl] = img[sl] * (1 - a) + sp[:, x0 - ox:x1 - ox, :3] * a
+            wgt[sl] = np.where(a[..., 0] > 0, 1.0, wgt[sl])
+
+        hxw = horse_x(t)
+        hmov = t > MOUNT1 + 0.05 and t < RIDE_END - 0.05
+        graze = 1.0 if t < LOOK else max(0.0, 1 - (t - LOOK) / 0.8)
+        hq = 2 * math.pi * (hxw - HORSE_X) / 36.0
+        hspr, hax, saddle = horse_sprite(hq, hmov, graze, t)
+        htop = GROUND + 1 - hspr.shape[0]
+        paste(hspr, hxw - cam - hax, htop)
+        seat = (hxw - hax + saddle[0], htop + saddle[1] + 1)          # mundo
+        if t < MOUNT0:
+            kx = king_x(t)
+            moving = t < WALK_END - 0.05
+            spr, hx, hy, tip = king_sprite(2 * math.pi * (kx - 60) / 30.0, moving, t)
+            top = GROUND + 1 - spr.shape[0]
+            left = kx - hx
+        else:
+            spr, hx, hy, tip = king_sprite(hq, True, t, ride=True)
+            u = min(1.0, (t - MOUNT0) / (MOUNT1 - MOUNT0))
+            u = u * u * (3 - 2 * u)
+            stand_hip = (KSTOP, GROUND + 1 - 60 + 41)
+            hipx = stand_hip[0] * (1 - u) + seat[0] * u
+            hipy = stand_hip[1] * (1 - u) + seat[1] * u - 12 * math.sin(math.pi * u)
+            left, top = hipx - hx, hipy - hy
+        paste(spr, left - cam, top)
+        tax = left - cam + tip[0]
+        tay = top + tip[1]
         over(front, 1.2, 0.9)
 
         # ---- luz
@@ -600,6 +740,15 @@ def main():
             if -10 < ex - cam < W + 10:
                 fire(img, ex - cam, ey, s, t, k)
         fire(img, tax, tay - 0.5, 3, t, 99)
+        for vx, vy, f in FAR_EMIT:
+            sx = vx - cam * f
+            if 0 < sx < W:
+                for k in range(2):
+                    block(img, (sx + k) * S, vy * S, c("#ffc060"), 0.85)
+        eyes = min(1, max(0, (cam + 260 - CAMP) / 40)) * (0.6 + 0.4 * math.sin(t * 3))
+        if eyes > 0.05 and -5 < CAMP - cam < W:
+            for k in (2.5, 4.5):
+                block(img, (CAMP - cam + k) * S, 96 * S, c("#c8f0ff"), eyes)
         r2 = np.random.default_rng(int(t * 12))
         if cam < 130:                                              # brasas
             for _ in range(16):
@@ -625,23 +774,25 @@ def main():
         draw_water_life(img, t, cam)
 
         # ---- fade, texto, saída
-        fade = min(1, t / 1.0) * min(1, (DUR - t) / 1.2)
+        fade = min(1, t / 1.0)
         out = np.clip(img * fade, 0, 1)
 
         def put(mask, al):
             m, o = mask
             out[o] = out[o] * (1 - al) + np.array([20, 14, 12]) / 255 * al
             out[m] = out[m] * (1 - al) + np.array([240, 228, 196]) / 255 * al
-        for a0, b0, mk in TXT:
-            if a0 <= t <= b0:
-                put(mk, min(1, (t - a0) / 0.4, (b0 - t) / 0.4))
-        if t > 15.8:
-            al = min(1, (t - 15.8) / 0.8, (DUR - t) / 0.6)
+        if 0.5 < t < 4.2:
+            al = min(1, (t - 0.5) / 0.6, (4.2 - t) / 0.6)
             put(TITLE, al)
             put(SUB, al)
+        if t > CARD_T:
+            al = min(1, (t - CARD_T) / 0.6)
+            out[100:380] *= 1 - 0.55 * al
+            for i, mk in enumerate(CARD):
+                put(mk, max(0, min(1, (t - CARD_T - i * 0.35) / 0.5)))
         big = (out * 255).astype(np.uint8).repeat(UP, 0).repeat(UP, 1)
         ff.stdin.write(big.tobytes())
-        if fi in (60, 230, 420, 500):
+        if fi in (90, 290, 330, 340, 500, 740):
             Image.fromarray(big).save(OUT.replace(".mp4", f"_f{fi:03d}.png"))
     ff.stdin.close()
     ff.wait()
