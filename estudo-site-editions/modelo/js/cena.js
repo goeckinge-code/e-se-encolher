@@ -191,6 +191,38 @@ void main(){
     return pr;
   }
 
+  // ---- sequência de quadros (scroll controla o quadro) ----
+  let seq = null;
+  function carregarSeq(urls) {
+    return Promise.all(urls.map((u) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = u; })))
+      .then((imgs) => {
+        imgs = imgs.filter(Boolean);
+        if (!imgs.length) return null;
+        const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imgs[0]);
+        [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach((k) => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
+        [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach((k) => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+        seq = { imgs, tex, asp: imgs[0].width / imgs[0].height, ult: 0 };
+        return seq;
+      });
+  }
+  function quadroSeq(p) {             // p de 0 a 1
+    if (!seq) return;
+    const i = Math.round(Math.min(1, Math.max(0, p)) * (seq.imgs.length - 1));
+    if (i === seq.ult) return;
+    seq.ult = i;
+    gl.bindTexture(gl.TEXTURE_2D, seq.tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, seq.imgs[i]);
+  }
+  function mostrarSeq() {
+    if (!seq || urlAlvo === "__seq") return;
+    urlAlvo = "__seq";
+    A = mix > 0 ? B : A; zoomA = S.zoom; panA = S.pan.slice();
+    B = { tex: seq.tex, asp: seq.asp }; mix = 0.0001; transIni = performance.now();
+  }
+
   // troca o fundo com a transição queimada
   function mostrar(url) {
     if (!url || url === urlAlvo) return;
@@ -243,5 +275,5 @@ void main(){
     }
   }
 
-  window.Cena = { iniciar, carregar, mostrar, quadro, estado: S };
+  window.Cena = { iniciar, carregar, mostrar, quadro, carregarSeq, quadroSeq, mostrarSeq, estado: S };
 })();

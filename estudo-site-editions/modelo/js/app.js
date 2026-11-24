@@ -22,6 +22,14 @@
     fundoCSS.appendChild(veuCSS);
   }
   const fotoDe = (item) => (innerWidth < 768 && item.fotoMobile ? item.fotoMobile : item.foto);
+  const SEQ = C.abertura.sequencia;
+  const urlsSeq = SEQ ? Array.from({ length: SEQ.quadros }, (_, i) => SEQ.pasta + String(i + 1).padStart(3, "0") + ".jpg") : [];
+  let seqPronta = false;
+  function mostrarAbertura() {
+    if (temGL && seqPronta) return window.Cena.mostrarSeq();
+    mostrarFoto(fotoDe(C.abertura));
+  }
+  if (SEQ) $(".espaco-abertura").style.height = `${SEQ.alturaScroll * 100}svh`;
   function mostrarFoto(url) {
     if (temGL) return window.Cena.mostrar(url);
     if (!camadas.has(url)) {
@@ -130,12 +138,14 @@
     acenderLinhas();
   });
   const t0 = performance.now();
-  const primeira = temGL ? window.Cena.carregar(fotoDe(C.abertura)) : Promise.resolve();
+  const primeira = !temGL ? Promise.resolve()
+    : SEQ ? window.Cena.carregarSeq(urlsSeq).then((r) => { seqPronta = !!r; })
+    : window.Cena.carregar(fotoDe(C.abertura));
   primeira.then(() => {
     const espera = Math.max(0, (reduzido ? 0 : 1800) - (performance.now() - t0));
     setTimeout(() => {
       body.dataset.carregado = "true";
-      mostrarFoto(fotoDe(C.abertura));
+      mostrarAbertura();
       introIni = performance.now();
     }, espera);
   });
@@ -189,7 +199,7 @@
 
     if (ativo !== ultimoAtivo) {
       ultimoAtivo = ativo;
-      if (body.dataset.carregado === "true") mostrarFoto(fotoDe(ativo >= 0 ? caps[ativo].dados : C.abertura));
+      if (body.dataset.carregado === "true") ativo >= 0 ? mostrarFoto(fotoDe(caps[ativo].dados)) : mostrarAbertura();
     }
     linksLateral.forEach((a, i) => a.classList.toggle("ativo", i === ativoIndice));
 
@@ -197,6 +207,11 @@
     let prog, veu = 0, escurecer = 0;
     if (ativo < 0) {
       prog = clamp(y / vh, 0, 1.5);
+      if (seqPronta) {
+        const altSeq = $(".espaco-abertura").offsetHeight - vh * 0.85;
+        window.Cena.quadroSeq(y / altSeq);
+        prog = 0;   // na sequência o movimento vem dos quadros, não do zoom
+      }
     } else {
       const c = caps[ativo];
       prog = clamp((y + vh * 0.85 - c.top) / (c.heroiAlt + vh), 0, 1.6);

@@ -21,8 +21,10 @@ window.CONTEUDO = {
   abertura: {
     titulo: ["A", "Cole{çã}o", "Inverno"],
     subtitulo: "Um novo mundo de coisas boas. 60+ novidades.",
-    foto: "fotos/00-abertura.jpg",
+    foto: "fotos/abertura-seq/001.jpg",
     fotoMobile: "",
+    // Sequência de quadros: anda conforme o scroll na abertura (apague para usar só a foto)
+    sequencia: { pasta: "fotos/abertura-seq/", quadros: 107, alturaScroll: 3 },
   },
 
   capitulos: [
