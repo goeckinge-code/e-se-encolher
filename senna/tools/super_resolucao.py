@@ -1,7 +1,9 @@
-"""Real-ESRGAN x4plus (RRDBNet) em NumPy puro, sem PyTorch.
+"""Real-ESRGAN em NumPy puro, sem PyTorch: x4plus (RRDBNet) ou general-x4v3 (compacto, ~14x mais rápido).
 
-Uso: python3 super_resolucao.py RealESRGAN_x4plus.pth entrada.png saida.png
+Uso: python3 super_resolucao.py PESOS.pth entrada.png saida.png [largura_final]
 Pesos: https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth
+       https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesr-general-x4v3.pth
+A imagem é processada em faixas com sobreposição, então fotos grandes cabem na memória.
 """
 import pickle, sys, time, zipfile
 import numpy as np
@@ -76,16 +78,47 @@ def run(img):
         t = time.time()
         o = rdb(rdb(rdb(body, f"body.{i}.rdb1"), f"body.{i}.rdb2"), f"body.{i}.rdb3")
         body = o * 0.2 + body
-        print(f"bloco {i + 1}/23 {time.time() - t:.1f}s", flush=True)
     feat = feat + conv(body, "conv_body")
     feat = conv(up2(feat), "conv_up1", 1)
     feat = conv(up2(feat), "conv_up2", 1)
     return conv(conv(feat, "conv_hr", 1), "conv_last")
 
 
+def run_compact(img):
+    x = img
+    n = max(int(k.split(".")[1]) for k in W if k.startswith("body."))
+    for i in range(n + 1):
+        k = f"body.{i}"
+        if k + ".bias" in W:
+            x = conv(x, k)
+        else:  # PReLU
+            a = W[k + ".weight"]
+            x = np.maximum(x, 0) + a * np.minimum(x, 0)
+    H, Wd, _ = x.shape
+    x = x.reshape(H, Wd, 3, 4, 4).transpose(0, 3, 1, 4, 2).reshape(H * 4, Wd * 4, 3)
+    return x + img.repeat(4, 0).repeat(4, 1)
+
+
+def tiled(img, fn, band=128, pad=40):
+    H = img.shape[0]
+    out = np.zeros((H * 4, img.shape[1] * 4, 3), np.float32)
+    for y in range(0, H, band):
+        a, b = max(0, y - pad), min(H, y + band + pad)
+        t = time.time()
+        r = fn(img[a:b])
+        out[y * 4:min(H, y + band) * 4] = r[(y - a) * 4:(y - a + min(band, H - y)) * 4]
+        print(f"faixa {y}/{H} {time.time() - t:.1f}s", flush=True)
+    return out
+
+
 if __name__ == "__main__":
     W.update({k: v.astype(np.float32) for k, v in load_pth(sys.argv[1]).items()})
     im = np.asarray(Image.open(sys.argv[2]).convert("RGB")).astype(np.float32) / 255
-    out = np.clip(run(im), 0, 1)
-    Image.fromarray((out * 255 + 0.5).astype(np.uint8)).save(sys.argv[3])
-    print("ok", out.shape)
+    fn = run if "conv_first.weight" in W else run_compact
+    out = np.clip(tiled(im, fn), 0, 1)
+    res = Image.fromarray((out * 255 + 0.5).astype(np.uint8))
+    if len(sys.argv) > 4:
+        w = int(sys.argv[4])
+        res = res.resize((w, round(res.height * w / res.width)), Image.LANCZOS)
+    res.save(sys.argv[3])
+    print("ok", res.size)

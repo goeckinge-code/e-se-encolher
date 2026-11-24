@@ -15,7 +15,9 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 
 | Momento | Fotografia | O que acontece |
 |---|---|---|
-| Abertura | 1ª (`01-abertura.jpg`, referência da composição) | A assinatura é escrita com a tinta real, em gestos contínuos. Ela voa até a hero, as letras de **SENNA** caem de cima para baixo e o carro entra pela direita até parar no centro. |
+| Abertura | — | A assinatura é escrita com a tinta real, em gestos contínuos, e pousa sobre o retrato. |
+| Entrada | Retrato de 1994 + capacete | **Rosto e capacete:** o capacete aparece sobre o rosto por uma máscara líquida que segue o cursor (ou o dedo). Ao rolar, o capacete desce do topo da cabeça até o queixo. Efeito em WebGL em `assets/js/capacete.js`. |
+| O carro | 1ª (`01-abertura.jpg`, referência da composição) | Quando a seção aparece, as letras de **SENNA** caem e o carro entra pela direita até o centro. |
 | Prólogo | — | O texto vai acendendo palavra por palavra conforme a leitura. |
 | I · Infância (1960) | 2ª, o capacete | **Aqui começa a narrativa visual principal.** As fotos ficam fixas num palco enquanto os textos rolam. |
 | II · Carreira (1984) | 3ª, o retrato | Cada nova foto entra como uma cópia impressa pousando no álbum e se "revela". A anterior fica embaixo, levemente girada. |
@@ -39,6 +41,16 @@ As mudanças foram só de adaptação: tinta escura sobre papel no lugar de bran
 
 A `SIG` de Ayrton Senna foi extraída da assinatura real da primeira fotografia por `tools/assinatura_linha_central.py` (esqueletização, junção dos traços nos cruzamentos e suavização em curvas `Q`). Para trocar a assinatura, rode o script com outra imagem e cole o JSON gerado no lugar de `const SIG=` em `assinatura.js`.
 
+## Fotos em HD
+
+`tools/hd.py` amplia uma foto com Real-ESRGAN (rodando em NumPy, sem PyTorch) e mistura o resultado com a ampliação clássica, para a pele não ficar "de cera":
+
+```bash
+python3 tools/hd.py realesr-general-x4v3.pth foto.jpg assets/img/foto.webp 1600 0.6
+```
+
+Os pesos do modelo estão nos *releases* do projeto Real-ESRGAN no GitHub (`realesr-general-x4v3.pth`, 5 MB). Use mistura 0.55–0.65 para rostos e 0.8–1 para objetos.
+
 ## Arquivos
 
 ```
@@ -46,6 +58,7 @@ senna/
 ├── index.html
 ├── assets/css/style.css     papel, impressões fotográficas, layout responsivo
 ├── assets/js/assinatura.js  sistema de assinatura (Plazza)
+├── assets/js/capacete.js    entrada: rosto + capacete com máscara líquida (WebGL)
 ├── assets/js/main.js        carro, parallax, palco de fotos, linha do tempo, capítulos
 ├── assets/img/              fotos em WebP, carro recortado com alfa, rodas, textura de papel
 └── tools/                   scripts usados para gerar a assinatura e o recorte do carro
@@ -55,5 +68,5 @@ senna/
 
 - Com `prefers-reduced-motion`, a abertura é pulada e tudo aparece já no lugar, sem parallax nem zoom.
 - A abertura tem o botão "Pular abertura" e também fecha com `Esc`.
-- As imagens somam cerca de 530 KB em WebP. As animações usam só `transform` e `opacity` num único laço `requestAnimationFrame`, que não recalcula nada quando a página está parada.
+- As imagens somam cerca de 1,2 MB em WebP, já em HD. A rolagem tem inércia na roda do mouse e no trackpad, e as camadas fixas de papel e grão não usam `mix-blend-mode`, que obrigaria o navegador a recompor a tela inteira a cada quadro. As animações usam só `transform` e `opacity` num único laço `requestAnimationFrame`, que não recalcula nada quando a página está parada.
 - As fotos são da referência enviada; os direitos pertencem aos respectivos autores.

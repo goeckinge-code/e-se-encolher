@@ -12,11 +12,11 @@ let started=false,vw=innerWidth,vh=innerHeight,cy=0,vel=0,svel=0;
 const smooth=(()=>{if(reduce||touch)return null;let target=scrollY,cur=scrollY,on=false;
  const max=()=>document.documentElement.scrollHeight-innerHeight;
  addEventListener("wheel",e=>{if(e.ctrlKey||document.body.classList.contains("lock"))return;e.preventDefault();
-  if(!on){target=cur=scrollY}const d=e.deltaY*(e.deltaMode===1?36:e.deltaMode===2?innerHeight:1);target=cl(target+d,0,max());on=true},{passive:false});
+  if(!on){target=cur=scrollY}const d=e.deltaY*(e.deltaMode===1?36:e.deltaMode===2?innerHeight:1)*1.05;target=cl(target+d,0,max());on=true},{passive:false});
  addEventListener("scroll",()=>{if(!on)target=cur=scrollY},{passive:true});
  addEventListener("keydown",()=>{on=false},{passive:true});
  addEventListener("pointerdown",()=>{on=false},{passive:true});
- return{tick(dt){if(!on)return;cur+=(target-cur)*(1-Math.pow(.9,dt*60));if(Math.abs(target-cur)<.4){cur=target;on=false}scrollTo(0,cur)},
+ return{tick(dt){if(!on)return;cur+=(target-cur)*(1-Math.pow(1-.075,dt*60));if(Math.abs(target-cur)<.25){cur=target;on=false}scrollTo(0,cur)},
   to(y){if(!on)cur=scrollY;target=cl(y,0,max());on=true}}})();
 
 /* grão animado (mesmo canvas do Plazza) */
@@ -25,10 +25,10 @@ const smooth=(()=>{if(reduce||touch)return null;let target=scrollY,cur=scrollY,o
 /* assinaturas */
 fill($("#sigMini"),{pen:true});
 const sigHero=$("#sigHero");fill(sigHero);
-sigWrite("#sigFt",2.8);
+sigWrite("#sigFt",2.8);sigWrite("#sigCar",2.4);
 
 /* hero: "SENNA" ajustado à largura da composição (como na primeira fotografia) */
-const plate=$("#plate"),senna=$("#senna"),lts=$$("#senna .lt"),sigWrap=$(".sig-wrap");
+const plate=$("#plate"),senna=$("#senna"),lts=$$("#senna .lt"),sigWrap=$("#plate .sig-wrap");
 function fitHero(){const pw=plate.offsetWidth;senna.style.fontSize="100px";const w=lts.reduce((a,l)=>a+l.getBoundingClientRect().width,0);senna.style.fontSize=(100*pw*.777/(w*1.07)).toFixed(2)+"px"}
 
 /* entrada do carro: da direita para a esquerda, desacelerando até o centro */
@@ -46,7 +46,14 @@ function carIn(){
 }
 
 /* go(): fim da abertura — libera a página (mesmo papel do go() do Plazza) */
-function go(){if(started)return;started=true;document.body.classList.remove("lock");document.body.classList.add("ready");measure();setTimeout(carIn,reduce?0:260)}
+function go(){if(started)return;started=true;document.body.classList.remove("lock");document.body.classList.add("ready");measure();if(!reduce)setTimeout(()=>helm.hint(),1500)}
+
+/* entrada: rosto + capacete (capacete.js). O retângulo do capacete e o centro da viseira
+   estão em coordenadas da foto do rosto (0..1). */
+const fhStage=$("#fhStage"),fhName=$(".fh-name"),fhSides=$$(".fh-side"),fhSig=$(".fh-sig");
+const helm=capacete(fhStage,{face:"assets/img/rosto.webp",helmet:"assets/img/capacete.webp",helm:[-.135,-.085,1.29,1.03],center:[.5,.42],radius:.13});
+const garage=$("#garage");
+new IntersectionObserver((es,ob)=>{if(es[0].isIntersecting){ob.disconnect();garage.classList.add("on");setTimeout(carIn,reduce?0:180)}},{threshold:.35}).observe(garage);
 
 /* história: palco fixo, fotografias empilhadas como num álbum */
 const steps=$$(".step"),prints=$$(".print"),P=prints.map(p=>({el:p,img:p.querySelector("img"),dev:p.querySelector(".dev"),sh:p.querySelector(".shade"),r:parseFloat(p.style.getPropertyValue("--r"))||0}));
@@ -59,7 +66,7 @@ let M=[],NT=[],R={},lcy=-1,dirty=true;
 const docTop=el=>el.getBoundingClientRect().top+scrollY;
 function measure(){vw=innerWidth;vh=innerHeight;dirty=true;fitHero();
  M=steps.map(s=>({t:docTop(s),h:s.offsetHeight}));NT=navT.map(docTop);
- R={pq:docTop(pq),pqh:pq.offsetHeight,ult:docTop(ult),ulth:ult.offsetHeight,track:docTop(track),pass:docTop(pass),passh:pass.offsetHeight,passw:passCar.offsetWidth,wc:Math.PI*(passWheels[0].offsetWidth||60),hc:Math.PI*(heroWheels[0].offsetWidth||60)}}
+ R={gar:docTop(garage),pq:docTop(pq),pqh:pq.offsetHeight,ult:docTop(ult),ulth:ult.offsetHeight,track:docTop(track),pass:docTop(pass),passh:pass.offsetHeight,passw:passCar.offsetWidth,wc:Math.PI*(passWheels[0].offsetWidth||60),hc:Math.PI*(heroWheels[0].offsetWidth||60)}}
 let active=-1;
 function setYear(i){if(i===active)return;active=i;const old=yearBox.querySelector(".y-in");if(old){old.className="y-out";setTimeout(()=>old.remove(),800)}const s=document.createElement("span");s.className="y-in";s.textContent=steps[i].dataset.year;yearBox.appendChild(s)}
 function stepProgress(y){const a=y+vh*.5;if(!M.length)return-1;if(a<M[0].t)return(a-M[0].t)/M[0].h;let p=0;for(let i=0;i<M.length;i++)if(a>=M[i].t)p=i+Math.min(1,(a-M[i].t)/M[i].h);return p}
@@ -84,7 +91,10 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
  const maxS=Math.max(1,document.documentElement.scrollHeight-vh);$("#prog").style.transform=`scaleX(${(cy/maxS).toFixed(4)})`;
  document.body.classList.toggle("past",cy>vh*.8);
  /* hero: parallax — letras mais lentas, carro sai pela esquerda */
- if(started&&cy<vh*1.3){const h=cl(cy/vh,0,1.3),dx=reduce?0:-h*vw*.6;
+ if(started&&cy<vh*1.2){const h=cl(cy/vh,0,1.2);helm.setFull(reduce?0:EIO(cl((h-.04)/.62)));
+  if(!reduce){fhStage.style.transform=`translate3d(-50%,${(-h*vh*.08).toFixed(1)}px,0) scale(${(1+h*.06).toFixed(4)})`;fhName.style.transform=`translate3d(0,calc(-50% + ${(h*vh*.32).toFixed(1)}px),0)`;
+   fhSig.style.opacity=(1-h*2.2).toFixed(3);fhSides.forEach(s=>s.style.translate=`0 ${(-h*vh*.2).toFixed(1)}px`)}}
+ const gy=cy-(R.gar||0);if(started&&gy>-vh&&gy<vh*1.3){const h=cl(gy/vh,0,1.3),dx=reduce?0:-h*vw*.6;
   senna.style.transform=`translate3d(0,${(h*vh*.28).toFixed(1)}px,0)`;
   carDrive.style.transform=`translate3d(${dx.toFixed(1)}px,${(h*vh*.05).toFixed(1)}px,0)`;
   heroWheels.forEach(w=>w.style.transform=`rotate(${(dx/R.hc*360).toFixed(1)}deg)`);
