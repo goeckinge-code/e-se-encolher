@@ -51,7 +51,7 @@ A `SIG` de Ayrton Senna foi extraída da assinatura real da primeira fotografia 
 
 ## Capacete 3D
 
-`blender/capacete.py` gera o modelo com Blender (módulo `bpy` 5.0, Python 3.11): casco com queixeira, aberturas por booleano exato, espessura com Solidify e viseira separada. Exporta `assets/3d/capacete3d.bin` (+ `.json`). A pintura é feita no shader (`assets/js/capacete3d.js`), pela posição no casco.
+`blender/capacete.py` gera o modelo com Blender (módulo `bpy` 5.0, Python 3.11): casco com queixeira, aberturas por booleano exato, espessura com Solidify e viseira separada. Exporta `assets/3d/capacete3d.json` (malha em base64). A pintura é feita no shader (`assets/js/capacete3d.js`), pela posição no casco.
 
 ```bash
 python3.11 -m pip install bpy

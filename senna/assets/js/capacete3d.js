@@ -44,12 +44,12 @@ function capacete3d(canvas,o={}){
   float a=.5+.45*fres;float d=length(gl_FragCoord.xy-uLens.xy);a*=mix(1.,smoothstep(uLens.z*.55,uLens.z,d),step(1.,uLens.z));
   a=clamp(a,0.,1.)*uOp;gl_FragColor=vec4(c*a,a);}`;
  const mat=(fs,side)=>{const m=new THREE.ShaderMaterial({uniforms:U,vertexShader:VS,fragmentShader:fs,transparent:true,depthWrite:false,side,blending:THREE.CustomBlending,blendSrc:THREE.OneFactor,blendDst:THREE.OneMinusSrcAlphaFactor});m.extensions={derivatives:true};return m};
- api.ready=fetch(o.base+".json").then(r=>r.json()).then(meta=>fetch(o.base+".bin").then(r=>r.arrayBuffer()).then(buf=>{
+ api.ready=fetch(o.base+".json").then(r=>r.json()).then(meta=>{const bin=atob(meta.data),buf=new ArrayBuffer(bin.length),u8=new Uint8Array(buf);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
   meta.parts.forEach(pt=>{const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(new Float32Array(buf,pt.pos,pt.count*3),3));
    g.setAttribute("normal",new THREE.BufferAttribute(new Float32Array(buf,pt.nor,pt.count*3),3));g.setIndex(new THREE.BufferAttribute(new Uint16Array(buf,pt.idx,pt.index),1));
    const fs=pt.name==="viseira"?FS_VISOR:FS_SHELL;const back=new THREE.Mesh(g,mat(fs,THREE.BackSide)),front=new THREE.Mesh(g,mat(fs,THREE.FrontSide));
    back.renderOrder=pt.name==="viseira"?1:0;front.renderOrder=pt.name==="viseira"?3:2;root.add(back,front)});
-  api.ok=true;canvas.classList.add("on");return true})).catch(e=>{console.warn(e);return false});
+  api.ok=true;canvas.classList.add("on");return true}).catch(e=>{console.warn(e);return false});
  let W=0,H=0,D=1,dirty=true;const S={x:0,y:0,s:1,yaw:0,pitch:0,roll:0,op:1,lens:null};
  api.size=(w,h)=>{const d=Math.min(1.75,devicePixelRatio||1);if(w===W&&h===H&&d===D)return;W=w;H=h;D=d;R.setPixelRatio(d);R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();dirty=true};
  /* x,y em fração da tela (0..1), s = largura do capacete em fração da largura */

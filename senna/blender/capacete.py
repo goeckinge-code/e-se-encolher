@@ -2,7 +2,7 @@
 
 Uso (Blender como módulo Python 3.11, ou `blender -b -P capacete.py --`):
     python capacete.py SAIDA_DIR [--render]
-Gera SAIDA_DIR/capacete3d.bin (+ .json com o layout) e, com --render, uma prévia em Cycles.
+Gera SAIDA_DIR/capacete3d.json (layout + malha em base64) e, com --render, uma prévia em Cycles.
 
 Modelo: casco alongado com queixeira (capacete fechado), abertura da viseira recortada,
 viseira separada um pouco maior que o casco, aro do pescoço. A pintura vem em cores por
@@ -184,8 +184,8 @@ def export(obs, path):
             part[key] = len(blob)
             blob += struct.pack(f"<{len(arr)}{fmt}", *arr)
         parts.append(part)
-    open(path + ".bin", "wb").write(blob)
-    json.dump({"parts": parts}, open(path + ".json", "w"))
+    import base64
+    json.dump({"parts": parts, "data": base64.b64encode(bytes(blob)).decode()}, open(path + ".json", "w"))
     print("export", path, len(blob) // 1024, "KB", [(p["name"], p["count"]) for p in parts])
 
 
