@@ -148,7 +148,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
  if(cy<R.fhH*1.1){const h=started?cl(cy/vh,0,1.3):0;
   if(started&&!reduce){T(fhStage,`translate3d(-50%,${(-h*vh*.08).toFixed(1)}px,0) scale(${(1+h*.06).toFixed(4)})`);T(fhName,`translate3d(0,calc(-50% + ${(h*vh*.32).toFixed(1)}px),0)`);
    O(fhSig,(1-h*2.2).toFixed(3));fhSides.forEach(s=>T(s,`translate3d(0,${(-h*vh*.2).toFixed(1)}px,0)`))}
-  helm.pointer(ptr.x,ptr.y,ptr.in,ptr.down);helm.setFull(reduce?0:EIO(cl((h-.06)/.65)));helm.frame(dt)}
+  helm.setFull(ES(cl((h-.01)/.62)));helm.frame(dt)}
  /* carro (seção 2): letras mais lentas, o carro sai pela esquerda */
  const gy=cy-(R.gar||0);if(started&&gy>-vh&&gy<vh*1.3){const h=cl(gy/vh,0,1.3),dx=reduce?0:-h*vw*.6;
   T(senna,`translate3d(0,${(h*vh*.28).toFixed(1)}px,0)`);T(carDrive,`translate3d(${dx.toFixed(1)}px,${(h*vh*.05).toFixed(1)}px,0)`);

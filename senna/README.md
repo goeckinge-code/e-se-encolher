@@ -16,7 +16,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | Momento | Fotografia | O que acontece |
 |---|---|---|
 | Abertura | — | A assinatura é escrita com a tinta real, em gestos contínuos, e pousa sobre o retrato. |
-| Entrada | Retrato de 1994 + foto do capacete | **Bolhas de água:** bolhas que flutuam, respiram e se fundem sobre o rosto mostram o capacete por dentro, translúcido, como através de água em movimento (bordas que fluem, ondinhas, cáusticas e brilho na borda). O rosto continua visível. Um toque ou clique solta um anel de onda que se espalha pelo rosto e empurra as bolhas; arrastar o cursor deixa ondinhas. Ao rolar, a água cresce e veste o capacete. WebGL em `assets/js/capacete.js`. |
+| Entrada | Retrato de 1994 + foto do capacete | **Rosto e capacete:** parado, só o rosto. Ao tocar (ou passar o cursor), surgem gotas de vidro no ponto de contato que mostram o capacete por dentro, se fundem e somem. Ao rolar, o capacete aparece descendo do alto da cabeça até cobrir o rosto. WebGL em `assets/js/capacete.js`. |
 | O carro | 1ª (`01-abertura.jpg`, referência da composição) | Quando a seção aparece, as letras de **SENNA** caem e o carro entra pela direita até o centro. |
 | Prólogo | — | O texto vai acendendo palavra por palavra conforme a leitura. |
 | I · Infância (1960) | 2ª, o capacete | **Aqui começa a narrativa visual principal.** As fotos ficam fixas num palco enquanto os textos rolam. |
