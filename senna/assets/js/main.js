@@ -21,7 +21,7 @@ let roQ=0;new ResizeObserver(()=>{if(roQ)return;roQ=requestAnimationFrame(()=>{r
 /* assinaturas */
 fill($("#sigMini"),{pen:true});
 const sigHero=$("#sigHero");fill(sigHero);
-sigWrite("#sigFt",2.8);sigWrite("#sigCar",2.4);
+sigWrite("#sigFt",2.1);sigWrite("#sigCar",1.8);
 
 /* carro: "SENNA" ajustado à largura da composição (primeira fotografia) */
 const plate=$("#plate"),senna=$("#senna"),lts=$$("#senna .lt"),sigWrap=$("#plate .sig-wrap");
@@ -55,15 +55,15 @@ const fh=$("#top"),fhStage=$("#fhStage"),fhName=$(".fh-name"),fhSides=$$(".fh-si
 const helm=capacete(fhStage,{face:"assets/img/rosto.webp",helmet:"assets/img/capacete.webp",helm:[-.135,-.085,1.29,1.03],head:[.5,.34,.3]});
 const ptr={x:0,y:0,in:false,down:false};
 const toStage=e=>{const S=R.fs;ptr.x=(e.clientX-S.l)/S.h;ptr.y=(e.clientY+(native?0:cy)-S.t)/S.h};
-fh.addEventListener("pointermove",e=>{toStage(e);ptr.in=true},{passive:true});
-fh.addEventListener("pointerdown",e=>{toStage(e);ptr.in=true;ptr.down=true},{passive:true});
+fh.addEventListener("pointermove",e=>{toStage(e);ptr.in=true;helm.trail(ptr.x,ptr.y)},{passive:true});
+fh.addEventListener("pointerdown",e=>{toStage(e);ptr.in=true;ptr.down=e.pointerType!=="touch";helm.splash(ptr.x,ptr.y,1)},{passive:true});
 fh.addEventListener("pointerleave",()=>{ptr.in=false;ptr.down=false},{passive:true});
 addEventListener("pointerup",e=>{ptr.down=false;if(e.pointerType==="touch")ptr.in=false},{passive:true});
 
 /* ---------------------------------------------------------------------------
    HISTÓRIA: palco preso + fotografias empilhadas como num álbum
    --------------------------------------------------------------------------- */
-const steps=$$(".step"),prints=$$(".print"),P=prints.map(p=>({el:p,img:p.querySelector("img"),dev:p.querySelector(".dev"),sh:p.querySelector(".shade"),r:parseFloat(p.style.getPropertyValue("--r"))||0}));
+const steps=$$(".step"),prints=$$(".print"),P=prints.map(p=>{const w=document.createElement("i");w.className="wipe";p.querySelector(".ph").appendChild(w);return{el:p,img:p.querySelector("img"),dev:p.querySelector(".dev"),sh:p.querySelector(".shade"),wipe:w,r:parseFloat(p.style.getPropertyValue("--r"))||0}});
 const first=[],span=[];steps.forEach((s,i)=>{const k=+s.dataset.photo;if(first[k]===undefined)first[k]=i;span[k]=i-first[k]+1});
 const yearBox=$("#year"),railFill=$("#railFill"),railLabels=$$("#rail span"),pos=steps.map(s=>+s.dataset.pos);
 const navA=$$("nav a"),navT=navA.map(a=>document.getElementById(a.dataset.go));
@@ -72,11 +72,11 @@ const ult=$("#cap-6"),trackLine=$("#trackLine"),track=$(".track"),pass=$("#pass"
 const pins=[{sec:$("#historia"),st:$("#historia .stage")},{sec:$("#pistas"),st:$(".pz-stage")}];
 
 /* NAS PISTAS */
-const races=$$(".race"),pzLine=$("#pzLine"),pzGhost=$("#pzGhost"),pzCar=$("#pzCar"),pzName=$("#pzName"),pzNum=$("#pzNum");
+const races=$$(".race"),rcProg=races.map(r=>r.querySelector(".rc-prog i")),pzLine=$("#pzLine"),pzGhost=$("#pzGhost"),pzCar=$("#pzCar"),pzName=$("#pzName"),pzNum=$("#pzNum");
 let pzIdx=-1,pzL=1,pzPts=[],lap=0;
 const pzOld=$("#pzOld"),pzStrip=$("#pzStrip");
-const minis=races.map((r,j)=>{const b=document.createElement("button");b.type="button";b.className="pz-mini";b.setAttribute("aria-label",r.dataset.name+" "+r.querySelector(".chap b").textContent);
- b.innerHTML=`<svg viewBox="0 0 1000 1000" aria-hidden="true"><path d="${PISTAS[r.dataset.track].d}"/><path d="${PISTAS[r.dataset.track].d}"/></svg><span>${r.querySelector(".chap b").textContent.split(" ")[0]}</span>`;
+const minis=races.map((r,j)=>{const b=document.createElement("button");b.type="button";b.className="pz-mini";const yr=r.querySelector(".rc-gp b").textContent;b.setAttribute("aria-label","Ir para "+r.dataset.name+", "+yr);
+ b.innerHTML=`<svg viewBox="0 0 1000 1000" aria-hidden="true"><path d="${PISTAS[r.dataset.track].d}"/><path d="${PISTAS[r.dataset.track].d}"/></svg><span>${yr.split(" ")[0]}</span>`;
  pzStrip.appendChild(b);const L=b.querySelector("path+path").getTotalLength();b.style.setProperty("--l",L.toFixed(0));
  b.addEventListener("click",()=>scrollTo(0,docTop(r)+Math.max(0,(r.offsetHeight-vh)/2)));return{el:b}});
 function setRace(i){if(i===pzIdx)return;const prevD=pzIdx>=0?pzLine.getAttribute("d"):null;pzIdx=i;const r=races[i],tr=PISTAS[r.dataset.track];
@@ -107,10 +107,12 @@ const progressOf=(L,y)=>{const a=y+vh*.5;if(!L.length)return-1;if(a<L[0].t)retur
 
 /* textos: títulos letra a letra, parágrafos palavra a palavra, rótulos "decodificando" */
 function splitWords(el){let i=0;const walk=n=>{[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(w=>{if(!w)return;if(/^\s+$/.test(w)){f.appendChild(document.createTextNode(w));return}const s=document.createElement("span");s.className="wd";s.innerHTML=`<i style="--i:${i++}">${w}</i>`;f.appendChild(s)});c.replaceWith(f)}else if(c.nodeType===1)walk(c)})};walk(el);el.classList.add("split")}
-function splitChars(line,base){const t=line.textContent;line.innerHTML=[...t].map((ch,i)=>ch===" "?" ":`<span class="ch" style="--i:${base+i}">${ch}</span>`).join("");return base+t.length}
+/* letras animadas, mas a palavra não quebra no meio: cada palavra (ou trecho após "-") fica junta */
+function splitChars(line,base){const t=line.textContent;let i=base;
+ line.innerHTML=t.split(" ").map(w=>w.split(/(?<=-)/).map(seg=>`<span class="wj">${[...seg].map(ch=>`<span class="ch" style="--i:${i++}">${ch}</span>`).join("")}</span>`).join("")).join(" ");return base+t.length}
 if(!reduce){
  $$(".title,.epi-title").forEach(ti=>{let b=0;ti.querySelectorAll(".ln>span").forEach(l=>{b=splitChars(l,b)+2})});
- $$(".card p[data-r]:not(.note),.note,.epi-text,.ultimo p[data-r]:not(.chap)").forEach(splitWords);
+ $$(".card p[data-r]:not(.note),.note,.epi-text,.rc-text,.ultimo p[data-r]:not(.chap)").forEach(splitWords);
 }
 const GL="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789·—/";
 function scramble(el){if(reduce||el._s)return;el._s=1;const nodes=[];const w=n=>[...n.childNodes].forEach(c=>c.nodeType===3?nodes.push([c,c.textContent]):w(c));w(el);const t0=performance.now();
@@ -163,7 +165,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
    let y=(1-e)*vh*.07-d*vh*.035,rot=o.r+(1-e)*(k%2?-3.5:3.5)+d*(k%2?-2.2:2.2),s=(1+(1-e)*.05)*(1-d*.05);
    if(reduce){y=0;rot=o.r;s=1}
    T(o.el,`translate3d(0,${y.toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${s.toFixed(4)})`);
-   const cp=reduce||e>=1?"":`inset(-40px -80px calc(${((1-e)*100).toFixed(1)}% + ${(e*-80).toFixed(0)}px) -80px)`;if(o._c!==cp){o._c=cp;o.el.style.clipPath=cp}
+   T(o.wipe,reduce||e>=1?"scaleY(0)":`scaleY(${(1-e).toFixed(4)})`);
    T(o.img,reduce?"scale(1)":`translate3d(0,${((.5-lp)*3).toFixed(2)}%,0) scale(${(1.13-.1*lp+(1-e)*.22).toFixed(4)})`);
    O(o.dev,(.85*(1-EO(cl((p-first[k]+(k?.2:.25))/.35)))).toFixed(2));
    O(o.sh,(d*.3).toFixed(2))});
@@ -172,7 +174,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
   T(railFill,`scaleX(${pc.toFixed(4)})`);railLabels.forEach(l=>l.classList.toggle("on",+l.style.getPropertyValue("--p")<=pc+.001))}
  /* nas pistas: o traçado se desenha, o carrinho dá voltas e as miniaturas mostram todas as corridas */
  if(R.pz!==undefined&&cy>R.pz-vh&&cy<R.pz+R.pzh){const p=progressOf(RM,cy),i=cl(Math.floor(p+.12),0,races.length-1);setRace(i);
-  const draw=reduce?1:EO(cl((p-i+.25)/.5));pzLine.style.strokeDashoffset=(pzL*(1-draw)).toFixed(1);
+  const draw=reduce?1:EO(cl((p-i+.25)/.5));pzLine.style.strokeDashoffset=(pzL*(1-draw)).toFixed(1);const dk=draw.toFixed(3);if(rcProg[i]._d!==dk){rcProg[i]._d=dk;rcProg[i].style.setProperty("--d",dk)}
   lap=(lap+dt*(.05+Math.min(.25,Math.abs(svel)*.01)))%1;const at=draw<.999?draw:lap,q=pzPts[Math.round(at*400)]||[0,0];
   pzCar.setAttribute("cx",q[0].toFixed(1));pzCar.setAttribute("cy",q[1].toFixed(1));
   minis.forEach((mm,j)=>{const k=(reduce?(j<=i?1:0):cl(p-j+.75)).toFixed(3);if(mm._k!==k){mm._k=k;mm.el.style.setProperty("--k",k)}})}

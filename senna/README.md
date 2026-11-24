@@ -16,7 +16,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | Momento | Fotografia | O que acontece |
 |---|---|---|
 | Abertura | — | A assinatura é escrita com a tinta real, em gestos contínuos, e pousa sobre o retrato. |
-| Entrada | Retrato de 1994 + foto do capacete | **Bolhas de água:** bolhas que flutuam, respiram e se fundem sobre o rosto mostram o capacete por dentro, translúcido, como através de água em movimento (bordas que fluem, ondinhas, cáusticas e brilho na borda). O rosto continua visível. O cursor empurra as bolhas; ao rolar, a água cresce e veste o capacete. WebGL em `assets/js/capacete.js`. |
+| Entrada | Retrato de 1994 + foto do capacete | **Bolhas de água:** bolhas que flutuam, respiram e se fundem sobre o rosto mostram o capacete por dentro, translúcido, como através de água em movimento (bordas que fluem, ondinhas, cáusticas e brilho na borda). O rosto continua visível. Um toque ou clique solta um anel de onda que se espalha pelo rosto e empurra as bolhas; arrastar o cursor deixa ondinhas. Ao rolar, a água cresce e veste o capacete. WebGL em `assets/js/capacete.js`. |
 | O carro | 1ª (`01-abertura.jpg`, referência da composição) | Quando a seção aparece, as letras de **SENNA** caem e o carro entra pela direita até o centro. |
 | Prólogo | — | O texto vai acendendo palavra por palavra conforme a leitura. |
 | I · Infância (1960) | 2ª, o capacete | **Aqui começa a narrativa visual principal.** As fotos ficam fixas num palco enquanto os textos rolam. |
@@ -24,7 +24,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | III · Ascensão (1988 · 1990 · 1991) | 4ª, McLaren nº 8 | Zoom lento (Ken Burns) e parallax dentro da foto. Linha do tempo de 1960 a 1994. |
 | IV · Conquistas | 5ª, o troféu | Contadores de 41 vitórias, 65 poles e 3 títulos. |
 | V · Legado | 6ª | |
-| Nas pistas | Traçados reais | Seis corridas (Mônaco 84, Estoril 85, Suzuka 88, Spa, Interlagos 91, as 6 vitórias em Mônaco). O traçado se desenha com a rolagem, o anterior sai girando, um carrinho dá voltas e uma faixa com as miniaturas de todos os mapas acompanha o avanço (clique para ir a uma corrida). |
+| Nas pistas | Traçados reais | Cada corrida tem uma ficha de cronometragem (número, ano, GP, largada, chegada, extensão do traçado, carro e condição) com uma barra que acompanha o desenho do mapa. Seis corridas (Mônaco 84, Estoril 85, Suzuka 88, Spa, Interlagos 91, as 6 vitórias em Mônaco). O traçado se desenha com a rolagem, o anterior sai girando, um carrinho dá voltas e uma faixa com as miniaturas de todos os mapas acompanha o avanço (clique para ir a uma corrida). |
 | VI · 1º de maio de 1994 | — | A página escurece; uma linha de pista se desenha e para. |
 | Epílogo | — | A assinatura é escrita de novo e o carro atravessa a página e estaciona. |
 

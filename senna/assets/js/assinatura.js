@@ -35,16 +35,16 @@ const sigWrite=(id,dur=2.6)=>{const s=$(id);if(!s)return;const ps=fill(s);if(mat
 
 /* abertura: a assinatura é escrita no centro e voa até o destino */
 function abertura(dest,go){
- const big=$("#sigBig"),sw=$("#sw"),pc=$("#ipc"),bar=$("#ibar"),intro=$("#intro"),ps=fill(big),DUR=3.6;
+ const big=$("#sigBig"),sw=$("#sw"),pc=$("#ipc"),bar=$("#ibar"),intro=$("#intro"),ps=fill(big),DUR=2.8;
  const reveal=()=>{dest.style.opacity=1};
  if(matchMedia("(prefers-reduced-motion:reduce)").matches||!intro){intro&&intro.remove();reveal();go();return}
  mask(big,1);hide(ps);let fin=false;
  const toHead=()=>{if(fin)return;fin=true;mask(big,0);sw.style.transition="none";sw.style.transform="none";
   const a=big.getBoundingClientRect(),b=dest.getBoundingClientRect(),s=b.width/a.width;
-  big.style.transformOrigin="0 0";big.style.transition="transform 1.5s cubic-bezier(.76,0,.2,1)";big.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px) scale(${s})`;
-  intro.classList.add("out");setTimeout(go,700);
-  setTimeout(()=>{reveal();setTimeout(()=>intro.remove(),450)},1500)};
+  big.style.transformOrigin="0 0";big.style.transition="transform 1.25s cubic-bezier(.76,0,.2,1)";big.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px) scale(${s})`;
+  intro.classList.add("out");setTimeout(go,600);
+  setTimeout(()=>{reveal();setTimeout(()=>intro.remove(),400)},1250)};
  requestAnimationFrame(()=>requestAnimationFrame(()=>{sw.style.transition=`transform ${DUR+1.6}s cubic-bezier(.25,.1,.2,1)`;sw.style.transform="none"}));
- setTimeout(()=>{if(fin)return;write(ps,DUR,{gap:30,step:(cur,k)=>{pc.textContent=String(Math.round(k*100)).padStart(3,"0");bar.style.transform=`scaleX(${k})`},done:()=>setTimeout(toHead,420)})},380);
+ setTimeout(()=>{if(fin)return;write(ps,DUR,{gap:22,step:(cur,k)=>{pc.textContent=String(Math.round(k*100)).padStart(3,"0");bar.style.transform=`scaleX(${k})`},done:()=>setTimeout(toHead,300)})},300);
  const skip=()=>{ps.forEach(p=>{p.style.strokeDasharray="";p.style.strokeDashoffset=""});toHead()};
  $("#skip").onclick=skip;addEventListener("keydown",e=>{if(e.key==="Escape"&&!fin)skip()})}
