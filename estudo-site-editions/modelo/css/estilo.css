@@ -14,6 +14,7 @@
 @font-face { font-family: "Script"; src: url(../fontes/imperial-script-latin-400-normal.woff2) format("woff2"); font-display: swap; }
 
 :root {
+  color-scheme: dark;
   --preto: #000;
   --escuro: #292919;      /* text-dark  */
   --claro: #f7f7ee;       /* text-light / bg-light */
