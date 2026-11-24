@@ -16,7 +16,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | Momento | Fotografia | O que acontece |
 |---|---|---|
 | Abertura | — | A assinatura é escrita com a tinta real, em gestos contínuos, e pousa sobre o retrato. |
-| Entrada | Retrato de 1994 + capacete | **Rosto e capacete:** o capacete aparece sobre o rosto por uma máscara líquida que segue o cursor (ou o dedo). Ao rolar, o capacete desce do topo da cabeça até o queixo. Efeito em WebGL em `assets/js/capacete.js`. |
+| Entrada | Retrato de 1994 + capacete | **Rosto e capacete:** um cardume de gotas de vidro (a lógica do CandyShoal, em 2D e sem cores) flutua, respira e se funde sobre o rosto, mostrando o capacete por dentro, sozinho, sem depender de nada. O cursor empurra as gotas; apertar e segurar as junta. Ao rolar, elas crescem e vestem o capacete inteiro. WebGL em `assets/js/capacete.js`. |
 | O carro | 1ª (`01-abertura.jpg`, referência da composição) | Quando a seção aparece, as letras de **SENNA** caem e o carro entra pela direita até o centro. |
 | Prólogo | — | O texto vai acendendo palavra por palavra conforme a leitura. |
 | I · Infância (1960) | 2ª, o capacete | **Aqui começa a narrativa visual principal.** As fotos ficam fixas num palco enquanto os textos rolam. |
@@ -40,6 +40,12 @@ O código de `assets/js/assinatura.js` foi portado do site principal (`plazza-co
 As mudanças foram só de adaptação: tinta escura sobre papel no lugar de branco sobre preto, o destino passou a ser a assinatura da hero e o *swoosh* corre da direita para a esquerda, como o rastro do carro. Os traços verticais são escritos de cima para baixo.
 
 A `SIG` de Ayrton Senna foi extraída da assinatura real da primeira fotografia por `tools/assinatura_linha_central.py` (esqueletização, junção dos traços nos cruzamentos e suavização em curvas `Q`). Para trocar a assinatura, rode o script com outra imagem e cole o JSON gerado no lugar de `const SIG=` em `assinatura.js`.
+
+## Revelações durante a rolagem
+
+- Títulos sobem letra a letra; parágrafos aparecem palavra a palavra, cada uma saindo de uma máscara.
+- Rótulos de capítulo "decodificam" de caracteres aleatórios até o texto final.
+- Cada fotografia se revela de cima para baixo como uma impressão saindo, com zoom que assenta e rotação que se acomoda.
 
 ## Fotos em HD
 
