@@ -2,11 +2,11 @@
  "rewrites": [
   {
    "source": "/assets/:path*",
-   "destination": "https://cdn.jsdelivr.net/gh/goeckinge-code/e-se-encolher@df57d336f963f83d55288499aa9e8b42cdec6685/senna/assets/:path*"
+   "destination": "https://cdn.jsdelivr.net/gh/goeckinge-code/e-se-encolher@e264c226f214f34b3c0a06ef85f4c22d26649e60/senna/assets/:path*"
   },
   {
    "source": "/pagina/documentario.html",
-   "destination": "https://cdn.jsdelivr.net/gh/goeckinge-code/e-se-encolher@df57d336f963f83d55288499aa9e8b42cdec6685/senna/index.html"
+   "destination": "https://cdn.jsdelivr.net/gh/goeckinge-code/e-se-encolher@e264c226f214f34b3c0a06ef85f4c22d26649e60/senna/index.html"
   }
  ]
 }
