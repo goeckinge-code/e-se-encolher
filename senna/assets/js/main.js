@@ -46,11 +46,11 @@ let heroIn=-1;
 function go(){if(started)return;started=true;document.body.classList.remove("lock");document.body.classList.add("ready");setH();measure();heroIn=performance.now()}
 
 /* ---------------------------------------------------------------------------
-   ENTRADA: rosto + capacete 3D (Blender -> three.js), transparente, com lente no cursor
+   ENTRADA: rosto + capacete 3D (fotos reais projetadas, three.js), transparente, com lente no cursor
    --------------------------------------------------------------------------- */
 const fh=$("#top"),fhStage=$("#fhStage"),fhName=$(".fh-name"),fhSides=$$(".fh-side"),fhSig=$(".fh-sig");
-const H3=capacete3d($("#h3d"),{base:"assets/3d/capacete3d",minA:.015,glass:true});
-const PZH=capacete3d($("#pzHelmet"),{base:"assets/3d/capacete3d",minA:.9});
+const H3=capacete3d($("#h3d"),{atlas:"assets/img/capacete-vistas.webp",minA:.1,glass:true});
+const PZH=capacete3d($("#pzHelmet"),{atlas:"assets/img/capacete-vistas.webp",minA:.9});
 const ptr={x:.5,y:.5,sx:.5,sy:.5,in:false,lens:0};
 fh.addEventListener("pointermove",e=>{ptr.x=e.clientX/vw;ptr.y=(e.clientY+cy)/R.fhH;ptr.in=true},{passive:true});
 fh.addEventListener("pointerdown",e=>{ptr.x=e.clientX/vw;ptr.y=(e.clientY+cy)/R.fhH;ptr.in=true},{passive:true});

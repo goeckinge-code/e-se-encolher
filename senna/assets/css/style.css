@@ -314,3 +314,4 @@ nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
 
 .pistas + .ultimo{background:linear-gradient(var(--night) 0,var(--night) calc(100% - 55vh),transparent 100%)}
 .pistas + .ultimo .fade-in{height:20vh}
+.race-card .title{font-variation-settings:"wdth" 70;font-size:clamp(34px,3.8vw,68px);white-space:nowrap}

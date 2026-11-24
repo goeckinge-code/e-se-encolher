@@ -16,7 +16,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | Momento | Fotografia | O que acontece |
 |---|---|---|
 | Abertura | — | A assinatura é escrita com a tinta real, em gestos contínuos, e pousa sobre o retrato. |
-| Entrada | Retrato de 1994 | **Capacete 3D de vidro:** um capacete modelado no Blender (`blender/capacete.py`) e desenhado com three.js desce sobre a cabeça. É transparente no centro e colorido nas bordas e nas faixas, então o rosto aparece através dele. O cursor (ou o dedo) abre uma lente que limpa o casco; o capacete acompanha o mouse e, ao rolar, sobe girando. |
+| Entrada | Retrato de 1994 | **Capacete 3D de vidro:** o capacete real (montado com as fotos de referência) desce sobre a cabeça. É transparente no centro e colorido nas bordas e nas faixas, então o rosto aparece através dele. O cursor (ou o dedo) abre uma lente que limpa o casco; o capacete acompanha o mouse e, ao rolar, sobe girando. |
 | O carro | 1ª (`01-abertura.jpg`, referência da composição) | Quando a seção aparece, as letras de **SENNA** caem e o carro entra pela direita até o centro. |
 | Prólogo | — | O texto vai acendendo palavra por palavra conforme a leitura. |
 | I · Infância (1960) | 2ª, o capacete | **Aqui começa a narrativa visual principal.** As fotos ficam fixas num palco enquanto os textos rolam. |
@@ -49,14 +49,13 @@ A `SIG` de Ayrton Senna foi extraída da assinatura real da primeira fotografia 
 - `svel` (velocidade suavizada) move as faixas de texto (aceleram e inclinam com `skewX`), muda a largura dos títulos e inclina levemente os cartões.
 - Palcos fixos (história e pistas) são presos por `transform` dentro do `#sc`; com movimento reduzido, a rolagem é a nativa e eles voltam a ser `position: sticky`.
 
-## Capacete 3D
+## Capacete 3D (feito com as fotos reais)
 
-`blender/capacete.py` gera o modelo com Blender (módulo `bpy` 5.0, Python 3.11): casco com queixeira, aberturas por booleano exato, espessura com Solidify e viseira separada. Exporta `assets/3d/capacete3d.json` (malha em base64). A pintura é feita no shader (`assets/js/capacete3d.js`), pela posição no casco.
+O capacete que gira é montado com 9 fotografias reais do capacete de 1991 (frente, três-quartos, laterais, traseiras e topo), reunidas em `assets/img/capacete-vistas.webp` por `tools/capacete_atlas.py` depois da super-resolução.
 
-```bash
-python3.11 -m pip install bpy
-python3.11 blender/capacete.py -- assets/3d --render   # --render salva prévias em Cycles
-```
+Em `assets/js/capacete3d.js`, um molde de casco (esfera deformada com queixeira e corte do pescoço, gerado no próprio navegador) recebe cada foto projetada do ângulo em que ela foi tirada. Cada ponto do casco usa a foto que olha mais de frente para ele, com uma transição curta para a vizinha. Assim a pintura, os logos, a faixa da viseira e a assinatura são os do capacete de verdade.
+
+Para trocar as fotos, edite as caixas e os ângulos em `tools/capacete_atlas.py` e em `CAPACETE_VISTAS` (no JS), na mesma ordem.
 
 ## Revelações durante a rolagem
 
@@ -81,11 +80,9 @@ senna/
 ├── index.html
 ├── assets/css/style.css     papel, impressões fotográficas, layout responsivo
 ├── assets/js/assinatura.js  sistema de assinatura (Plazza)
-├── assets/js/capacete3d.js  capacete 3D de vidro (three.js, shader próprio)
+├── assets/js/capacete3d.js  capacete 3D com as fotos reais projetadas (three.js, shader próprio)
 ├── assets/js/pistas.js      traçados dos circuitos (gerado por tools/pistas.py)
-├── assets/3d/               malha do capacete exportada do Blender
 ├── assets/lib/three.min.js  three.js r128
-├── blender/capacete.py      modelagem do capacete
 ├── assets/js/main.js        carro, parallax, palco de fotos, linha do tempo, capítulos
 ├── assets/img/              fotos em WebP, carro recortado com alfa, rodas, textura de papel
 └── tools/                   scripts usados para gerar a assinatura e o recorte do carro
