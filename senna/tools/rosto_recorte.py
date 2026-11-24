@@ -74,7 +74,8 @@ F = np.where((A2 > .985)[..., None], Hd, np.clip(F, 0, 1))
 edge = cv2.dilate((A2 < .99).astype(np.uint8), np.ones((5, 5), np.uint8), iterations=12).astype(bool)
 skin = (F[..., 0] > F[..., 2] + .06)  # pele e macacão branco não mudam
 cap = np.maximum(F[..., 0], F[..., 1]) * 1.04 + .015
-F[..., 2] = np.where(edge & ~skin, np.minimum(F[..., 2], cap), F[..., 2])
+hair = (np.arange(h2) < h2 * .7)[:, None]  # só no cabelo: o azul-marinho do macacão fica
+F[..., 2] = np.where(edge & ~skin & hair, np.minimum(F[..., 2], cap), F[..., 2])
 out = np.dstack([F, A2]) * 255
 Image.fromarray(out.clip(0, 255).astype(np.uint8), "RGBA").save(dst, quality=88, method=6)
 print("ok", w2, h2)
