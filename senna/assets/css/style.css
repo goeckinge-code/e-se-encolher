@@ -79,8 +79,8 @@ nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
 .ready .fh-stage{translate:0 0;opacity:1}
 .fh-stage img{position:absolute;inset:0;width:100%;height:100%}
 .fh-stage img{-webkit-mask-image:linear-gradient(#000 88%,transparent);mask-image:linear-gradient(#000 88%,transparent)}
-.h3d{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;opacity:0;transition:opacity .8s}
-.h3d.on{opacity:1}
+.fh-stage canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.fh-stage.gl .fh-photo{opacity:0}
 .fh-side{position:absolute;bottom:calc(74px + env(safe-area-inset-bottom));z-index:2;display:flex;flex-direction:column;gap:6px;color:var(--ink);opacity:0;transition:opacity 1s .9s}
 .fh-side b{font-family:var(--fg);font-weight:400;font-size:2.1em;line-height:.8;color:var(--red);vertical-align:-.12em;margin-right:.15em;letter-spacing:0}
 .fh-left{left:var(--gut)}.fh-right{right:var(--gut);text-align:right;align-items:flex-end}
@@ -189,7 +189,7 @@ nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
 .chap{color:var(--ink2);margin-bottom:22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .chap b{color:var(--red);font-weight:500}
 .chap::before{content:"";width:34px;height:8px;flex:none;background:linear-gradient(var(--blue) 0 1.5px,var(--yellow) 1.5px 6.5px,var(--green) 6.5px 8px)}
-.title{font-family:var(--fx);font-weight:800;font-variation-settings:"wdth" var(--tw,70);font-stretch:70%;text-transform:uppercase;font-size:clamp(44px,5.4vw,92px);line-height:.88;letter-spacing:-.01em;margin-bottom:.5em;color:var(--ink)}
+.title{font-family:var(--fx);font-weight:800;font-variation-settings:"wdth" 70;font-stretch:70%;text-transform:uppercase;font-size:clamp(44px,5.4vw,92px);line-height:.88;letter-spacing:-.01em;margin-bottom:.5em;color:var(--ink)}
 .ln{display:block;overflow:hidden;padding:.12em 0 .04em;margin-top:-.12em}
 .ln>span{display:block;transform:translate3d(0,105%,0);transition:transform 1.1s var(--e)}
 .ln:nth-child(2)>span{transition-delay:.09s}
@@ -217,7 +217,7 @@ nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
 
 /* ---------- faixas de texto (Plazza): aceleram e inclinam com a velocidade ---------- */
 .mq{overflow:hidden;padding:3.5vh 0;border-block:1px solid rgba(27,22,19,.16);white-space:nowrap}
-.mq-row{display:inline-flex;align-items:center;gap:.5em;will-change:transform;font-family:var(--fx);font-weight:800;text-transform:uppercase;font-size:clamp(44px,8vw,132px);line-height:1;letter-spacing:-.01em;font-variation-settings:"wdth" var(--mw,110)}
+.mq-row{display:inline-flex;align-items:center;gap:.5em;will-change:transform;font-family:var(--fx);font-weight:800;text-transform:uppercase;font-size:clamp(44px,8vw,132px);line-height:1;letter-spacing:-.01em;font-variation-settings:"wdth" 110}
 .mq-row span{color:var(--ink)}
 .mq-row span.o{color:transparent;-webkit-text-stroke:1.5px var(--red)}
 .mq-row i{width:.32em;height:.32em;border-radius:50%;background:var(--yellow);flex:none;box-shadow:0 0 0 .07em var(--green)}
@@ -227,16 +227,17 @@ nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
 .pz-stage{background:radial-gradient(70% 60% at 32% 50%,#1d1a17,var(--night))}
 .pz-kicker{position:absolute;top:calc(70px + env(safe-area-inset-top));left:var(--gut);right:var(--gut);display:flex;justify-content:space-between;color:#a99f90}
 .pz-kicker span:first-child{color:var(--yellow)}
-.pz-name{position:absolute;left:var(--gut);bottom:5vh;font-family:var(--fg);font-size:min(22vw,30vh);line-height:.8;text-transform:uppercase;color:transparent;-webkit-text-stroke:1px rgba(239,232,218,.22);white-space:nowrap;overflow:hidden}
+.pz-name{position:absolute;left:var(--gut);top:calc(104px + env(safe-area-inset-top));font-family:var(--fg);font-size:min(22vw,30vh);line-height:.8;text-transform:uppercase;color:transparent;-webkit-text-stroke:1px rgba(239,232,218,.22);white-space:nowrap;overflow:hidden}
 .pz-name span{display:block;animation:yin .9s var(--e) both}
 .pz-name span.out{position:absolute;left:0;top:0;animation:pzout .6s var(--io) both}
 @keyframes pzout{to{transform:translateY(100%);opacity:0}}
-.pz-map{position:absolute;left:4vw;top:50%;width:min(56vw,78vh);height:auto;transform:translateY(-50%);overflow:visible}
+.pz-map{position:absolute;left:5vw;top:50%;width:min(52vw,76vh);height:auto;transform:translateY(-52%);overflow:visible}
+.pz-old{fill:none;stroke:rgba(239,232,218,.5);stroke-width:5;stroke-linejoin:round;opacity:0;transform-origin:500px 500px}
+.pz-old.go{animation:pzold .9s var(--io) both}
+@keyframes pzold{0%{opacity:.6;transform:none}100%{opacity:0;transform:scale(.82) rotate(-8deg)}}
 .pz-ghost{fill:none;stroke:rgba(239,232,218,.1);stroke-width:26;stroke-linejoin:round;stroke-linecap:round}
 .pz-line{fill:none;stroke:var(--red);stroke-width:7;stroke-linejoin:round;stroke-linecap:round}
 .pz-car{fill:var(--yellow);stroke:var(--night);stroke-width:4}
-.pz-helmet{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .8s}
-.pz-helmet.on{opacity:1}
 .pz-count{position:absolute;right:var(--gut);bottom:5vh;color:#a99f90;font-size:13px}
 .pz-count b{font-family:var(--fg);font-weight:400;font-size:4.2em;line-height:.8;color:#efe8da;vertical-align:-.1em;margin-right:.1em}
 .race{min-height:120vh;display:flex;align-items:center;padding:12vh var(--gut) 12vh 62%}
@@ -248,12 +249,28 @@ nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
 .race-meta dt{font-family:var(--fm);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#a99f90}
 .race-meta dd{font-family:var(--fx);font-weight:700;font-variation-settings:"wdth" 80;font-size:20px;color:#efe8da}
 @media (max-width:900px){
- .pz-map{left:50%;top:16svh;transform:translateX(-50%);width:min(88vw,46svh)}
+ .pz-map{left:50%;top:21svh;transform:translateX(-50%);width:min(84vw,40svh)}
  .pz-name{font-size:24vw;bottom:auto;top:58svh}
  .race{padding:0 var(--gut) 8svh;align-items:flex-end;min-height:130svh}
  .race .race-card{background:rgba(22,19,17,.94);background-image:none;box-shadow:0 18px 40px -18px rgba(0,0,0,.8)}
  .pz-count{top:calc(70px + env(safe-area-inset-top));bottom:auto}
  .pz-kicker span:last-child{display:none}
+}
+
+
+.pz-strip{position:absolute;left:var(--gut);bottom:4.5vh;display:flex;gap:10px;pointer-events:auto}
+.pz-mini{display:flex;flex-direction:column;align-items:center;gap:6px;width:66px;padding:6px 0 4px;border-radius:6px;color:#a99f90;font-family:var(--fm);font-size:9.5px;letter-spacing:.04em;transition:color .3s,background .3s}
+.pz-mini svg{width:48px;height:48px;overflow:visible}
+.pz-mini path{fill:none;stroke:rgba(239,232,218,.22);stroke-width:40;stroke-linejoin:round}
+.pz-mini path+path{stroke:var(--yellow);stroke-dasharray:var(--l) var(--l);stroke-dashoffset:calc(var(--l) * (1 - var(--k,0)))}
+.pz-mini.on{color:#efe8da;background:rgba(239,232,218,.07)}
+.pz-mini.on path+path{stroke:var(--red)}
+.pz-mini:hover{color:#efe8da}
+@media (max-width:900px){
+ .pz-strip{bottom:auto;top:calc(96px + env(safe-area-inset-top));left:0;right:0;justify-content:center;gap:4px}
+ .pz-mini{width:52px;font-size:8.5px}.pz-mini svg{width:34px;height:34px}
+ .pz-count{display:none}
+ .pz-name{top:58svh}
 }
 
 /* ---------- CAPÍTULO VI ---------- */
@@ -273,7 +290,7 @@ nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
 /* ---------- EPÍLOGO ---------- */
 .epilogo{position:relative;padding:14vh var(--gut) 0;text-align:center;overflow:hidden}
 .epilogo .eyebrow{color:var(--red)}
-.epi-title{font-family:var(--fx);font-weight:800;font-variation-settings:"wdth" var(--tw,70);font-stretch:70%;text-transform:uppercase;font-size:clamp(46px,7.4vw,124px);line-height:.88;letter-spacing:-.01em}
+.epi-title{font-family:var(--fx);font-weight:800;font-variation-settings:"wdth" 70;font-stretch:70%;text-transform:uppercase;font-size:clamp(46px,7.4vw,124px);line-height:.88;letter-spacing:-.01em}
 .epi-text{max-width:640px;margin:5vh auto 0;font-size:clamp(19px,1.5vw,23px)}
 #sigFt{width:min(560px,82vw);height:auto;margin:7vh auto 0;color:var(--ink);--sw:2.2}
 .epi-years{margin-top:14px}

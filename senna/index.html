@@ -46,12 +46,12 @@
  <h1 class="fh-name" aria-label="Ayrton Senna"><span class="fh-line"><span>AYRTON</span></span></h1>
  <div class="fh-stage" id="fhStage">
   <img class="fh-photo" src="assets/img/rosto.webp" width="1800" height="2256" alt="Retrato de Ayrton Senna com o macacão branco da Williams, em 1994">
+  <canvas aria-hidden="true"></canvas>
  </div>
- <canvas class="h3d" id="h3d" aria-hidden="true"></canvas>
  <div class="fh-side fh-left cap"><span>Ayrton Senna da Silva</span><span>São Paulo · 21.03.1960</span></div>
  <div class="fh-side fh-right cap"><span><b>3</b> títulos mundiais</span><span><b>41</b> vitórias · <b>65</b> poles</span></div>
  <div class="sig-wrap fh-sig"><svg id="sigHero" class="sigs" aria-hidden="true"></svg></div>
- <p class="fh-hint cap" id="fhHint"><i></i><span class="h-mouse">Passe o cursor: o capacete fica transparente</span><span class="h-touch">Toque: o capacete fica transparente</span></p>
+ <p class="fh-hint cap" id="fhHint"><i></i><span class="h-mouse">Passe o cursor: a água se move</span><span class="h-touch">Toque: a água se move</span></p>
  <div class="fh-foot cap"><span class="scroll-cue">Role para começar<i></i></span></div>
 </section>
 
@@ -170,8 +170,8 @@
  <div class="pz-stage">
   <p class="pz-kicker cap"><span>Nas pistas</span><span>Traçados atuais dos circuitos</span></p>
   <div class="pz-name" id="pzName" aria-hidden="true"><span>Mônaco</span></div>
-  <svg class="pz-map" viewBox="0 0 1000 1000" aria-hidden="true"><path class="pz-ghost" id="pzGhost"/><path class="pz-line" id="pzLine"/><circle class="pz-car" id="pzCar" r="13"/></svg>
-  <canvas class="pz-helmet" id="pzHelmet" aria-hidden="true"></canvas>
+  <svg class="pz-map" viewBox="0 0 1000 1000" aria-hidden="true"><path class="pz-old" id="pzOld"/><path class="pz-ghost" id="pzGhost"/><path class="pz-line" id="pzLine"/><circle class="pz-car" id="pzCar" r="13"/></svg>
+  <nav class="pz-strip" id="pzStrip" aria-label="Corridas"></nav>
   <p class="pz-count cap" aria-hidden="true"><b id="pzNum">01</b> / 06</p>
  </div>
  <div class="pz-list">
@@ -253,14 +253,13 @@
 
 <footer class="ft cap">
  <span>Ayrton Senna — um documentário interativo</span>
- <span>Fotografias: acervo de referência do projeto. Traçados: f1-circuits (MIT). Capacete 3D montado com fotos do capacete original.</span>
+ <span>Fotografias: acervo de referência do projeto. Traçados: f1-circuits (MIT). Capacete: foto do capacete original.</span>
  <a href="#top" data-go="top">Voltar ao início ↑</a>
 </footer>
 </main>
 
 <script src="assets/js/assinatura.js"></script>
-<script src="assets/lib/three.min.js"></script>
-<script src="assets/js/capacete3d.js"></script>
+<script src="assets/js/capacete.js"></script>
 <script src="assets/js/pistas.js"></script>
 <script src="assets/js/main.js"></script>
 </body>

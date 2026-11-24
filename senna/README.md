@@ -16,7 +16,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | Momento | Fotografia | O que acontece |
 |---|---|---|
 | Abertura | — | A assinatura é escrita com a tinta real, em gestos contínuos, e pousa sobre o retrato. |
-| Entrada | Retrato de 1994 | **Capacete 3D de vidro:** o capacete real (montado com as fotos de referência) desce sobre a cabeça. É transparente no centro e colorido nas bordas e nas faixas, então o rosto aparece através dele. O cursor (ou o dedo) abre uma lente que limpa o casco; o capacete acompanha o mouse e, ao rolar, sobe girando. |
+| Entrada | Retrato de 1994 + foto do capacete | **Bolhas de água:** bolhas que flutuam, respiram e se fundem sobre o rosto mostram o capacete por dentro, translúcido, como através de água em movimento (bordas que fluem, ondinhas, cáusticas e brilho na borda). O rosto continua visível. O cursor empurra as bolhas; ao rolar, a água cresce e veste o capacete. WebGL em `assets/js/capacete.js`. |
 | O carro | 1ª (`01-abertura.jpg`, referência da composição) | Quando a seção aparece, as letras de **SENNA** caem e o carro entra pela direita até o centro. |
 | Prólogo | — | O texto vai acendendo palavra por palavra conforme a leitura. |
 | I · Infância (1960) | 2ª, o capacete | **Aqui começa a narrativa visual principal.** As fotos ficam fixas num palco enquanto os textos rolam. |
@@ -24,7 +24,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | III · Ascensão (1988 · 1990 · 1991) | 4ª, McLaren nº 8 | Zoom lento (Ken Burns) e parallax dentro da foto. Linha do tempo de 1960 a 1994. |
 | IV · Conquistas | 5ª, o troféu | Contadores de 41 vitórias, 65 poles e 3 títulos. |
 | V · Legado | 6ª | |
-| Nas pistas | Traçados reais | Seis corridas (Mônaco 84, Estoril 85, Suzuka 88, Spa, Interlagos 91, as 6 vitórias em Mônaco). O traçado se desenha com a rolagem, um carrinho dá voltas (mais rápido quando a rolagem acelera) e o capacete 3D gira. |
+| Nas pistas | Traçados reais | Seis corridas (Mônaco 84, Estoril 85, Suzuka 88, Spa, Interlagos 91, as 6 vitórias em Mônaco). O traçado se desenha com a rolagem, o anterior sai girando, um carrinho dá voltas e uma faixa com as miniaturas de todos os mapas acompanha o avanço (clique para ir a uma corrida). |
 | VI · 1º de maio de 1994 | — | A página escurece; uma linha de pista se desenha e para. |
 | Epílogo | — | A assinatura é escrita de novo e o carro atravessa a página e estaciona. |
 
@@ -46,16 +46,9 @@ A `SIG` de Ayrton Senna foi extraída da assinatura real da primeira fotografia 
 
 - Todo o conteúdo fica num `<main id="sc">` fixo; o `body` rola de verdade com a altura do `#sc` (ResizeObserver).
 - A cada quadro: `k = 1 - Math.pow(touch ? 0.00006 : 0.0006, dt)`, `cy += (scrollY - cy) * k`, e `#sc` recebe `translate3d(0, -cy, 0)`.
-- `svel` (velocidade suavizada) move as faixas de texto (aceleram e inclinam com `skewX`), muda a largura dos títulos e inclina levemente os cartões.
+- `svel` (velocidade suavizada) acelera e inclina as faixas de texto (`skewX`), que correm devagar.
+- O laço só escreve um estilo quando o valor muda, e nada no quadro mexe em variáveis CSS globais nem em fontes variáveis, que obrigariam o navegador a recalcular a página inteira.
 - Palcos fixos (história e pistas) são presos por `transform` dentro do `#sc`; com movimento reduzido, a rolagem é a nativa e eles voltam a ser `position: sticky`.
-
-## Capacete 3D (feito com as fotos reais)
-
-O capacete que gira é montado com 9 fotografias reais do capacete de 1991 (frente, três-quartos, laterais, traseiras e topo), reunidas em `assets/img/capacete-vistas.webp` por `tools/capacete_atlas.py` depois da super-resolução.
-
-Em `assets/js/capacete3d.js`, um molde de casco (esfera deformada com queixeira e corte do pescoço, gerado no próprio navegador) recebe cada foto projetada do ângulo em que ela foi tirada. Cada ponto do casco usa a foto que olha mais de frente para ele, com uma transição curta para a vizinha. Assim a pintura, os logos, a faixa da viseira e a assinatura são os do capacete de verdade.
-
-Para trocar as fotos, edite as caixas e os ângulos em `tools/capacete_atlas.py` e em `CAPACETE_VISTAS` (no JS), na mesma ordem.
 
 ## Revelações durante a rolagem
 
@@ -80,9 +73,8 @@ senna/
 ├── index.html
 ├── assets/css/style.css     papel, impressões fotográficas, layout responsivo
 ├── assets/js/assinatura.js  sistema de assinatura (Plazza)
-├── assets/js/capacete3d.js  capacete 3D com as fotos reais projetadas (three.js, shader próprio)
+├── assets/js/capacete.js    entrada: bolhas de água sobre o rosto (WebGL)
 ├── assets/js/pistas.js      traçados dos circuitos (gerado por tools/pistas.py)
-├── assets/lib/three.min.js  three.js r128
 ├── assets/js/main.js        carro, parallax, palco de fotos, linha do tempo, capítulos
 ├── assets/img/              fotos em WebP, carro recortado com alfa, rodas, textura de papel
 └── tools/                   scripts usados para gerar a assinatura e o recorte do carro
