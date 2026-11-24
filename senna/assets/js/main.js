@@ -52,7 +52,7 @@ function go(){if(started)return;started=true;document.body.classList.remove("loc
    ENTRADA: rosto + bolhas de água que mostram o capacete (capacete.js)
    --------------------------------------------------------------------------- */
 const fh=$("#top"),fhStage=$("#fhStage"),fhName=$(".fh-name"),fhSides=$$(".fh-side"),fhSig=$(".fh-sig");
-const helm=capacete(fhStage,{face:"assets/img/rosto.webp",helmet:"assets/img/capacete.webp",helm:[-.135,-.085,1.29,1.03],head:[.5,.34,.3]});
+const helm=capacete(fhStage,{face:"assets/img/rosto.webp",helmet:"assets/img/capacete.webp",helm:[-.095,-.069,1.225,.977],head:[.5,.34,.3]});
 const ptr={x:0,y:0,in:false,down:false};
 const toStage=e=>{const S=R.fs;ptr.x=(e.clientX-S.l)/S.h;ptr.y=(e.clientY+(native?0:cy)-S.t)/S.h};
 fh.addEventListener("pointermove",e=>{toStage(e);ptr.in=true;helm.trail(ptr.x,ptr.y)},{passive:true});
