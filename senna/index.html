@@ -10,10 +10,9 @@
 <meta property="og:description" content="De São Paulo ao tricampeonato mundial: a história de Ayrton Senna em capítulos visuais.">
 <meta property="og:image" content="assets/img/01-abertura.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%23efe8da%22/%3E%3Crect y=%2213%22 width=%2232%22 height=%226%22 fill=%22%23f4c300%22/%3E%3Crect y=%2219%22 width=%2232%22 height=%222%22 fill=%22%230b7a3b%22/%3E%3Crect y=%2211%22 width=%2232%22 height=%222%22 fill=%22%231d3f8f%22/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=IBM+Plex+Mono:wght@400;500&family=Caveat:wght@500&family=League+Gothic&display=swap">
 <link rel="preload" as="image" href="assets/img/rosto.webp">
-<link rel="preload" as="image" href="assets/img/capacete.webp">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="lock">
@@ -36,23 +35,24 @@
   <a href="#cap-3" data-go="cap-3"><i>III</i><span>Ascensão</span></a>
   <a href="#cap-4" data-go="cap-4"><i>IV</i><span>Conquistas</span></a>
   <a href="#cap-5" data-go="cap-5"><i>V</i><span>Legado</span></a>
+  <a href="#pistas" data-go="pistas"><i>◆</i><span>Pistas</span></a>
   <a href="#cap-6" data-go="cap-6"><i>VI</i><span>1994</span></a>
  </nav>
 </header>
 
-<main>
+<main id="sc">
 <!-- ENTRADA — o rosto e o capacete -->
 <section id="top" class="face-hero" aria-label="Ayrton Senna">
  <h1 class="fh-name" aria-label="Ayrton Senna"><span class="fh-line"><span>AYRTON</span></span></h1>
  <div class="fh-stage" id="fhStage">
   <img class="fh-photo" src="assets/img/rosto.webp" width="1800" height="2256" alt="Retrato de Ayrton Senna com o macacão branco da Williams, em 1994">
-  <canvas aria-hidden="true"></canvas>
  </div>
+ <canvas class="h3d" id="h3d" aria-hidden="true"></canvas>
  <div class="fh-side fh-left cap"><span>Ayrton Senna da Silva</span><span>São Paulo · 21.03.1960</span></div>
  <div class="fh-side fh-right cap"><span><b>3</b> títulos mundiais</span><span><b>41</b> vitórias · <b>65</b> poles</span></div>
  <div class="sig-wrap fh-sig"><svg id="sigHero" class="sigs" aria-hidden="true"></svg></div>
- <p class="fh-hint cap" id="fhHint"><i></i><span class="h-mouse">Passe o cursor no rosto</span><span class="h-touch">Toque no rosto</span></p>
- <div class="fh-foot cap"><span class="scroll-cue">Role para vestir o capacete<i></i></span></div>
+ <p class="fh-hint cap" id="fhHint"><i></i><span class="h-mouse">Passe o cursor: o capacete fica transparente</span><span class="h-touch">Toque: o capacete fica transparente</span></p>
+ <div class="fh-foot cap"><span class="scroll-cue">Role para começar<i></i></span></div>
 </section>
 
 <!-- O CARRO — composição da primeira fotografia -->
@@ -76,6 +76,8 @@
  </div>
  <div class="hero-foot cap"><span>São Paulo, 21.03.1960</span><span>McLaren · 1988 — 1993</span><span>Ímola, 01.05.1994</span></div>
 </section>
+
+<div class="mq" aria-hidden="true"><div class="mq-row" id="mq1" data-words="41 vitórias|65 pole positions|3 títulos mundiais|1988|1990|1991"></div></div>
 
 <!-- PRÓLOGO -->
 <section class="prologo" id="prologo">
@@ -162,6 +164,68 @@
  </div>
 </section>
 
+<!-- NAS PISTAS — as corridas que contam a história -->
+<div class="mq" aria-hidden="true"><div class="mq-row" id="mq2" data-words="Mônaco|Estoril|Suzuka|Spa-Francorchamps|Interlagos|Mônaco"></div></div>
+<section class="pistas" id="pistas" aria-label="Nas pistas">
+ <div class="pz-stage">
+  <p class="pz-kicker cap"><span>Nas pistas</span><span>Traçados atuais dos circuitos</span></p>
+  <div class="pz-name" id="pzName" aria-hidden="true"><span>Mônaco</span></div>
+  <svg class="pz-map" viewBox="0 0 1000 1000" aria-hidden="true"><path class="pz-ghost" id="pzGhost"/><path class="pz-line" id="pzLine"/><circle class="pz-car" id="pzCar" r="13"/></svg>
+  <canvas class="pz-helmet" id="pzHelmet" aria-hidden="true"></canvas>
+  <p class="pz-count cap" aria-hidden="true"><b id="pzNum">01</b> / 06</p>
+ </div>
+ <div class="pz-list">
+  <article class="race" data-track="monaco" data-name="Mônaco">
+   <div class="card race-card">
+    <p class="chap cap"><b>1984</b> · GP de Mônaco</p>
+    <h3 class="title"><span class="ln"><span>Mônaco</span></span></h3>
+    <dl class="race-meta" data-r><div><dt>Carro</dt><dd>Toleman TG184</dd></div><div><dt>Resultado</dt><dd>2º lugar</dd></div></dl>
+    <p data-r>Largou em 13º, sob chuva forte, e subia volta a volta quando a corrida foi interrompida. O estreante terminou em segundo, e o mundo aprendeu o seu nome.</p>
+   </div>
+  </article>
+  <article class="race" data-track="estoril" data-name="Estoril">
+   <div class="card race-card">
+    <p class="chap cap"><b>1985</b> · GP de Portugal</p>
+    <h3 class="title"><span class="ln"><span>Estoril</span></span></h3>
+    <dl class="race-meta" data-r><div><dt>Carro</dt><dd>Lotus 97T</dd></div><div><dt>Resultado</dt><dd>1ª vitória</dd></div></dl>
+    <p data-r>Pole position e vitória debaixo de um temporal. Na primeira vitória dele na Fórmula 1, só o segundo colocado terminou na mesma volta.</p>
+   </div>
+  </article>
+  <article class="race" data-track="suzuka" data-name="Suzuka">
+   <div class="card race-card">
+    <p class="chap cap"><b>1988</b> · GP do Japão</p>
+    <h3 class="title"><span class="ln"><span>Suzuka</span></span></h3>
+    <dl class="race-meta" data-r><div><dt>Carro</dt><dd>McLaren MP4/4</dd></div><div><dt>Resultado</dt><dd>Campeão mundial</dd></div></dl>
+    <p data-r>Saiu da pole, mas o carro quase morreu na largada e ele caiu para o meio do pelotão. Recuperou posição por posição, venceu e conquistou o primeiro título mundial.</p>
+   </div>
+  </article>
+  <article class="race" data-track="spa" data-name="Spa-Francorchamps">
+   <div class="card race-card">
+    <p class="chap cap"><b>1985 · 1988–1991</b> · GP da Bélgica</p>
+    <h3 class="title"><span class="ln"><span>Spa-Francorchamps</span></span></h3>
+    <dl class="race-meta" data-r><div><dt>Carro</dt><dd>Lotus e McLaren</dd></div><div><dt>Resultado</dt><dd>5 vitórias</dd></div></dl>
+    <p data-r>A pista mais desafiadora do calendário virou território dele: cinco vitórias, quatro delas seguidas, de 1988 a 1991.</p>
+   </div>
+  </article>
+  <article class="race" data-track="interlagos" data-name="Interlagos">
+   <div class="card race-card">
+    <p class="chap cap"><b>1991</b> · GP do Brasil</p>
+    <h3 class="title"><span class="ln"><span>Interlagos</span></span></h3>
+    <dl class="race-meta" data-r><div><dt>Carro</dt><dd>McLaren MP4/6</dd></div><div><dt>Resultado</dt><dd>1ª vitória em casa</dd></div></dl>
+    <p data-r>Nas voltas finais, o câmbio ficou preso na sexta marcha. Ele segurou a liderança até a bandeirada e venceu, pela primeira vez, diante da torcida brasileira.</p>
+   </div>
+  </article>
+  <article class="race" data-track="monaco" data-name="Rei de Mônaco">
+   <div class="card race-card">
+    <p class="chap cap"><b>1987 · 1989–1993</b> · GP de Mônaco</p>
+    <h3 class="title"><span class="ln"><span>Rei de Mônaco</span></span></h3>
+    <dl class="race-meta" data-r><div><dt>Carro</dt><dd>Lotus e McLaren</dd></div><div><dt>Resultado</dt><dd>6 vitórias</dd></div></dl>
+    <p data-r>Seis vitórias nas ruas do principado, cinco delas seguidas, de 1989 a 1993. Nenhum piloto venceu tantas vezes em Mônaco.</p>
+   </div>
+  </article>
+ </div>
+</section>
+
 <!-- CAPÍTULO VI · o último capítulo -->
 <section class="ultimo" id="cap-6">
  <div class="fade-in" aria-hidden="true"></div>
@@ -186,16 +250,18 @@
   <div class="pass-car" id="passCar"><img src="assets/img/carro.webp" alt="" loading="lazy"><span class="wheel wf"><img src="assets/img/roda-dianteira.webp" alt="" loading="lazy"></span><span class="wheel wr"><img src="assets/img/roda-traseira.webp" alt="" loading="lazy"></span></div>
  </div>
 </section>
-</main>
 
 <footer class="ft cap">
  <span>Ayrton Senna — um documentário interativo</span>
- <span>Fotografias: acervo de referência do projeto. Direitos dos respectivos autores.</span>
+ <span>Fotografias: acervo de referência do projeto. Traçados: f1-circuits (MIT). Capacete 3D modelado no Blender.</span>
  <a href="#top" data-go="top">Voltar ao início ↑</a>
 </footer>
+</main>
 
 <script src="assets/js/assinatura.js"></script>
-<script src="assets/js/capacete.js"></script>
+<script src="assets/lib/three.min.js"></script>
+<script src="assets/js/capacete3d.js"></script>
+<script src="assets/js/pistas.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

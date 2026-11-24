@@ -16,7 +16,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | Momento | Fotografia | O que acontece |
 |---|---|---|
 | Abertura | — | A assinatura é escrita com a tinta real, em gestos contínuos, e pousa sobre o retrato. |
-| Entrada | Retrato de 1994 + capacete | **Rosto e capacete:** um cardume de gotas de vidro (a lógica do CandyShoal, em 2D e sem cores) flutua, respira e se funde sobre o rosto, mostrando o capacete por dentro, sozinho, sem depender de nada. O cursor empurra as gotas; apertar e segurar as junta. Ao rolar, elas crescem e vestem o capacete inteiro. WebGL em `assets/js/capacete.js`. |
+| Entrada | Retrato de 1994 | **Capacete 3D de vidro:** um capacete modelado no Blender (`blender/capacete.py`) e desenhado com three.js desce sobre a cabeça. É transparente no centro e colorido nas bordas e nas faixas, então o rosto aparece através dele. O cursor (ou o dedo) abre uma lente que limpa o casco; o capacete acompanha o mouse e, ao rolar, sobe girando. |
 | O carro | 1ª (`01-abertura.jpg`, referência da composição) | Quando a seção aparece, as letras de **SENNA** caem e o carro entra pela direita até o centro. |
 | Prólogo | — | O texto vai acendendo palavra por palavra conforme a leitura. |
 | I · Infância (1960) | 2ª, o capacete | **Aqui começa a narrativa visual principal.** As fotos ficam fixas num palco enquanto os textos rolam. |
@@ -24,6 +24,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 | III · Ascensão (1988 · 1990 · 1991) | 4ª, McLaren nº 8 | Zoom lento (Ken Burns) e parallax dentro da foto. Linha do tempo de 1960 a 1994. |
 | IV · Conquistas | 5ª, o troféu | Contadores de 41 vitórias, 65 poles e 3 títulos. |
 | V · Legado | 6ª | |
+| Nas pistas | Traçados reais | Seis corridas (Mônaco 84, Estoril 85, Suzuka 88, Spa, Interlagos 91, as 6 vitórias em Mônaco). O traçado se desenha com a rolagem, um carrinho dá voltas (mais rápido quando a rolagem acelera) e o capacete 3D gira. |
 | VI · 1º de maio de 1994 | — | A página escurece; uma linha de pista se desenha e para. |
 | Epílogo | — | A assinatura é escrita de novo e o carro atravessa a página e estaciona. |
 
@@ -40,6 +41,22 @@ O código de `assets/js/assinatura.js` foi portado do site principal (`plazza-co
 As mudanças foram só de adaptação: tinta escura sobre papel no lugar de branco sobre preto, o destino passou a ser a assinatura da hero e o *swoosh* corre da direita para a esquerda, como o rastro do carro. Os traços verticais são escritos de cima para baixo.
 
 A `SIG` de Ayrton Senna foi extraída da assinatura real da primeira fotografia por `tools/assinatura_linha_central.py` (esqueletização, junção dos traços nos cruzamentos e suavização em curvas `Q`). Para trocar a assinatura, rode o script com outra imagem e cole o JSON gerado no lugar de `const SIG=` em `assinatura.js`.
+
+## Rolagem (a mesma do Plazza)
+
+- Todo o conteúdo fica num `<main id="sc">` fixo; o `body` rola de verdade com a altura do `#sc` (ResizeObserver).
+- A cada quadro: `k = 1 - Math.pow(touch ? 0.00006 : 0.0006, dt)`, `cy += (scrollY - cy) * k`, e `#sc` recebe `translate3d(0, -cy, 0)`.
+- `svel` (velocidade suavizada) move as faixas de texto (aceleram e inclinam com `skewX`), muda a largura dos títulos e inclina levemente os cartões.
+- Palcos fixos (história e pistas) são presos por `transform` dentro do `#sc`; com movimento reduzido, a rolagem é a nativa e eles voltam a ser `position: sticky`.
+
+## Capacete 3D
+
+`blender/capacete.py` gera o modelo com Blender (módulo `bpy` 5.0, Python 3.11): casco com queixeira, aberturas por booleano exato, espessura com Solidify e viseira separada. Exporta `assets/3d/capacete3d.bin` (+ `.json`). A pintura é feita no shader (`assets/js/capacete3d.js`), pela posição no casco.
+
+```bash
+python3.11 -m pip install bpy
+python3.11 blender/capacete.py -- assets/3d --render   # --render salva prévias em Cycles
+```
 
 ## Revelações durante a rolagem
 
@@ -64,7 +81,11 @@ senna/
 ├── index.html
 ├── assets/css/style.css     papel, impressões fotográficas, layout responsivo
 ├── assets/js/assinatura.js  sistema de assinatura (Plazza)
-├── assets/js/capacete.js    entrada: rosto + capacete com máscara líquida (WebGL)
+├── assets/js/capacete3d.js  capacete 3D de vidro (three.js, shader próprio)
+├── assets/js/pistas.js      traçados dos circuitos (gerado por tools/pistas.py)
+├── assets/3d/               malha do capacete exportada do Blender
+├── assets/lib/three.min.js  three.js r128
+├── blender/capacete.py      modelagem do capacete
 ├── assets/js/main.js        carro, parallax, palco de fotos, linha do tempo, capítulos
 ├── assets/img/              fotos em WebP, carro recortado com alfa, rodas, textura de papel
 └── tools/                   scripts usados para gerar a assinatura e o recorte do carro
