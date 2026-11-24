@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ayrton Senna — Um documentário interativo</title>
+<meta name="description" content="A trajetória de Ayrton Senna contada como um documentário interativo: fotografias, datas e capítulos que se desenrolam conforme você rola a página.">
+<meta name="theme-color" content="#efe8da">
+<meta property="og:title" content="Ayrton Senna — Um documentário interativo">
+<meta property="og:description" content="De São Paulo ao tricampeonato mundial: a história de Ayrton Senna em capítulos visuais.">
+<meta property="og:image" content="/assets/img/01-abertura.jpg">
+<style>html,body{background:#efe8da;margin:0}</style>
+</head>
+<body>
+<noscript>Este documentário interativo precisa de JavaScript.</noscript>
+<script>
+/* mesmo carregamento do Plazza: busca a página completa e a escreve */
+fetch("/pagina/documentario.html").then(r=>r.text()).then(h=>{document.open();document.write(h);document.close()});
+</script>
+</body>
+</html>
