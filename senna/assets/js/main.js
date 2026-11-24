@@ -1,6 +1,6 @@
 /* Ayrton Senna — documentário interativo
    Depende de: assinatura.js ($, $$, cl, EO, EIO, ES, TAU, fill, write, sigWrite, abertura),
-   three.min.js + capacete3d.js (capacete 3D) e pistas.js (traçados). */
+   capacete.js (bolhas de água na entrada) e pistas.js (traçados). */
 if("scrollRestoration" in history)history.scrollRestoration="manual";
 scrollTo(0,0);
 const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches,touch=matchMedia("(hover:none)").matches;
@@ -49,7 +49,7 @@ let heroIn=-1;
 function go(){if(started)return;started=true;document.body.classList.remove("lock");document.body.classList.add("ready");setH();measure();heroIn=performance.now();helm.hint()}
 
 /* ---------------------------------------------------------------------------
-   ENTRADA: rosto + capacete 3D (fotos reais projetadas, three.js), transparente, com lente no cursor
+   ENTRADA: rosto + bolhas de água que mostram o capacete (capacete.js)
    --------------------------------------------------------------------------- */
 const fh=$("#top"),fhStage=$("#fhStage"),fhName=$(".fh-name"),fhSides=$$(".fh-side"),fhSig=$(".fh-sig");
 const helm=capacete(fhStage,{face:"assets/img/rosto.webp",helmet:"assets/img/capacete.webp",helm:[-.135,-.085,1.29,1.03],head:[.5,.34,.3]});
