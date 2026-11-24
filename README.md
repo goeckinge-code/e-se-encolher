@@ -42,3 +42,7 @@ Para testar uma cena só: `blender -b -P blender/render.py -- s4 still 0.3,0.85`
 - Cena 4: a formiga fica parcialmente atrás do cubo de açúcar.
 - Cena final: o card cobre parte da etiqueta "VOCÊ".
 - Render `--hq` (Eevee) ainda não foi testado com placa de vídeo.
+
+## Outro projeto neste repositório
+
+- [`senna/`](senna/README.md): site biográfico interativo sobre Ayrton Senna, com a abertura de assinatura reaproveitada do Plazza.

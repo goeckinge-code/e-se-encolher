@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ayrton Senna — Um documentário interativo</title>
+<meta name="description" content="A trajetória de Ayrton Senna contada como um documentário interativo: fotografias, datas e capítulos que se desenrolam conforme você rola a página.">
+<meta name="theme-color" content="#efe8da">
+<meta property="og:title" content="Ayrton Senna — Um documentário interativo">
+<meta property="og:description" content="De São Paulo ao tricampeonato mundial: a história de Ayrton Senna em capítulos visuais.">
+<meta property="og:image" content="assets/img/01-abertura.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%23efe8da%22/%3E%3Crect y=%2213%22 width=%2232%22 height=%226%22 fill=%22%23f4c300%22/%3E%3Crect y=%2219%22 width=%2232%22 height=%222%22 fill=%22%230b7a3b%22/%3E%3Crect y=%2211%22 width=%2232%22 height=%222%22 fill=%22%231d3f8f%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=IBM+Plex+Mono:wght@400;500&family=Caveat:wght@500&family=League+Gothic&display=swap">
+<link rel="preload" as="image" href="assets/img/carro.webp">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="lock">
+<canvas id="grain" aria-hidden="true"></canvas>
+<div class="paper-fx" aria-hidden="true"></div>
+<div id="prog" aria-hidden="true"></div>
+
+<!-- ABERTURA: assinatura escrita (sistema do Plazza) -->
+<div id="intro">
+ <div id="sw" aria-hidden="true"><svg id="sigBig"></svg></div>
+ <div class="im cap" aria-hidden="true"><span>Ayrton Senna da Silva <b>1960 — 1994</b></span><span class="ibar"><i id="ibar"></i></span><span id="ipc">000</span></div>
+ <button id="skip" class="cap" type="button">Pular abertura</button>
+</div>
+
+<header id="hd">
+ <a href="#top" data-go="top" aria-label="Início"><svg id="sigMini" class="sigs" aria-hidden="true"></svg></a>
+ <nav aria-label="Capítulos">
+  <a href="#cap-1" data-go="cap-1"><i>I</i><span>Infância</span></a>
+  <a href="#cap-2" data-go="cap-2"><i>II</i><span>Carreira</span></a>
+  <a href="#cap-3" data-go="cap-3"><i>III</i><span>Ascensão</span></a>
+  <a href="#cap-4" data-go="cap-4"><i>IV</i><span>Conquistas</span></a>
+  <a href="#cap-5" data-go="cap-5"><i>V</i><span>Legado</span></a>
+  <a href="#cap-6" data-go="cap-6"><i>VI</i><span>1994</span></a>
+ </nav>
+</header>
+
+<main>
+<!-- 1 · HERO — primeira fotografia: nome, carro e assinatura -->
+<section id="top" class="hero">
+ <p class="hero-kicker cap"><span>Um documentário interativo</span><span>em seis capítulos</span></p>
+ <div class="plate" id="plate">
+  <h1 class="senna" id="senna" aria-label="Ayrton Senna"><span class="lt"><b>S</b></span><span class="lt"><b>E</b></span><span class="lt"><b>N</b></span><span class="lt"><b>N</b></span><span class="lt"><b>A</b></span></h1>
+  <div class="car-drive" id="carDrive">
+   <div class="car-enter" id="carEnter">
+    <i class="speed" aria-hidden="true"></i><i class="speed" aria-hidden="true"></i><i class="speed" aria-hidden="true"></i><i class="speed" aria-hidden="true"></i>
+    <img class="car-ghost" src="assets/img/carro.webp" alt="" aria-hidden="true"><img class="car-ghost" src="assets/img/carro.webp" alt="" aria-hidden="true">
+    <div class="car-body" id="carBody">
+     <i class="car-shadow" aria-hidden="true"></i>
+     <img class="car-img" src="assets/img/carro.webp" width="1374" height="366" alt="McLaren vermelha e branca de Ayrton Senna, vista de perfil">
+     <span class="wheel wf"><img src="assets/img/roda-dianteira.webp" alt=""></span>
+     <span class="wheel wr"><img src="assets/img/roda-traseira.webp" alt=""></span>
+    </div>
+   </div>
+  </div>
+  <div class="sig-wrap"><svg id="sigHero" class="sigs" aria-hidden="true"></svg></div>
+ </div>
+ <div class="hero-foot cap"><span>São Paulo, 21.03.1960</span><span class="scroll-cue">Role para começar<i></i></span><span>Ímola, 01.05.1994</span></div>
+</section>
+
+<!-- PRÓLOGO -->
+<section class="prologo" id="prologo">
+ <p class="eyebrow cap" data-r>Prólogo</p>
+ <p class="big-quote" id="pq">Antes do mito, havia um garoto de São Paulo apaixonado por velocidade. Esta é a sua história — contada em fotografias, datas e curvas, do kart ao topo do mundo.</p>
+ <div class="helmet-rule" aria-hidden="true"></div>
+</section>
+
+<!-- CAPÍTULOS I–V · palco fixo com as fotografias, textos rolando -->
+<section class="story" id="historia" aria-label="A história em capítulos">
+ <div class="stage">
+  <div class="year" id="year" aria-hidden="true"><span class="y-in">1960</span></div>
+  <div class="media" id="media">
+   <figure class="print" style="--a:.856;--r:-2.5deg" data-k="0"><div class="ph"><img src="assets/img/02-capacete.webp" alt="Capacete amarelo de Ayrton Senna, com faixas verde e azul" loading="eager" decoding="async"><i class="dev"></i></div><figcaption>As cores do Brasil no capacete</figcaption><i class="shade"></i></figure>
+   <figure class="print" style="--a:.8;--r:2deg;--op:50% 30%" data-k="1"><div class="ph"><img src="assets/img/03-retrato.webp" alt="Ayrton Senna de braços cruzados, com o macacão vermelho da McLaren" loading="lazy" decoding="async"><i class="dev"></i></div><figcaption>Concentração antes da largada</figcaption><i class="shade"></i></figure>
+   <figure class="print" style="--a:1.145;--r:-1.5deg" data-k="2"><div class="ph"><img src="assets/img/04-pista.webp" alt="Senna ergue o punho no cockpit da McLaren número 8, na pista" loading="lazy" decoding="async"><i class="dev"></i></div><figcaption>McLaren nº 8 — o punho erguido</figcaption><i class="shade"></i></figure>
+   <figure class="print" style="--a:1;--r:2.5deg" data-k="3"><div class="ph"><img src="assets/img/05-trofeu.webp" alt="Senna beija o troféu, envolto na bandeira do Brasil" loading="lazy" decoding="async"><i class="dev"></i></div><figcaption>A bandeira e o troféu</figcaption><i class="shade"></i></figure>
+   <figure class="print" style="--a:.8;--r:-2deg;--op:50% 45%" data-k="4"><div class="ph"><img src="assets/img/06-cockpit.webp" alt="Piloto de capacete amarelo sobe no carro de corrida, diante das arquibancadas" loading="lazy" decoding="async"><i class="dev"></i></div><figcaption>Fora do carro, o mesmo olhar</figcaption><i class="shade"></i></figure>
+  </div>
+  <div class="rail" id="rail" aria-hidden="true">
+   <div class="rail-line"><i id="railFill"></i></div>
+   <span style="--p:0">1960</span><span style="--p:.706">1984</span><span style="--p:.824">1988</span><span style="--p:.882">1990</span><span style="--p:.912" class="dn">1991</span><span style="--p:1">1994</span>
+  </div>
+ </div>
+
+ <div class="steps">
+  <article class="step" id="cap-1" data-photo="0" data-year="1960" data-pos="0">
+   <div class="card">
+    <p class="chap cap"><b>Capítulo I</b> · Infância e primeiros passos</p>
+    <h2 class="title"><span class="ln"><span>Um garoto</span></span><span class="ln"><span>e um kart</span></span></h2>
+    <p data-r>Ayrton Senna da Silva nasceu em <strong>21 de março de 1960</strong>, em São Paulo. Desde criança, o que o encantava era a velocidade: os motores, as pistas, a sensação de estar no limite.</p>
+    <p data-r>Começou no kart ainda jovem. Foi ali, curva após curva, que desenvolveu a precisão e a sensibilidade que mais tarde o levariam ao automobilismo profissional.</p>
+    <p class="note" data-r>O capacete amarelo, com faixas verde e azul, se tornaria uma das imagens mais reconhecíveis do esporte: as cores do Brasil dentro do cockpit.</p>
+   </div>
+  </article>
+
+  <article class="step" id="cap-2" data-photo="1" data-year="1984" data-pos=".706">
+   <div class="card">
+    <p class="chap cap"><b>Capítulo II</b> · Carreira no automobilismo</p>
+    <h2 class="title"><span class="ln"><span>Do kart à</span></span><span class="ln"><span>Fórmula 1</span></span></h2>
+    <p data-r>Senna construiu a carreira degrau por degrau: kart, Fórmula Ford e outras categorias de base, quase sempre como o piloto a ser batido.</p>
+    <p data-r>Em <strong>1984</strong>, estreou na Fórmula 1 pela equipe Toleman. O talento logo chamou a atenção do mundo, sobretudo nas corridas em condições difíceis, quando a pista molhada parecia impossível para todos os outros.</p>
+    <p class="note" data-r>Mônaco, 1984: sob chuva forte, o estreante terminou em segundo lugar com um carro considerado modesto.</p>
+   </div>
+  </article>
+
+  <article class="step" id="cap-3" data-photo="2" data-year="1988" data-pos=".824">
+   <div class="card">
+    <p class="chap cap"><b>Capítulo III</b> · A ascensão</p>
+    <h2 class="title"><span class="ln"><span>Campeão</span></span><span class="ln"><span>do mundo</span></span></h2>
+    <p data-r>Em <strong>1988</strong>, já na McLaren, Ayrton conquistou seu primeiro campeonato mundial de Fórmula 1. Era a confirmação de um talento que o paddock inteiro já reconhecia.</p>
+   </div>
+  </article>
+
+  <article class="step" data-photo="2" data-year="1991" data-pos=".912">
+   <div class="card">
+    <p class="chap cap"><b>Capítulo III</b> · A ascensão</p>
+    <h2 class="title"><span class="ln"><span>1990,</span></span><span class="ln"><span>1991</span></span></h2>
+    <p data-r>Vieram então o segundo e o terceiro títulos mundiais, em <strong>1990</strong> e <strong>1991</strong>. A cada vitória, o Brasil parava diante da televisão para ouvir o Tema da Vitória.</p>
+   </div>
+  </article>
+
+  <article class="step" id="cap-4" data-photo="3" data-year="Tri" data-pos=".97">
+   <div class="card">
+    <p class="chap cap"><b>Capítulo IV</b> · As conquistas</p>
+    <h2 class="title"><span class="ln"><span>Números que</span></span><span class="ln"><span>viraram lenda</span></span></h2>
+    <dl class="stats" data-r>
+     <div><dt>Vitórias</dt><dd data-n="41">00</dd></div>
+     <div><dt>Pole positions</dt><dd data-n="65">00</dd></div>
+     <div><dt>Títulos mundiais</dt><dd data-n="3">0</dd></div>
+    </dl>
+    <p data-r>Mais do que estatísticas, cada número guarda uma tarde de chuva, uma volta perfeita, uma bandeira brasileira erguida no pódio. Os títulos vieram em <strong>1988, 1990 e 1991</strong>.</p>
+   </div>
+  </article>
+
+  <article class="step" id="cap-5" data-photo="4" data-year="Legado" data-pos="1">
+   <div class="card">
+    <p class="chap cap"><b>Capítulo V</b> · O legado</p>
+    <h2 class="title"><span class="ln"><span>Velocidade,</span></span><span class="ln"><span>coragem, paixão</span></span></h2>
+    <p data-r>Senna ficou conhecido pela velocidade, pela determinação, pela habilidade na chuva e pela paixão com que vivia o automobilismo.</p>
+    <p data-r>Também marcou a história pelo envolvimento em ações sociais e pelo impacto que teve na vida de milhões de brasileiros, que viam nele a prova de que era possível ser o melhor do mundo.</p>
+   </div>
+  </article>
+ </div>
+</section>
+
+<!-- CAPÍTULO VI · o último capítulo -->
+<section class="ultimo" id="cap-6">
+ <div class="fade-in" aria-hidden="true"></div>
+ <div class="ultimo-in">
+  <p class="chap cap" data-r><b>Capítulo VI</b> · O último capítulo</p>
+  <h2 class="date" data-r><span>1º de maio</span><span>de 1994</span></h2>
+  <div class="track" aria-hidden="true"><i id="trackLine"></i></div>
+  <p data-r>Durante o Grande Prêmio de San Marino, em Ímola, Ayrton Senna sofreu um acidente fatal enquanto competia pela Williams.</p>
+  <p data-r>Sua morte marcou profundamente o Brasil e o mundo do automobilismo.</p>
+ </div>
+ <div class="fade-out" aria-hidden="true"></div>
+</section>
+
+<!-- EPÍLOGO -->
+<section class="epilogo" id="epilogo">
+ <p class="eyebrow cap" data-r>Epílogo</p>
+ <h2 class="epi-title"><span class="ln"><span>Uma história que</span></span><span class="ln"><span>continua viva</span></span></h2>
+ <p class="epi-text" data-r>Mesmo décadas depois, Ayrton Senna permanece como um dos maiores nomes da história do esporte. Seu legado representa talento, dedicação, coragem e a busca constante pela excelência.</p>
+ <svg id="sigFt" class="sigs" aria-label="Assinatura de Ayrton Senna"></svg>
+ <p class="epi-years cap" data-r>1960 — 1994</p>
+ <div class="pass" id="pass" aria-hidden="true">
+  <div class="pass-car" id="passCar"><img src="assets/img/carro.webp" alt="" loading="lazy"><span class="wheel wf"><img src="assets/img/roda-dianteira.webp" alt="" loading="lazy"></span><span class="wheel wr"><img src="assets/img/roda-traseira.webp" alt="" loading="lazy"></span></div>
+ </div>
+</section>
+</main>
+
+<footer class="ft cap">
+ <span>Ayrton Senna — um documentário interativo</span>
+ <span>Fotografias: acervo de referência do projeto. Direitos dos respectivos autores.</span>
+ <a href="#top" data-go="top">Voltar ao início ↑</a>
+</footer>
+
+<script src="assets/js/assinatura.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
