@@ -15,7 +15,7 @@ Qualquer hospedagem estática serve (Vercel, Netlify, GitHub Pages): publique a 
 
 | Momento | Fotografia | O que acontece |
 |---|---|---|
-| Abertura | 1ª (`01-abertura.jpg`, referência da composição) | Uma estrela cadente cai do alto e escreve a assinatura. Ela voa até a hero, as letras de **SENNA** caem de cima para baixo e o carro entra pela direita até parar no centro. |
+| Abertura | 1ª (`01-abertura.jpg`, referência da composição) | A assinatura é escrita com a tinta real, em gestos contínuos. Ela voa até a hero, as letras de **SENNA** caem de cima para baixo e o carro entra pela direita até parar no centro. |
 | Prólogo | — | O texto vai acendendo palavra por palavra conforme a leitura. |
 | I · Infância (1960) | 2ª, o capacete | **Aqui começa a narrativa visual principal.** As fotos ficam fixas num palco enquanto os textos rolam. |
 | II · Carreira (1984) | 3ª, o retrato | Cada nova foto entra como uma cópia impressa pousando no álbum e se "revela". A anterior fica embaixo, levemente girada. |

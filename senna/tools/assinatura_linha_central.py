@@ -1,4 +1,8 @@
-"""Extrai a linha central da assinatura e gera SIG {vb, d[]} no formato do Plazza."""
+"""Gera SIG {vb, ink, d[]} no formato do Plazza a partir da assinatura ampliada 4x.
+
+ink = contorno real da tinta (espessura variável); d = trajeto da caneta (linha central),
+encadeado em poucos gestos contínuos para a escrita fluir. Uso: python3 assinatura_linha_central.py sig_x4.png saida.json
+"""
 import json, math, sys
 import numpy as np
 from PIL import Image, ImageFilter
@@ -6,8 +10,7 @@ from skimage.morphology import skeletonize, remove_small_objects
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 K = 4
-im = Image.open(SRC).convert("L").crop((195, 575, 545, 725))
-im = im.resize((im.width * K, im.height * K), Image.LANCZOS).filter(ImageFilter.GaussianBlur(1.6))
+im = Image.open(SRC).convert("L").filter(ImageFilter.GaussianBlur(1.3))  # recorte da assinatura já 4x (super_resolucao.py)
 a = np.asarray(im).astype(float)
 ink = a < 150
 ink = remove_small_objects(ink, max_size=200)
@@ -175,19 +178,62 @@ for s in strokes:
 out.sort(key=lambda s: min(p[0] for p in s))
 
 allp = np.array([p for s in out for p in s], float)
-x0, y0 = allp.min(0) - 6 * K
-x1, y1 = allp.max(0) + 6 * K
+x0, y0 = allp.min(0) - 8 * K
+x1, y1 = allp.max(0) + 8 * K
 sc = 1000 / (x1 - x0)
-D = []
-for s in out:
-    P = smooth(rdp(s, 1.4 * K / 4), 1)
-    P = (P - [x0, y0]) * sc
+Wd = x1 - x0
+
+# encadeia os traços em gestos contínuos: a caneta segue para o traço mais próximo
+def d2(a, b): return math.hypot(a[0] - b[0], a[1] - b[1])
+rest = [list(map(tuple, s)) for s in out]
+chains, cur = [], rest.pop(0)
+while rest:
+    end, s = cur[-1], rest[0]  # ordem de escrita: da esquerda para a direita
+    dx, dy = abs(s[-1][0] - s[0][0]), abs(s[-1][1] - s[0][1])
+    if dy > dx * 1.1:
+        rev = s[0][1] > s[-1][1]  # verticais de cima para baixo
+    else:
+        rev = d2(end, s[-1]) < d2(end, s[0])  # começa pela ponta mais perto da caneta
+    dd, j = d2(end, s[-1] if rev else s[0]), 0
+    s = rest.pop(j)
+    s = s[::-1] if rev else s
+    if dd < Wd * 0.09:
+        cur = cur + s  # a caneta "voa" até o próximo traço sem levantar o ritmo
+    else:
+        chains.append(cur); cur = s
+chains.append(cur)
+
+def path_d(P, closed=False):
+    P = (np.array(P, float) - [x0, y0]) * sc
     d = f"M{P[0][0]:.1f} {P[0][1]:.1f}"
     for i in range(1, len(P) - 1):
         m = (P[i] + P[i + 1]) / 2
         d += f"Q{P[i][0]:.1f} {P[i][1]:.1f} {m[0]:.1f} {m[1]:.1f}"
-    d += f"L{P[-1][0]:.1f} {P[-1][1]:.1f}"
-    D.append(d)
-sig = {"vb": [1000, float(round((y1 - y0) * sc, 1))], "d": D}
-json.dump(sig, open(OUT, "w"))
-print(len(D), "strokes", sig["vb"], sum(len(d) for d in D), "chars")
+    return d + ("Z" if closed else f"L{P[-1][0]:.1f} {P[-1][1]:.1f}")
+
+D = [path_d(smooth(rdp(c, 2.2), 3)) for c in chains]
+
+# contorno real da tinta (com os furos de a, e, y)
+import cv2
+mask = ((a < 112) * 255).astype(np.uint8)  # tinta: limiar mais fino que o do esqueleto
+mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
+cs, hier = cv2.findContours(mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
+INK = ""
+for c in cs:
+    if cv2.contourArea(c) < 12:
+        continue
+    if c[:, 0, 1].mean() < H * 0.14:
+        continue  # sombra do topo do recorte
+    pts = c[:, 0, :].astype(float)
+    k = np.ones(5) / 5  # suaviza o contorno (circular)
+    pts = np.stack([np.convolve(np.r_[pts[-2:, a], pts[:, a], pts[:2, a]], k, "valid") for a in (0, 1)], 1)
+    pts = pts[::4]
+    if len(pts) < 4:
+        continue
+    INK += path_d(list(pts) + [pts[0]], closed=True)
+
+dist = cv2.distanceTransform(mask, cv2.DIST_L2, 5)
+thick = float(np.percentile(dist[sk > 0], 95)) * 2 * sc
+sig = {"vb": [1000, float(round((y1 - y0) * sc, 1))], "w": round(thick * 1.9 + 3, 1), "ink": INK, "d": D}
+json.dump(sig, open(OUT, "w"), separators=(",", ":"))
+print(len(D), "gestos", sig["vb"], "espessura", round(thick, 1), "máscara", sig["w"], len(INK), "chars de tinta")

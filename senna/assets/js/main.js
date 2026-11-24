@@ -4,13 +4,26 @@ if("scrollRestoration" in history)history.scrollRestoration="manual";
 scrollTo(0,0);
 const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches,touch=matchMedia("(hover:none)").matches;
 if(reduce)document.body.classList.add("reduce");
-let started=false,landed=false,vw=innerWidth,vh=innerHeight,cy=0;
+let started=false,vw=innerWidth,vh=innerHeight,cy=0,vel=0,svel=0;
+
+/* rolagem suave com inércia (roda do mouse e trackpad). Toque, teclado e barra
+   de rolagem continuam nativos; a posição real da página é sempre a do navegador,
+   então o palco fixo (position: sticky) e os links continuam funcionando. */
+const smooth=(()=>{if(reduce||touch)return null;let target=scrollY,cur=scrollY,on=false;
+ const max=()=>document.documentElement.scrollHeight-innerHeight;
+ addEventListener("wheel",e=>{if(e.ctrlKey||document.body.classList.contains("lock"))return;e.preventDefault();
+  if(!on){target=cur=scrollY}const d=e.deltaY*(e.deltaMode===1?36:e.deltaMode===2?innerHeight:1);target=cl(target+d,0,max());on=true},{passive:false});
+ addEventListener("scroll",()=>{if(!on)target=cur=scrollY},{passive:true});
+ addEventListener("keydown",()=>{on=false},{passive:true});
+ addEventListener("pointerdown",()=>{on=false},{passive:true});
+ return{tick(dt){if(!on)return;cur+=(target-cur)*(1-Math.pow(.9,dt*60));if(Math.abs(target-cur)<.4){cur=target;on=false}scrollTo(0,cur)},
+  to(y){if(!on)cur=scrollY;target=cl(y,0,max());on=true}}})();
 
 /* grão animado (mesmo canvas do Plazza) */
 (()=>{const c=$("#grain"),g=c.getContext("2d");c.width=c.height=160;const d=g.createImageData(160,160);for(let i=0;i<d.data.length;i+=4){const v=Math.random()*255|0;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}g.putImageData(d,0,0);c.style.backgroundImage="url("+c.toDataURL()+")";c.style.backgroundSize="160px";g.clearRect(0,0,160,160);c.width=c.height=1})();
 
 /* assinaturas */
-fill($("#sigMini"));
+fill($("#sigMini"),{pen:true});
 const sigHero=$("#sigHero");fill(sigHero);
 sigWrite("#sigFt",2.8);
 
@@ -57,13 +70,17 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return
 $$("[data-r],.title,.epi-title,.helmet-rule").forEach(el=>io.observe(el));
 
 /* navegação */
-$$("[data-go]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const el=document.getElementById(a.dataset.go);if(!el)return;let y=docTop(el);if(el.classList.contains("step"))y+=Math.max(0,(el.offsetHeight-vh)/2)+vh*.1;scrollTo({top:a.dataset.go==="top"?0:y,behavior:reduce?"auto":"smooth"})}));
+$$("[data-go]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const el=document.getElementById(a.dataset.go);if(!el)return;let y=docTop(el);if(el.classList.contains("step"))y+=Math.max(0,(el.offsetHeight-vh)/2)+vh*.1;const ty=a.dataset.go==="top"?0:y;if(smooth)smooth.to(ty);else scrollTo({top:ty,behavior:reduce?"auto":"smooth"})}));
 
 /* laço de animação: valores suavizados pelo mesmo lerp de rolagem do Plazza */
-const sig2=$("#sigHero");let last=performance.now();
+const cards=$$(".card");let last=performance.now();
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;
- const ty=scrollY;if(reduce)cy=ty;else{const k=1-Math.pow(touch?.00006:.0006,dt);cy+=(ty-cy)*k;if(Math.abs(ty-cy)<.05)cy=ty}
- if(!dirty&&Math.abs(cy-lcy)<.02)return;lcy=cy;dirty=false;
+ smooth&&smooth.tick(dt);
+ const ty=scrollY,prev=cy;if(reduce||smooth)cy=ty;else{const k=1-Math.pow(.00006,dt);cy+=(ty-cy)*k;if(Math.abs(ty-cy)<.05)cy=ty}
+ vel=dt>0?(cy-prev)/(dt*60):0;svel+=(vel-svel)*.12;if(Math.abs(svel)<.01)svel=0;
+ if(!dirty&&Math.abs(cy-lcy)<.02&&!svel)return;lcy=cy;dirty=false;
+ /* a velocidade da rolagem vira "vento": cartões e fotos inclinam levemente */
+ const sk=reduce?0:cl(-svel*.05,-2.2,2.2);cards.forEach(c=>c.style.transform=sk?`skewY(${sk.toFixed(3)}deg)`:"");
  const maxS=Math.max(1,document.documentElement.scrollHeight-vh);$("#prog").style.transform=`scaleX(${(cy/maxS).toFixed(4)})`;
  document.body.classList.toggle("past",cy>vh*.8);
  /* hero: parallax — letras mais lentas, carro sai pela esquerda */
@@ -80,7 +97,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
   P.forEach((o,k)=>{const t=ent[k];if(t<=0||(k+2<n&&ent[k+2]>=1)){if(o.vis!==0){o.el.style.visibility="hidden";o.vis=0}return}
    if(o.vis!==1){o.el.style.visibility="visible";o.vis=1}
    const e=EO(t),d=k+1<n?EO(ent[k+1]):0,lp=cl((p-first[k]+.3)/(span[k]+.3));
-   let y=(1-e)*vh*.95-d*vh*.035,rot=o.r+(1-e)*9+d*(k%2?-2.2:2.2),s=(1+(1-e)*.06)*(1-d*.05);
+   let y=(1-e)*vh*.95-d*vh*.035,rot=o.r+(1-e)*9+d*(k%2?-2.2:2.2)+sk*.6*(1-d),s=(1+(1-e)*.06)*(1-d*.05);
    if(reduce){y=0;rot=o.r;s=1}
    o.el.style.transform=`translate3d(0,${y.toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${s.toFixed(4)})`;
    o.el.style.opacity=reduce?cl(t*2).toFixed(3):"";
