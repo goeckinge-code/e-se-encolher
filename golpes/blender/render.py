@@ -12,6 +12,7 @@ GOLPES = os.path.dirname(HERE)
 args = sys.argv[sys.argv.index('--') + 1:]
 ep, sid, mode = args[0], args[1], args[2]
 RES = float(args[args.index("--res") + 1]) if "--res" in args else 1.0
+AA = args[args.index("--aa") + 1] if "--aa" in args else None     # suavização (5, 8, 11, 16)
 EPD = os.path.join(GOLPES, ep)
 sys.path.insert(0, HERE); sys.path.insert(0, EPD)
 
@@ -25,6 +26,7 @@ def frame(t):
 scn = bpy.context.scene
 scn.render.resolution_x, scn.render.resolution_y = int(R.W * RES), int(R.H * RES)
 scn.render.image_settings.file_format = 'JPEG'; scn.render.image_settings.quality = 92
+if AA: scn.display.render_aa = AA
 OUT = os.path.join(GOLPES, "renders", ep)
 
 if mode == "still":
