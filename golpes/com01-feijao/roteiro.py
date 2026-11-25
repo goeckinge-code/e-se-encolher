@@ -23,7 +23,7 @@ PRODUTO = {
 SHOTS = [
     # ---------------------------------------------------------------- 1. A DISPUTA (abre de longe e entra no meio da confusão)
     dict(id="f01", text="", dur=4.2,
-         big=[("CONFUSÃO NO MERCADO!", 1.0, "w", 0.15)], pills=[("FEIJÃO GALANTE", "pack", 2.0, "#1E4FC2")],
+         big=[("CONFUSÃO NO MERCADO!", 1.0, "w", 0.2)], pills=[("FEIJÃO GALANTE", "pack", 2.0, "#1E4FC2")],
          sfx=[(0.2, "briga"), (1.2, "briga"), (2.2, "briga"), (3.2, "briga")]),
     # ---------------------------------------------------------------- 2. ENTRA O APRESENTADOR
     dict(id="f02", text="Atenção, pessoal! Baixou o preço do melhor feijão da região: o Feijão Galante tá quase de graça!",

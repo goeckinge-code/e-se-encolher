@@ -113,8 +113,9 @@ def build(seed=1, produto=None):
             box(f"light{i}_{j}", "#FFFFFF", (2.2, 0.35, 0.08), (i, j * 2.2, 6.45), bevel=0.02)
             box(f"lightf{i}_{j}", "#D5D8DC", (2.3, 0.45, 0.04), (i, j * 2.2, 6.5), bevel=0.0)
     # faixas e bandeirinhas
-    box("banner", "#E53935", (6.0, 0.15, 0.9), (0, 11.8, 4.9), bevel=0.06)
-    text("banner_t", "SUPER OFERTAS", "#FFFFFF", 0.62, (0, 11.68, 4.9))
+    box("banner", "#1E4FC2", (8.4, 0.15, 1.0), (0, 11.8, 4.9), bevel=0.06)
+    box("banner_b", "#FFD23F", (8.6, 0.12, 1.12), (0, 11.86, 4.9), bevel=0.06)
+    text("banner_t", "GALANTE EM PROMOÇÃO", "#FFFFFF", 0.58, (0, 11.68, 4.9))
     for k in range(-14, 15):
         o = box(f"flag{k}", ["#E74C3C", "#F1C40F", "#2E86DE", "#2ECC71"][k % 4], (0.35, 0.03, 0.4), (k * 0.45, 3.0, 5.6 - 0.12 * math.cos(k * 0.25)),
                 rot=(0, math.pi / 4, 0), bevel=0)

@@ -44,33 +44,62 @@ def roda(center=(0, 0), r=1.15, seed=3):
     return ppl
 
 def briga(ppl, t, k=1.0, center=(0, 0)):
-    """Confusão: inclinam para o centro, braços tentando pegar, corpo chacoalhando."""
+    """Confusão: inclinam para o centro, braços tentando pegar, corpo chacoalhando, caras de esforço e grito."""
     for i, (p, a) in enumerate(ppl):
         ph = i * 1.7
         p.pose(t, armL=lerp(0.3, 2.3 + 0.5 * math.sin(t * 7 + ph), k), armR=lerp(0.3, 2.0 + 0.6 * math.sin(t * 7 + ph + 2.4), k),
                armLs=0.15 * k, armRs=0.15 * k, elbL=0.2, elbR=0.25, lean=0.22 * k, bob=2.5, phase=ph,
                head=(0, 0.15 * math.sin(t * 6 + ph) * k, 0))
         p.root.location.z = abs(math.sin(t * 8 + ph)) * 0.08 * k
-        p.expr("o" if math.sin(t * 5 + ph) > 0 else "flat", "angry"); p.blink(t, off=ph)
+        cyc = int(t * 2.2 + i * 0.7) % 3                 # troca de cara a cada ~0,45 s
+        p.expr(["teeth", "shout", "teeth"][cyc], "angry")
+        p.eyes_(["squint", "wide", "normal"][cyc]); p.blink(t, off=ph)
 
-def pack_disputa(pk, t, z0=2.45, center=(0, 0)):
-    pk.location = (center[0] + 0.45 * math.sin(t * 2.3), center[1] + 0.35 * math.sin(t * 1.7 + 1), z0 + 0.22 * abs(math.sin(t * 4.5)))
-    pk.rotation_euler = (0.3 * math.sin(t * 3.1), 0.4 * math.sin(t * 2.2), 0.9 * math.sin(t * 1.3))
+def pack_disputa(pk, t, z0=2.35, center=(0, 0), hop=0.42):
+    """O pacote pula de mão em mão: arco de um lado para o outro da roda, girando."""
+    n = int(t / hop); u = t / hop - n
+    def spot(k):
+        r = random.Random(k * 7919)
+        a = r.uniform(0, 2 * math.pi)
+        return (center[0] + math.sin(a) * 0.75, center[1] + math.cos(a) * 0.6, z0 + r.uniform(-0.1, 0.15))
+    a, b = spot(n), spot(n + 1)
+    e = smooth(u)
+    pk.location = (lerp(a[0], b[0], e), lerp(a[1], b[1], e), lerp(a[2], b[2], e) + math.sin(u * math.pi) * 0.75)
+    r = random.Random(n)
+    pk.rotation_euler = (r.uniform(-0.6, 0.6) * math.sin(u * math.pi), r.uniform(-0.5, 0.5) * math.sin(u * math.pi),
+                         r.uniform(-1, 1) + u * (r.choice([-1, 1]) * 3.0))
 
-def poeira(name, n=10, center=(0, 0)):
-    """Nuvem de poeira de briga de desenho, no pé da roda."""
+def poeira(name, n=22, center=(0, 0)):
+    """Nuvem de briga de desenho: bolas de poeira que nascem, incham e somem em volta da roda (embaixo e no meio)
+    + estrelinhas e pedacinhos voando para fora."""
     items = []
     for i in range(n):
-        o = sphere(f"{name}{i}", "#F4F6F7", 0.35, (0, 0, 0), scale=(1, 1, 0.8))
-        items.append((o, i / n * 2 * math.pi))
+        o = sphere(f"{name}{i}", ["#FFFFFF", "#F2F3F4", "#E5E8E8"][i % 3], 0.5, (0, 0, 0))
+        items.append((o, i / n * 2 * math.pi, 0.25 if i % 3 else 1.25, random.Random(i).uniform(0, 1)))
+    stars = []
+    for i in range(6):
+        g = empty(f"{name}_st{i}", (0, 0, 0))
+        for k in range(3):
+            box(f"{name}_st{i}_{k}", "#FFD23F", (0.26, 0.04, 0.07), (0, 0, 0), g, rot=(0, k * math.pi / 3, 0), bevel=0.01)
+        stars.append((g, i))
     def anim(t, k=1.0):
-        for o, a in items:
-            aa = a + t * 2.2
-            r = 1.5 + 0.15 * math.sin(t * 6 + a * 3)
-            o.location = (center[0] + math.sin(aa) * r, center[1] + math.cos(aa) * r, 0.25 + 0.15 * abs(math.sin(t * 5 + a)))
-            s = (0.45 + 0.3 * abs(math.sin(t * 4 + a * 2))) * k
-            o.scale = (0.7 * s, 0.7 * s, 0.55 * s)
-            o.hide_render = k < 0.05
+        for o, a, z, off in items:
+            life = (t * 1.6 + off) % 1.0                         # cada bola: nasce, cresce, some
+            aa = a + t * 2.6 + off
+            r = (1.35 if z < 1 else 1.05) + 0.35 * life
+            o.location = (center[0] + math.sin(aa) * r, center[1] + math.cos(aa) * r, z + 0.3 * life + 0.08 * math.sin(t * 9 + a))
+            sc = math.sin(life * math.pi) * (0.75 if z < 1 else 0.5) * k
+            o.scale = (sc, sc, sc * 0.85)
+            o.hide_render = sc < 0.03
+        for g, i in stars:
+            life = (t * 1.3 + i / 6) % 1.0
+            a = i * 1.05 + int(t * 1.3 + i / 6) * 2.3
+            g.location = (center[0] + math.sin(a) * (0.6 + 1.6 * life), center[1] + math.cos(a) * (0.6 + 1.6 * life) - 0.3,
+                          2.6 + 1.0 * math.sin(life * math.pi) - 0.4 * life)
+            g.rotation_euler = (0, life * 9, 0)
+            s_ = math.sin(life * math.pi) * 1.3 * k
+            g.scale = (s_, s_, s_); g.hide_render = s_ < 0.05
+            for c in g.children: c.hide_render = g.hide_render
     return anim
 
 def cenario(with_roda=True):
@@ -141,33 +170,58 @@ def f03(sh):
 @shot
 def f04(sh):
     S = cenario()
-    big = mercado.caixa("bigpack", (0.55, -3.0, 0.0), s=3.4, rot=(0, 0, 0))
-    pot = empty("pot", (-0.85, -3.6, 0))
-    cyl("pot_b", "#5D6D7E", 0.45, 0.55, (0, 0, 0.75), pot)
-    cyl("pot_i", "#7B4A2E", 0.4, 0.56, (0, 0, 0.77), pot)
-    box("pot_st", "#7F8C8D", (1.1, 1.1, 0.5), (0, 0, 0.25), pot, bevel=0.06)
-    for sx in (-1, 1): box(f"pot_h{sx}", "#34495E", (0.18, 0.08, 0.08), (sx * 0.52, 0, 0.95), pot, bevel=0.02)
-    steam = [sphere(f"st{i}", "#FFFFFF", 0.12, (0, 0, 0)) for i in range(6)]
-    beans = [sphere(f"bean{i}", "#A9744F", 0.05, (0, 0, 0), scale=(1.3, 0.8, 0.9)) for i in range(18)]
-    h = gerente((-1.5, -2.2, 0), rotz=-0.35)
-    empty("b1", (0.55, -3.3, 2.4)); empty("b2", (-0.85, -3.6, 1.6)); empty("b3", (0.55, -3.3, 1.2))
+    big = mercado.caixa("bigpack", (0.5, -3.0, 0.0), s=3.0)
+    # fogão com chama + panela com borda, alças e tampa entreaberta
+    stove = empty("stove", (-0.85, -3.6, 0))
+    box("stv_b", "#ECF0F1", (1.3, 1.1, 0.75), (0, 0, 0.375), stove, bevel=0.06)
+    box("stv_f", "#BDC3C7", (1.0, 0.04, 0.45), (0, -0.56, 0.36), stove, bevel=0.03)
+    for kx in (-0.3, 0.0, 0.3): cyl(f"stv_k{kx}", "#2C3E50", 0.05, 0.06, (kx, -0.58, 0.68), stove, rot=(math.pi / 2, 0, 0), verts=12)
+    box("stv_t", "#2C3E50", (1.3, 1.1, 0.04), (0, 0, 0.77), stove, bevel=0.01)
+    flames = [box(f"flame{i}", ["#FF7043", "#FFB300", "#FF5722"][i % 3], (0.08, 0.08, 0.16), (math.sin(i * 1.05) * 0.32, math.cos(i * 1.05) * 0.32, 0.85),
+                  stove, bevel=0.03) for i in range(6)]
+    pot = empty("pot", (0, 0, 0.8), stove)
+    cyl("pot_b", "#566573", 0.48, 0.6, (0, 0, 0.3), pot, verts=28)
+    cyl("pot_r", "#7F8C8D", 0.52, 0.06, (0, 0, 0.6), pot, verts=28)
+    level = cyl("pot_i", "#8D5A3B", 0.44, 0.05, (0, 0, 0.3), pot, verts=28)        # feijão subindo dentro
+    for sx in (-1, 1): box(f"pot_h{sx}", "#2C3E50", (0.2, 0.1, 0.08), (sx * 0.6, 0, 0.5), pot, bevel=0.03)
+    lid = empty("lid", (0.35, 0.3, 0.64), pot)
+    cyl("lid_b", "#7F8C8D", 0.5, 0.05, (-0.35, -0.3, 0), lid, verts=28)
+    box("lid_k", "#2C3E50", (0.12, 0.12, 0.08), (-0.35, -0.3, 0.06), lid, bevel=0.03)
+    lid.rotation_euler = (0.35, -0.25, 0)
+    steam = [sphere(f"st{i}", "#FFFFFF", 0.5, (0, 0, 0)) for i in range(12)]
+    beans = [sphere(f"bean{i}", random.Random(i).choice(["#A9744F", "#8D5A3B", "#B9845A"]), 0.05, (0, 0, 0), scale=(1.35, 0.85, 0.9)) for i in range(26)]
+    splash = [sphere(f"spl{i}", "#A9744F", 0.035, (0, 0, 0)) for i in range(8)]
+    h = gerente((-1.55, -2.0, 0), rotz=-0.35)
+    empty("b1", (0.5, -3.3, 2.1)); empty("b2", (-0.85, -3.6, 1.6)); empty("b3", (0.5, -3.3, 1.0))
     cam = camera(32)
-    c = pushcam(cam, sh, (0.0, -10.0, 2.9), (0.0, -8.9, 2.7), (-0.1, -2.6, 1.6))
+    c = pushcam(cam, sh, (0.0, -10.6, 2.9), (0.0, -9.5, 2.7), (-0.15, -2.6, 1.5))
     t_g, t_s, t_r = R.wt(sh, "Grãos"), R.wt(sh, "sabor"), R.wt(sh, "rendimento")
+    src = (0.2, -3.25, 1.85); dst = (-0.85, -3.6, 1.45)
     def f(t):
-        briga(S["roda"], t); pack_disputa(S["pack"], t); S["poeira"](t)
-        big.rotation_euler.z = 0.25 * math.sin(t * 1.1)
+        briga(S["roda"], t); pack_disputa(S["pack"], t); S["poeira"](t, 0.7)
+        big.rotation_euler = (0, 0.12 * smooth(ramp(t, t_g - 0.4, 0.5)), 0.2 * math.sin(t * 1.1))   # inclina para "despejar"
         pop(big, t, 0.05, 0.4)
-        h.talk(t, sh["words"])
-        h.pose(t, armR=1.3, armRs=0.7, elbR=0.1, armL=0.3, bob=2); h.blink(t)
-        for i, b in enumerate(beans):          # grãos pulando do pacote para a panela
-            k = ((t - t_g - i * 0.09) % 1.0)
-            b.location = (lerp(0.3, -0.85, k), lerp(-3.2, -3.6, k), 2.2 + math.sin(k * math.pi) * 0.9 - k * 1.2)
-            b.rotation_euler = (k * 8, k * 5, 0); b.hide_render = t < t_g + i * 0.09
-        for i, s_ in enumerate(steam):
-            k = ((t * 0.6 + i / 6) % 1.0)
-            s_.location = (-0.85 + 0.15 * math.sin(t * 2 + i), -3.6, 1.15 + k * 1.3)
-            sc = 0.12 + 0.12 * k; s_.scale = (2 * sc,) * 3; s_.hide_render = t < t_r - 0.3
+        h.talk(t, sh["words"]); h.eyes_("normal")
+        h.pose(t, armR=1.3, armRs=0.7, elbR=0.1, armL=0.3 + 0.3 * max(0, math.sin(t * 3)), bob=2); h.blink(t)
+        for i, fl in enumerate(flames):                  # chama tremendo
+            fl.scale = (1, 1, 0.7 + 0.5 * abs(math.sin(t * 13 + i * 2.1)))
+        for i, b in enumerate(beans):                    # grãos em arco do pacote para a panela, girando
+            k = ((t - t_g - i * 0.07) % 0.9) / 0.9
+            b.location = (lerp(src[0], dst[0], k) + 0.08 * math.sin(i * 2.3), lerp(src[1], dst[1], k) + 0.06 * math.cos(i * 1.7),
+                          lerp(src[2], dst[2], k) + math.sin(k * math.pi) * 0.75)
+            b.rotation_euler = (k * 9 + i, k * 6, i); b.hide_render = t < t_g + i * 0.07
+        for i, sp in enumerate(splash):                  # respingos quando os grãos caem
+            k = ((t - t_g - 0.9 - i * 0.11) % 0.45) / 0.45
+            a = i * 0.785
+            sp.location = (dst[0] + math.sin(a) * 0.3 * k, dst[1] + math.cos(a) * 0.25 * k, dst[2] + 0.05 + math.sin(k * math.pi) * 0.25)
+            sp.hide_render = t < t_g + 0.9
+        level.location.z = 0.3 + 0.22 * smooth(ramp(t, t_g + 0.9, 3.0))         # a panela vai enchendo
+        for i, st in enumerate(steam):                   # fumaça: nasce pequena, sobe em espiral e cresce
+            life = (t * 0.55 + i / 12) % 1.0
+            a = life * 5 + i
+            st.location = (-0.85 + 0.12 * math.sin(a) + 0.25 * life, -3.6 + 0.08 * math.cos(a), 1.55 + life * 1.9)
+            sc = (0.12 + 0.4 * life) * math.sin(min(1, life * 1.3) * math.pi * 0.95 + 0.05)
+            st.scale = (sc, sc, sc * 0.9); st.hide_render = sc < 0.02
         c(t)
     return f, ["b1", "b2", "b3"]
 
@@ -202,8 +256,7 @@ def f06(sh):
                 briga([(p, a)], t); continue
             if t < t_go:                         # congela e olha para o apresentador, chocado
                 p.pose(t, armL=1.8, armR=1.6, elbL=0.2, elbR=0.2, lean=-0.05, bob=0, head=(0.1, 0, 0.5))
-                p.expr("o", "up")
-                for e in p.eyes: e.scale = (1.4, 1, 1.5)
+                p.expr("shout", "up"); p.eyes_("wide")      # susto!
                 continue
             k = clamp((t - t_go) / 1.2)
             x0, y0 = math.sin(a) * 1.15, math.cos(a) * 1.15
@@ -212,13 +265,13 @@ def f06(sh):
                 x1, y1 = GPOS
                 p.root.location = (lerp(x0, x1, e), lerp(y0, y1, e), max(0, math.sin(clamp(k * 3) * math.pi) * 0.4))
                 p.root.rotation_euler.z = face_to(x1, y1)
-                p.pose(t, armL=1.6, armR=1.6, elbL=0.6, elbR=0.6, bob=0); p.expr("o", "up")
+                p.pose(t, armL=1.6, armR=1.6, elbL=0.6, elbR=0.6, bob=0); p.expr("o", "up"); p.eyes_("wide")
                 continue
             x1, y1 = FORA[i]                     # salto para trás e corrida para as bordas
             p.root.location = (lerp(x0, x1 * 1.15, e), lerp(y0, y1 + 0.3, e), max(0, math.sin(clamp(k * 2.5) * math.pi) * 0.6))
             p.root.rotation_euler.z = lerp(face_in(a), face_to(x0, y0, x1 * 3, y1 * 3), smooth(k * 3))
             p.pose(t, walk=1.8, armL=2.8, armR=2.8, armLs=0.6, armRs=0.6, bob=0)
-            p.expr("o", "up")
+            p.expr("shout", "up"); p.eyes_("wide")      # foge gritando
         if t < t_fz: pack_disputa(pk, t)
         else:                                     # o pacote cai no chão quando largam
             k = clamp((t - t_go) / 0.5)
@@ -247,7 +300,8 @@ def fora(S):
 def invejosos(S, t):
     for i, (p, a) in enumerate(S["roda"]):
         if i == G: continue
-        p.pose(t, armL=0.4, armR=0.4, elbL=1.0, elbR=1.0, bob=1, phase=i); p.expr("sad", "sad"); p.blink(t, off=i)
+        p.pose(t, armL=0.4, armR=0.4, elbL=1.0, elbR=1.0, bob=1, phase=i, head=(0, 0.12 * math.sin(i), 0))
+        p.expr("sad" if i % 2 else "flat", "sad"); p.eyes_("squint" if i % 3 == 0 else "normal"); p.blink(t, off=i)   # inveja
 
 @shot
 def f07(sh):
@@ -268,11 +322,11 @@ def f07(sh):
         g.root.location = (gx, gy, 0)
         g.root.rotation_euler.z = lerp(face_to(*GPOS), 0.0, smooth((t - 0.9) / 0.4))
         if t < t_pick:                            # vai de mansinho até o pacote
-            g.pose(t, walk=1.0, bob=1, lean=0.1); g.expr("grin")
+            g.pose(t, walk=1.0, bob=1, lean=0.1); g.expr("grin", "angry"); g.eyes_("squint")   # de mansinho, esperto
         elif t < t_up:                            # abaixa e pega
-            g.pose(t, armL=0.9, armR=0.9, elbL=0.2, elbR=0.2, lean=0.5, bob=0); g.expr("grin")
+            g.pose(t, armL=0.9, armR=0.9, elbL=0.2, elbR=0.2, lean=0.5, bob=0); g.expr("teeth", "up"); g.eyes_("normal")
         else:                                     # ergue acima da cabeça, como um troféu
-            g.pose(t, armL=2.95, armR=2.95, armLs=0.15, armRs=0.15, elbL=0.15, elbR=0.15, bob=3); g.expr("grin")
+            g.pose(t, armL=2.95, armR=2.95, armLs=0.15, armRs=0.15, elbL=0.15, elbR=0.15, bob=3); g.expr("shout", "up"); g.eyes_("happy")   # vitória!
         g.blink(t)
         if t < t_pick + 0.2:
             pk.location = (0, 0, 0); pk.rotation_euler = (0, 0, 0)
@@ -301,6 +355,7 @@ def f08(sh):
         S["poeira"](t, k=0)
         invejosos(S, t)
         h.pose(t, armR=1.6, elbR=1.3, bob=1.5); h.expr("grin"); h.blink(t)
+        g.eyes_("happy" if t > R.wt(sh, "melhor") else "normal")
         g.talk(t, sh["words"])
         g.pose(t, armR=0.9, armRs=0.0, elbR=1.1, armL=2.7 if t < t_f else 0.9, elbL=0.3 if t < t_f else 1.1,
                armLs=0.3 if t < t_f else 0.0, bob=2.5)

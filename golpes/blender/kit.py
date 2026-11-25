@@ -230,6 +230,16 @@ class Person:
         g = empty(n + "_m_o", (0, y, 0.13), h)
         box(n + "_mo1", mc, (0.09, 0.02, 0.11), (0, 0, 0), g, bevel=0.02)
         self.mouths["o"] = g
+        g = empty(n + "_m_teeth", (0, y, 0.13), h)       # dentes cerrados (raiva, esforço)
+        box(n + "_mt1", "#4A1C1C", (0.24, 0.02, 0.1), (0, 0, 0), g, bevel=0.02)
+        box(n + "_mt2", "#FFFFFF", (0.2, 0.025, 0.035), (0, -0.002, 0.018), g, bevel=0.005)
+        box(n + "_mt3", "#FFFFFF", (0.2, 0.025, 0.03), (0, -0.002, -0.022), g, bevel=0.005)
+        self.mouths["teeth"] = g
+        g = empty(n + "_m_shout", (0, y, 0.12), h)       # boca bem aberta (grito, susto)
+        box(n + "_mh1", "#5A1A22", (0.2, 0.02, 0.17), (0, 0, 0), g, bevel=0.04)
+        box(n + "_mh2", "#E57373", (0.13, 0.022, 0.05), (0, -0.002, -0.05), g, bevel=0.02)
+        box(n + "_mh3", "#FFFFFF", (0.15, 0.024, 0.03), (0, -0.003, 0.065), g, bevel=0.01)
+        self.mouths["shout"] = g
         g = empty(n + "_m_flat", (0, y, 0.14), h)
         box(n + "_mf1", mc, (0.15, 0.02, 0.03), (0, 0, 0), g, bevel=0.01)
         self.mouths["flat"] = g
@@ -265,11 +275,11 @@ class Person:
 
     def expr(self, name, brows=None):
         for k, g in self.mouths.items(): show(g, k == name)
-        b = brows or {"sad": "sad", "o": "up", "grin": "up"}.get(name, "flat")
+        b = brows or {"sad": "sad", "o": "up", "grin": "up", "teeth": "angry", "shout": "up"}.get(name, "flat")
         for i, br in enumerate(self.brows):
             sx = -1 if i == 0 else 1
             br.rotation_euler = (0, {"sad": sx * 0.35, "angry": -sx * 0.35, "up": 0, "flat": 0}[b], 0)
-            br.location.z = 0.47 if b == "up" else 0.45
+            br.location.z = 0.48 if b == "up" else (0.43 if b == "angry" else 0.45)
 
     def pose(self, t, armL=0.0, armR=0.0, armLs=0.0, armRs=0.0, head=(0, 0, 0), bob=1.0, walk=0.0, phase=0.0,
              elbL=None, elbR=None, lean=0.0):
@@ -303,6 +313,11 @@ class Person:
         self.head.rotation_euler = (hx + math.sin(t * 2.9 + ph) * 0.035 * bob, hy + math.sin(t * 0.9 + ph) * 0.03 * bob,
                                     hz + math.sin(t * 0.7 + ph * 2) * 0.08 * bob)
 
+    def eyes_(self, kind="normal"):
+        """Olhos: normal, wide (arregalados), squint (apertados de raiva/esforço), happy (fechadinhos de alegria)."""
+        sc = {"normal": (1, 1, 1), "wide": (1.45, 1, 1.6), "squint": (1.15, 1, 0.38), "happy": (1.2, 1, 0.22)}[kind]
+        for e in self.eyes: e.scale = sc; e["bz"] = sc[2]
+
     def talk(self, t, words, rest="grin", brows=None):
         """Boca no ritmo da fala: abre e fecha em cada sílaba das palavras (lista de (ini, fim, palavra)).
         Fora das palavras fica na expressão `rest`."""
@@ -311,7 +326,8 @@ class Person:
                 n = max(1, sum(ch in "aeiouáéíóúãõâêô" for ch in w.lower()))   # ~sílabas
                 ph = (t - a) / (b - a) * n
                 k = ph - int(ph)
-                self.expr("o" if 0.15 < k < 0.75 else ("flat" if k < 0.15 else "smile"), brows or "up")
+                big = (int(ph) + len(w)) % 3 == 0 or w.endswith("!")
+                self.expr(("shout" if big else "o") if 0.15 < k < 0.75 else ("flat" if k < 0.15 else "grin"), brows or "up")
                 self.head.rotation_euler.x += 0.04 * math.sin(ph * math.pi)        # cabeça acompanha a fala
                 return True
         self.expr(rest, brows)
@@ -319,7 +335,7 @@ class Person:
 
     def blink(self, t, every=3.1, off=0.0):
         k = ((t + off + 1.5) % every) < 0.09
-        for e in self.eyes: e.scale.z = 0.15 if k else 1.0
+        for e in self.eyes: e.scale.z = (0.15 if k else 1.0) * e.get("bz", 1.0)
 
 def _shade(h, f):
     h = h.lstrip('#'); c = [min(255, int(int(h[i:i + 2], 16) * f)) for i in (0, 2, 4)]
