@@ -44,8 +44,8 @@ SHOTS = [
     dict(id="f08", text="Finalmente! Consegui pegar o melhor feijão do mercado!", cap=0.86),
     dict(id="f09", text="", dur=6.0, packshot=True,
          title=("GERENTE\nFICOU LOUCO", 0.25),
-         texts=[("Qualidade excepcional, sabor de verdade e preço de promoção!", 1.2, 0.78, "w"),
-                ("Corra para o supermercado e aproveite!", 2.6, 0.91, "g")],
+         texts=[("Qualidade excepcional, sabor de verdade e preço de promoção!", 1.2, 0.765, "w"),
+                ("Corra para o supermercado e aproveite!", 2.6, 0.905, "g")],
          sfx=[(0.0, "whoosh"), (0.25, "fanfare")]),
 ]
 

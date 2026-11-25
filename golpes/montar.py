@@ -25,6 +25,7 @@ F_CAP = font("LilitaOne.ttf", 96)
 F_TIT = font("LilitaOne.ttf", 150)
 F_BIG = font("LilitaOne.ttf", 120)
 F_PILL = font("Nunito-Black.ttf", 46)
+F_TXT = font("LilitaOne.ttf", 74)
 
 def clamp(x, a=0.0, b=1.0): return max(a, min(b, x))
 def back(x, s=2.2):
@@ -103,10 +104,10 @@ def wrapped(txt, fill, width=W - 140):
     words, lines, cur = txt.split(), [], ""
     for w in words:
         test = (cur + " " + w).strip()
-        if F_CAP.getlength(test.upper()) + 20 > width and cur: lines.append(cur); cur = w
+        if F_TXT.getlength(test.upper()) + 20 > width and cur: lines.append(cur); cur = w
         else: cur = test
     lines.append(cur)
-    parts = [outlined(l.upper(), F_CAP, fill) for l in lines]
+    parts = [outlined(l.upper(), F_TXT, fill, sw=8, shadow=6) for l in lines]
     w = max(p.width for p in parts); h = sum(p.height for p in parts) - 14 * (len(parts) - 1)
     im = Image.new("RGBA", (w, h)); y = 0
     for p in parts: im.alpha_composite(p, ((w - p.width) // 2, y)); y += p.height - 14
