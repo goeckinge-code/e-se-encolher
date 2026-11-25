@@ -1,7 +1,7 @@
-"""Comercial 3D: FEIJÃO GERENTE FICOU LOUCO (vertical 9:16, ~36 s, sem voz).
+"""Comercial 3D: FEIJÃO GALANTE (vertical 9:16, ~37 s, sem voz).
 
 Fonte única do texto, dos tempos de cada palavra e dos gráficos de cada plano.
-Rode `python3 golpes/com01-feijao/roteiro.py` para gerar `narracao.txt` (falas do gerente).
+Rode `python3 golpes/com01-feijao/roteiro.py` para gerar `narracao.txt` (falas).
 
 PRODUTO: dados comerciais editáveis. Deixe "" para não aparecer na tela (nada é inventado).
 Cada plano (SHOT): id, text (fala; "" = plano sem fala), dur (só para planos sem fala),
@@ -14,7 +14,7 @@ FPS = 30
 W, H = 1080, 1920
 
 PRODUTO = {
-    "marca": "GERENTE FICOU LOUCO",
+    "marca": "FEIJÃO GALANTE",
     "produto": "FEIJÃO",
     "peso": "",          # ex.: "1 kg"   — vazio = não aparece
     "preco": "",         # ex.: "R$ 0,00" — vazio = não aparece
@@ -23,11 +23,11 @@ PRODUTO = {
 SHOTS = [
     # ---------------------------------------------------------------- 1. A DISPUTA (abre de longe e entra no meio da confusão)
     dict(id="f01", text="", dur=4.2,
-         big=[("CONFUSÃO NO MERCADO!", 1.0, "w", 0.15)], pills=[("FEIJÃO", "pack", 2.0, "#C62828")],
+         big=[("CONFUSÃO NO MERCADO!", 1.0, "w", 0.15)], pills=[("FEIJÃO GALANTE", "pack", 2.0, "#1E4FC2")],
          sfx=[(0.2, "briga"), (1.2, "briga"), (2.2, "briga"), (3.2, "briga")]),
-    # ---------------------------------------------------------------- 2. ENTRA O GERENTE
-    dict(id="f02", text="Gerente Ficou Louco! Baixou o preço do melhor feijão da região e deixou ele quase de graça!",
-         title=("GERENTE\nFICOU LOUCO", "Louco!"), big=[("QUASE DE GRAÇA!", "graça!", "g", 0.30)], whip=True),
+    # ---------------------------------------------------------------- 2. ENTRA O APRESENTADOR
+    dict(id="f02", text="Atenção, pessoal! Baixou o preço do melhor feijão da região: o Feijão Galante tá quase de graça!",
+         title=("FEIJÃO\nGALANTE", "Galante"), big=[("QUASE DE GRAÇA!", "graça!", "g", 0.30)], whip=True),
     dict(id="f03", text="Todo mundo tá querendo, porque além de ser gostoso, tem uma qualidade excepcional!",
          big=[("QUALIDADE EXCEPCIONAL", "excepcional!", "g", 0.17)]),
     dict(id="f04", text="Grãos selecionados, sabor de verdade e um rendimento que enche a panela!",
@@ -38,12 +38,12 @@ SHOTS = [
          big=[("PROMOÇÃO!", "promoção!", "r", 0.17)], cap=0.86),
     dict(id="f06", text="", dur=2.4, big=[("?!", 0.3, "w", 0.2)],
          sfx=[(0.25, "buzz"), (0.95, "boing"), (1.05, "whoosh"), (1.45, "pop")]),
-    # ---------------------------------------------------------------- 4. O GERENTE PEGA O PACOTE
+    # ---------------------------------------------------------------- 4. UMA PESSOA DA CONFUSÃO PEGA O PACOTE
     dict(id="f07", text="", dur=3.4, cap=0.86, sfx=[(1.3, "pop"), (1.7, "fanfare"), (1.7, "boom")]),
-    # ---------------------------------------------------------------- 5. FINAL
-    dict(id="f08", text="Finalmente! Consegui pegar o melhor feijão do mercado!", cap=0.86),
+    # ---------------------------------------------------------------- 5. FINAL (fala da pessoa que pegou o pacote)
+    dict(id="f08", text="Finalmente! Consegui pegar o melhor feijão do mercado!", cap=0.86, voz="cliente"),
     dict(id="f09", text="", dur=6.0, packshot=True,
-         title=("GERENTE\nFICOU LOUCO", 0.25),
+         title=("FEIJÃO\nGALANTE", 0.25),
          texts=[("Qualidade excepcional, sabor de verdade e preço de promoção!", 1.2, 0.765, "w"),
                 ("Corra para o supermercado e aproveite!", 2.6, 0.905, "g")],
          sfx=[(0.0, "whoosh"), (0.25, "fanfare")]),
@@ -99,9 +99,11 @@ def captions(sh):
 
 if __name__ == "__main__":
     here = os.path.dirname(os.path.abspath(__file__))
-    lines = ["FEIJÃO GERENTE FICOU LOUCO — falas do gerente (≈%.0fs de vídeo). Tempos do início de cada plano." % TOTAL, ""]
+    lines = ["FEIJÃO GALANTE — falas (≈%.0fs de vídeo). Tempos do início de cada plano." % TOTAL, ""]
     for sh in SHOTS:
-        if sh["text"]: lines.append(f"[{int(sh['start']//60)}:{sh['start']%60:04.1f}] {sh['text']}")
+        if sh["text"]:
+            quem = "CLIENTE (quem pegou o pacote)" if sh.get("voz") == "cliente" else "APRESENTADOR"
+            lines.append(f"[{int(sh['start']//60)}:{sh['start']%60:04.1f}] {quem}: {sh['text']}")
     open(os.path.join(here, "narracao.txt"), "w").write("\n".join(lines) + "\n")
     print("\n".join(lines))
     print("planos:", len(SHOTS), "total:", TOTAL)

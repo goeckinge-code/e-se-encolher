@@ -17,7 +17,7 @@ PROD_COLORS = ["#E74C3C", "#F1C40F", "#3498DB", "#2ECC71", "#9B59B6", "#E67E22",
 # ------------------------------------------------------------------ embalagem
 def pacote(name, loc=(0, 0, 0), parent=None, s=1.0, rot=(0, 0, 0), produto=None):
     """Pacote de feijão (frente para -y): saco vermelho, faixa amarela com a marca, 'FEIJÃO' e janela com grãos."""
-    P = produto or {"marca": "GERENTE FICOU LOUCO", "produto": "FEIJÃO", "peso": ""}
+    P = produto or {"marca": "FEIJÃO GALANTE", "produto": "FEIJÃO", "peso": ""}
     g = empty(name, loc, parent, rot); g.scale = (s, s, s)
     W_, D_, H_ = 0.44, 0.14, 0.62
     box(name + "_bag", "#C62828", (W_, D_, H_), (0, 0, H_ / 2), g, bevel=0.06)
@@ -92,8 +92,8 @@ def pallet(name, loc, n=(4, 3, 3), produto=None):
         for ix in range(n[0]):
             for iy in range(n[1]):
                 if lz == n[2] - 1 and iy == 0 and ix in (1, 2): continue    # espaço do pacote disputado
-                p = pacote(f"{name}_pk{lz}{ix}{iy}", ((ix - (n[0] - 1) / 2) * 0.5, (iy - (n[1] - 1) / 2) * 0.42 + 0.1, 0.2 + lz * 0.62 * 0.8),
-                           g, s=0.8, produto=produto)
+                p = caixa(f"{name}_pk{lz}{ix}{iy}", ((ix - (n[0] - 1) / 2) * 0.5, (iy - (n[1] - 1) / 2) * 0.42 + 0.1, 0.2 + lz * 0.55 * 0.8),
+                          g, s=0.8)
                 packs.append(p)
     return g, packs
 
@@ -131,3 +131,59 @@ def build(seed=1, produto=None):
     def anim(t):
         pass
     return anim
+
+# ------------------------------------------------------------------ embalagem real (arte do cliente nas 6 faces)
+import os, bpy, bmesh
+GALANTE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "galante")
+_GMATS = {}
+def _face_mat(face):
+    if face in _GMATS: return _GMATS[face]
+    m = bpy.data.materials.new("galante_" + face); m.use_nodes = True
+    nt = m.node_tree; bsdf = nt.nodes.get("Principled BSDF")
+    tex = nt.nodes.new("ShaderNodeTexImage")
+    tex.image = bpy.data.images.load(os.path.join(GALANTE, face + ".png"), check_existing=True)
+    nt.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+    nt.nodes.active = tex
+    _GMATS[face] = m; return m
+
+def caixa(name, loc=(0, 0, 0), parent=None, s=1.0, rot=(0, 0, 0), W_=0.40, H_=0.55, D_=0.28):
+    """Caixa do Feijão Galante (frente para -y), com a arte de cada face. Origem na base."""
+    me = bpy.data.meshes.new(name); bm = bmesh.new()
+    uv = bm.loops.layers.uv.new("UVMap")
+    x, y, z = W_ / 2, D_ / 2, H_
+    V = lambda a, b, c: bm.verts.new((a, b, c))
+    # (face, 4 vértices em ordem anti-horária vista de fora, começando no canto inferior esquerdo da arte)
+    faces = {
+        "frente":   [(-x, -y, 0), (x, -y, 0), (x, -y, z), (-x, -y, z)],
+        "costas":   [(x, y, 0), (-x, y, 0), (-x, y, z), (x, y, z)],
+        "direita":  [(x, -y, 0), (x, y, 0), (x, y, z), (x, -y, z)],
+        "esquerda": [(-x, y, 0), (-x, -y, 0), (-x, -y, z), (-x, y, z)],
+        "topo":     [(-x, -y, z), (x, -y, z), (x, y, z), (-x, y, z)],
+        "base":     [(-x, y, 0), (x, y, 0), (x, -y, 0), (-x, -y, 0)],
+    }
+    order = list(faces)
+    for f in order: me.materials.append(_face_mat(f))
+    for i, f in enumerate(order):
+        fc = bm.faces.new([V(*p) for p in faces[f]]); fc.material_index = i
+        for lp, (u, v) in zip(fc.loops, [(0, 0), (1, 0), (1, 1), (0, 1)]): lp[uv].uv = (u, v)
+    bm.to_mesh(me); bm.free()
+    o = bpy.data.objects.new(name, me); o.location = loc; o.rotation_euler = rot; o.scale = (s, s, s)
+    o.color = kit.hexcol("#1E4FC2")
+    return kit.link(o, parent)
+
+def usar_texturas():
+    """Liga as texturas no Workbench. Objetos sem material ganham um material com a sua cor de objeto."""
+    sc = bpy.context.scene
+    cache = {}
+    for o in bpy.data.objects:
+        if o.type not in ("MESH", "FONT") or o.name.startswith("galante") : continue
+        if o.type == "MESH" and len(o.data.materials) and o.data.materials[0] and o.data.materials[0].name.startswith("galante_"): continue
+        key = tuple(round(c, 4) for c in o.color[:3])
+        if key not in cache:
+            m = bpy.data.materials.new("c%d" % len(cache)); m.diffuse_color = (*key, 1); cache[key] = m
+        o.data.materials.clear() if o.type == "MESH" and o.data.users == 1 else None
+        if o.type == "MESH" and o.data.users > 1:
+            o.data = o.data.copy(); o.data.materials.clear()
+        o.data.materials.append(cache[key]) if not len(o.data.materials) else None
+        o.data.materials[0] = cache[key]
+    sc.display.shading.color_type = 'TEXTURE'
