@@ -1,0 +1,22 @@
+O REI EXILADO, capítulo 2: O Encapuzado (vídeo de 25s, sem voz)
+
+00.0 – 03.0  Vocês escolheram B. E aqui, cada comentário decide o destino do rei.
+03.0 – 05.5  O Rei Exilado. Capítulo dois: o encapuzado.
+05.5 – 09.5  Sem dizer uma palavra, o estranho se levantou... e acendeu uma lanterna de luz azul.
+09.5 – 13.5  O rei o seguiu. Passaram por pedras antigas, com marcas que brilhavam no escuro...
+13.5 – 17.0  ...e por túmulos que ninguém visitava havia cem anos.
+17.0 – 22.0  Até chegarem a um portal em ruínas. Lá dentro, o estandarte do lobo. O mesmo de quem tomou o castelo.
+22.0 – 25.0  O encapuzado sabe demais. Comenta A: o rei confia nele. Comenta B: ele foge durante a noite.
+
+--- TEXTO PARA O ELEVENLABS (copiar e colar) ---
+Vocês escolheram B. E aqui, cada comentário decide o destino do rei.
+
+O Rei Exilado. Capítulo dois: o encapuzado.
+
+Sem dizer uma palavra, o estranho se levantou... e acendeu uma lanterna de luz azul.
+
+O rei o seguiu. Passaram por pedras antigas, com marcas que brilhavam no escuro... e por túmulos que ninguém visitava havia cem anos.
+
+Até chegarem a um portal em ruínas. Lá dentro... o estandarte do lobo. O mesmo de quem tomou o castelo.
+
+O encapuzado sabe demais. Comenta A: o rei confia nele. Comenta B: ele foge durante a noite.
