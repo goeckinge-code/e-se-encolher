@@ -70,18 +70,11 @@ def pack_disputa(pk, t, z0=2.35, center=(0, 0), hop=0.42):
                          r.uniform(-1, 1) + u * (r.choice([-1, 1]) * 3.0))
 
 def poeira(name, n=22, center=(0, 0)):
-    """Nuvem de briga de desenho: bolas de poeira que nascem, incham e somem em volta da roda (embaixo e no meio)
-    + estrelinhas e pedacinhos voando para fora."""
+    """Nuvem de briga de desenho: bolas de poeira que nascem, incham e somem em volta da roda (embaixo e no meio)."""
     items = []
     for i in range(n):
         o = sphere(f"{name}{i}", ["#FFFFFF", "#F2F3F4", "#E5E8E8"][i % 3], 0.5, (0, 0, 0))
         items.append((o, i / n * 2 * math.pi, 0.25 if i % 3 else 1.25, random.Random(i).uniform(0, 1)))
-    stars = []
-    for i in range(6):
-        g = empty(f"{name}_st{i}", (0, 0, 0))
-        for k in range(3):
-            box(f"{name}_st{i}_{k}", "#FFD23F", (0.26, 0.04, 0.07), (0, 0, 0), g, rot=(0, k * math.pi / 3, 0), bevel=0.01)
-        stars.append((g, i))
     def anim(t, k=1.0):
         for o, a, z, off in items:
             life = (t * 1.6 + off) % 1.0                         # cada bola: nasce, cresce, some
@@ -91,15 +84,6 @@ def poeira(name, n=22, center=(0, 0)):
             sc = math.sin(life * math.pi) * (0.75 if z < 1 else 0.5) * k
             o.scale = (sc, sc, sc * 0.85)
             o.hide_render = sc < 0.03
-        for g, i in stars:
-            life = (t * 1.3 + i / 6) % 1.0
-            a = i * 1.05 + int(t * 1.3 + i / 6) * 2.3
-            g.location = (center[0] + math.sin(a) * (0.6 + 1.6 * life), center[1] + math.cos(a) * (0.6 + 1.6 * life) - 0.3,
-                          2.6 + 1.0 * math.sin(life * math.pi) - 0.4 * life)
-            g.rotation_euler = (0, life * 9, 0)
-            s_ = math.sin(life * math.pi) * 1.3 * k
-            g.scale = (s_, s_, s_); g.hide_render = s_ < 0.05
-            for c in g.children: c.hide_render = g.hide_render
     return anim
 
 def cenario(with_roda=True):

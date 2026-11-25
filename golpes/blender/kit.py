@@ -169,12 +169,14 @@ class Person:
         self.root = empty(name, loc, rot=(0, 0, rotz)); self.root.scale = (st["scale"],) * 3
         r = self.root
         self.hip = empty(name + "_hip", (0, 0, 0.78), r)
-        self.legs = []
+        self.legs, self.knees = [], []
         for i, x in enumerate((-0.15, 0.15)):
-            p = empty(f"{name}_leg{i}", (x, 0, 0), self.hip)
-            box(f"{name}_legm{i}", st["pants"], (0.25, 0.27, 0.74), (0, 0, -0.37), p)
-            box(f"{name}_shoe{i}", st["shoes"], (0.27, 0.36, 0.13), (0, -0.04, -0.72), p, bevel=0.04)
-            self.legs.append(p)
+            p = empty(f"{name}_leg{i}", (x, 0, 0), self.hip)                    # quadril
+            box(f"{name}_legm{i}", st["pants"], (0.25, 0.27, 0.4), (0, 0, -0.19), p)
+            kn = empty(f"{name}_knee{i}", (0, 0, -0.37), p)                    # joelho
+            box(f"{name}_shin{i}", st["pants"], (0.24, 0.26, 0.36), (0, 0, -0.17), kn)
+            box(f"{name}_shoe{i}", st["shoes"], (0.27, 0.36, 0.13), (0, -0.04, -0.35), kn, bevel=0.04)
+            self.legs.append(p); self.knees.append(kn)
         self.body = empty(name + "_body", (0, 0, 0), self.hip)
         b = self.body
         box(name + "_torso", st["top"], (0.7, 0.38, 0.74), (0, 0, 0.37), b, bevel=0.05)
@@ -286,7 +288,7 @@ class Person:
         """armX: braço para a frente (rad); armXs: abrir para o lado; elbX: dobra do cotovelo; walk: passo.
         As mudanças de pose são suavizadas no tempo (quadro a quadro), então trocas bruscas viram movimento."""
         tgt = [armL, armR, armLs, armRs, head[0], head[1], head[2], lean,
-               0.35 if elbL is None else elbL, 0.35 if elbR is None else elbR]
+               0.35 if elbL is None else elbL, 0.35 if elbR is None else elbR, walk]
         dt = None if self._lt is None else t - self._lt
         if self._cur is None or dt is None or not (0 < dt <= 0.07):
             cur = list(tgt)
@@ -294,21 +296,27 @@ class Person:
             a = 1 - math.exp(-dt / 0.085)                                     # ~0,1 s para chegar na pose
             cur = [c + (g - c) * a for c, g in zip(self._cur, tgt)]
         self._cur, self._lt = cur, t
-        aL, aR, sL, sR, hx, hy, hz, ln, eL, eR = cur
+        aL, aR, sL, sR, hx, hy, hz, ln, eL, eR, walk = cur
         ph = phase + hash(self.name) % 7
-        w = math.sin(t * 9 + ph) * 0.55 * walk
+        # ciclo de passo: cada perna balança; o joelho dobra quando a perna vem para a frente (fase de balanço)
+        fi = t * 8.5 + ph
+        w = math.sin(fi) * 0.5 * walk
         breathe = math.sin(t * 2.2 + ph)
         self.legs[0].rotation_euler.x = w; self.legs[1].rotation_euler.x = -w
+        self.knees[0].rotation_euler.x = max(0.0, -math.cos(fi)) * 0.95 * walk
+        self.knees[1].rotation_euler.x = max(0.0, math.cos(fi)) * 0.95 * walk
         sway = math.sin(t * 1.3 + ph) * 0.05 * bob
-        self.arms[0].rotation_euler = (-aL - w * 0.8 + sway * 0.6, -sL - 0.04 - 0.02 * breathe, 0)
-        self.arms[1].rotation_euler = (-aR + w * 0.8 - sway * 0.6, sR + 0.04 + 0.02 * breathe, 0)
-        # cotovelo: dobra natural, menos dobrado com o braço esticado para cima, balança ao andar
-        for el, base, arm in ((self.elbows[0], eL, aL), (self.elbows[1], eR, aR)):
+        self.arms[0].rotation_euler = (-aL - w * 0.9 + sway * 0.6, -sL - 0.04 - 0.02 * breathe - 0.06 * walk, 0)
+        self.arms[1].rotation_euler = (-aR + w * 0.9 - sway * 0.6, sR + 0.04 + 0.02 * breathe + 0.06 * walk, 0)
+        # cotovelo: dobra natural, menos dobrado com o braço esticado para cima; ao andar dobra mais no balanço para a frente
+        for el, base, arm, sg in ((self.elbows[0], eL, aL, 1), (self.elbows[1], eR, aR, -1)):
             straight = clamp((arm - 1.6) / 1.2)
-            el.rotation_euler.x = -(base * (1 - 0.7 * straight) + 0.25 * walk * (1 + math.sin(t * 9 + ph)) / 2)
-        self.body.location.z = abs(math.sin(t * 9 + ph)) * 0.06 * walk + breathe * 0.012 * bob
-        self.body.rotation_euler = (ln + 0.04 * walk, 0, math.sin(t * 1.1 + ph) * 0.04 * bob + math.sin(t * 9 + ph) * 0.08 * walk)
-        self.hip.rotation_euler.z = -math.sin(t * 9 + ph) * 0.06 * walk
+            el.rotation_euler.x = -(base * (1 - 0.7 * straight) + 0.45 * walk * max(0.0, sg * math.sin(fi)) + 0.1 * walk)
+        # corpo: sobe no meio do passo (pernas retas), desce na troca; tronco gira contra o quadril
+        self.body.location.z = abs(math.cos(fi)) * 0.05 * walk + breathe * 0.012 * bob
+        self.hip.location.z = 0.78 - (1 - abs(math.cos(fi))) * 0.05 * walk
+        self.body.rotation_euler = (ln + 0.07 * walk, math.sin(fi) * 0.04 * walk, math.sin(t * 1.1 + ph) * 0.04 * bob + math.sin(fi) * 0.12 * walk)
+        self.hip.rotation_euler.z = -math.sin(fi) * 0.1 * walk
         # cabeça viva: pequeno aceno e olhar
         self.head.rotation_euler = (hx + math.sin(t * 2.9 + ph) * 0.035 * bob, hy + math.sin(t * 0.9 + ph) * 0.03 * bob,
                                     hz + math.sin(t * 0.7 + ph * 2) * 0.08 * bob)
