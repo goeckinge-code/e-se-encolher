@@ -1,0 +1,43 @@
+Episódio 7: "Na minha cidade, cada vez que você fica com vergonha, ganha cinco reais."
+
+ELEVENLABS (copiar e colar)
+Na minha cidade, cada vez que você fica com vergonha, ganha cinco reais.
+Seu Jair rasgou a calça: cinco reais.
+O Bruno chamou a professora de mãe: cinco reais.
+Eu sou o Caio. E eu nunca fico com vergonha.
+Dancei no meio da praça: nada.
+Cantei no ônibus: nada.
+Vesti fantasia de galinha: nada.
+Aí a Ana, da minha sala, me deu oi.
+Meu rosto pegou fogo.
+Mil reais de vergonha!
+Eu fui responder "oi"… e saiu "mãe".
+Mil e cinco reais. E um apelido: Tomate.
+
+TEXTO
+Na minha cidade, cada vez que você fica com vergonha, ganha cinco reais.
+Seu Jair rasgou a calça: cinco reais.
+O Bruno chamou a professora de mãe: cinco reais.
+Eu sou o Caio. E eu nunca fico com vergonha.
+Dancei no meio da praça: nada.
+Cantei no ônibus: nada.
+Vesti fantasia de galinha: nada.
+Aí a Ana, da minha sala, me deu oi.
+Meu rosto pegou fogo.
+Mil reais de vergonha!
+Eu fui responder “oi”… e saiu “mãe”.
+Mil e cinco reais. E um apelido: Tomate.
+
+COM TEMPOS
+[0:00.3 - 0:03.0] Na minha cidade, cada vez que você fica com vergonha, ganha cinco reais.
+[0:03.2 - 0:05.2] Seu Jair rasgou a calça: cinco reais.
+[0:05.4 - 0:07.4] O Bruno chamou a professora de mãe: cinco reais.
+[0:07.6 - 0:10.0] Eu sou o Caio. E eu nunca fico com vergonha.
+[0:10.2 - 0:12.4] Dancei no meio da praça: nada.
+[0:12.6 - 0:14.8] Cantei no ônibus: nada.
+[0:15.0 - 0:17.2] Vesti fantasia de galinha: nada.
+[0:17.4 - 0:19.6] Aí a Ana, da minha sala, me deu oi.
+[0:19.8 - 0:21.8] Meu rosto pegou fogo.
+[0:22.0 - 0:24.2] Mil reais de vergonha!
+[0:24.4 - 0:26.8] Eu fui responder “oi”… e saiu “mãe”.
+[0:27.0 - 0:29.8] Mil e cinco reais. E um apelido: Tomate.

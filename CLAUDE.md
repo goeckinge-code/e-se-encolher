@@ -31,7 +31,7 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
 - Dinheiro na tela: cartão de SALDO, notas/moedas voando, "-R$" / "+R$" saltando, contadores grandes.
 - Código em `cartoon2d/`: motor `engine.js` + `lib.js`; cada episódio é `cartoon2d/episodios/epNN-tema.js` (LINES + planos).
   Render: `cartoon2d/montar.sh epNN-tema` → `renders/epNN-tema.mp4`; narração: `node cartoon2d/narracao.js epNN-tema`.
-- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10; ep03 abraço de verdade vale R$ 10 (falso custa); ep04 batalha de imaginação, aposta R$ 200 (45s); ep05 a sombra trabalha por você (pede aumento, vai embora); ep06 poderes no futebol: Caio de borracha x zagueiro Muralha de metal, prêmio R$ 500 (45s). Não repetir temas.
+- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10; ep03 abraço de verdade vale R$ 10 (falso custa); ep04 batalha de imaginação, aposta R$ 200 (45s); ep05 a sombra trabalha por você (pede aumento, vai embora); ep06 poderes no futebol: Caio de borracha x zagueiro Muralha de metal, prêmio R$ 500 (45s); ep07 vergonha rende R$ 5 (Ana dá oi, R$ 1.000, apelido Tomate). Não repetir temas.
 - Nada de personagens, nomes, visuais ou termos de obras de terceiros (ex.: One Piece); só ideias genéricas recriadas com o Caio.
 - Temas preferidos: sentimentos e emoções do dia a dia (com humor), animação fluida (use `K()` para poses suaves, `walk`, `lean`, `hug`).
 

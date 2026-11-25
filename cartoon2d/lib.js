@@ -75,6 +75,7 @@ function char(id, o) {
   if (o.hair === 'bun') P.push(`<circle cx="0" cy="${hy - R - 22}" r="46" fill="${o.hairCol}" stroke="${OL}" stroke-width="${SW}"/><path d="M${-R - 14},${hy + 40} Q${-R - 30},${hy - R - 10} 0,${hy - R - 8} Q${R + 30},${hy - R - 10} ${R + 14},${hy + 40} Z" fill="${o.hairCol}" stroke="${OL}" stroke-width="${SW}"/>`);
   if (o.hair === 'curly') { for (let i = 0; i < 9; i++) { const a = Math.PI * (1.05 + i * .1); P.push(`<circle cx="${Math.cos(a) * R * .95}" cy="${hy + Math.sin(a) * R * .95}" r="40" fill="${o.hairCol}" stroke="${OL}" stroke-width="${SW}"/>`); } }
   P.push(`<circle cx="0" cy="${hy}" r="${R}" fill="${sk}" stroke="${OL}" stroke-width="${SW}"/>`);
+  P.push(`<circle id="${id}-red" cx="0" cy="${hy}" r="${R - 4}" fill="#ff3b3b" opacity="0"/>`);
   // cabelo / boné da frente
   if (o.hair === 'cap') {
     for (const s of [-1, 1]) P.push(`<circle cx="${s * (R - 18)}" cy="${hy - 30}" r="26" fill="${o.hairCol}" stroke="${OL}" stroke-width="6"/>`);
@@ -197,6 +198,7 @@ function setChar(id, st) {
   if (st.sweat) $(id + '-sweat').setAttribute('transform', `translate(0,${(t * 90) % 40})`);
   $(id + '-tears').setAttribute('display', st.tears ? 'inline' : 'none');
   $(id + '-shades').setAttribute('display', st.shades ? 'inline' : 'none');
+  $(id + '-red').setAttribute('opacity', (st.red || 0) * .75);
   const md = $(id + '-mad'); md.setAttribute('display', st.mad ? 'inline' : 'none');
   if (st.mad) md.setAttribute('transform', `translate(${g.R * .62},${g.hy - g.R * .72}) scale(${1 + Math.abs(Math.sin(t * 9)) * .25})`);
   const cap = $(id + '-cap');
