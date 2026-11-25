@@ -220,3 +220,43 @@ background static, keep flat vector style and outlines, no 3D, no morphing, 1.5 
 - [ ] Nenhum plano passa de 2,5 s (média de 1,2 a 1,6 s).
 - [ ] A legenda destaca a palavra falada em amarelo.
 - [ ] Os personagens, nomes e histórias são seus, não dos vídeos de referência.
+
+
+---
+
+## 9. Estilo 2 — referência @bieldozero_ ("cada passo custa R$2", 2:13, ~67 planos de ~2 s)
+
+O que esse vídeo faz melhor e que passou a ser o padrão do mundo do Caio (código em `cartoon2d/lib2.js`):
+
+**Personagens**
+- Cabeça grande e redonda, sobrancelhas grossas e arredondadas, olhos ovais grandes com dois brilhos, bochecha alaranjada,
+  narizinho em curva, sombra suave em um lado do rosto.
+- Cabelo com textura (pontinhos/trancinhas), roupas com detalhes: emblema no peito, sombra lateral, dobras, barra da manga,
+  calça/bermuda com costura, tênis branco de sola grossa e cadarço; mãos em formato de luva com polegar.
+- Contorno azul-marinho médio (~7 px), cores saturadas.
+
+**Movimento**
+- Andar 3/4 de frente: um pé sobe enquanto o outro apoia (a canela encurta), corpo sobe e desce e inclina um pouco,
+  braços balançam ao contrário das pernas; o cenário passa atrás (paralaxe: morro devagar, casas na velocidade da câmera).
+- Expressões trocam por pose; piscadas; bocejo/espreguiçada com braços para cima; reações com close.
+
+**Cenário**
+- Céu azul em degradê com nuvens brancas; morro verde com casinhas desbotadas no fundo; casas coloridas com telhas,
+  janelas com veneziana, floreira, porta com almofadas, cerquinha branca, muro de tijolo, arbustos;
+  postes com fios entre eles, árvores de três bolas; calçada clara com lajotas em perspectiva, meio-fio branco, asfalto escuro com faixas.
+- Interiores: parede listrada, rodapé, chão de madeira, quadro, relógio, quadros na parede.
+
+**Interface**
+- Saldo em balão branco sobre a cabeça de cada personagem ("$" verde + "R$ 14,00"); o "-R$2" vermelho sobe dali.
+- Título grande no gancho, duas linhas (amarela e branca) com contorno grosso.
+- Inserções: planta da casa vista de cima com o custo de cada passo, notificação de celular ("PREFEITURA – aviso oficial"),
+  placas, gráfico, carimbo.
+
+**Prompt (gerador de imagem) para esse estilo**
+```
+2D flat vector cartoon, Brazilian neighborhood, bright blue sky with white clouds, distant green hill with tiny pastel houses,
+colorful detailed houses (tiled roofs, windows with shutters, flower boxes, white picket fence, brick wall), utility poles with wires,
+round trees, light sidewalk with perspective tiles, dark asphalt road with white dashes; chibi kid character with big round head,
+thick rounded eyebrows, big oval eyes with highlights, orange blush, textured hair, t-shirt with side shading and folds,
+glove-like hands, chunky sneakers; medium navy outline, saturated colors, vertical 9:16.
+```

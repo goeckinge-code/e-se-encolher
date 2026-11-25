@@ -31,9 +31,19 @@ Vídeo vertical 9:16 (1080x1920), ~63s, para TikTok/Shorts, sem voz: o dono do c
 - Dinheiro na tela: cartão de SALDO, notas/moedas voando, "-R$" / "+R$" saltando, contadores grandes.
 - Código em `cartoon2d/`: motor `engine.js` + `lib.js`; cada episódio é `cartoon2d/episodios/epNN-tema.js` (LINES + planos).
   Render: `cartoon2d/montar.sh epNN-tema` → `renders/epNN-tema.mp4`; narração: `node cartoon2d/narracao.js epNN-tema`.
-- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10; ep03 abraço de verdade vale R$ 10 (falso custa); ep04 batalha de imaginação, aposta R$ 200 (45s); ep05 a sombra trabalha por você (pede aumento, vai embora); ep06 poderes no futebol: Caio de borracha x zagueiro Muralha de metal, prêmio R$ 500 (45s); ep07 vergonha rende R$ 5 (Ana dá oi, R$ 1.000, apelido Tomate). Não repetir temas.
+- Episódios feitos: ep01 reclamação custa R$ 1; ep02 mentira custa R$ 10; ep03 abraço de verdade vale R$ 10 (falso custa); ep04 batalha de imaginação, aposta R$ 200 (45s); ep05 a sombra trabalha por você (pede aumento, vai embora); ep06 poderes no futebol: Caio de borracha x zagueiro Muralha de metal, prêmio R$ 500 (45s); ep07 vergonha rende R$ 5 (Ana dá oi, R$ 1.000, apelido Tomate); ep08 bocejo custa R$ 2 (estilo 2; a professora fica rica). Não repetir temas.
 - Nada de personagens, nomes, visuais ou termos de obras de terceiros (ex.: One Piece); só ideias genéricas recriadas com o Caio.
 - Temas preferidos: sentimentos e emoções do dia a dia (com humor), animação fluida (use `K()` para poses suaves, `walk`, `lean`, `hug`).
+- **A partir do ep08 o mundo do Caio usa o ESTILO 2 (`cartoon2d/lib2.js`, carregado automaticamente para ep ≥ 08).** Sempre usar:
+  - personagens v2: cabeça grande redonda, sobrancelha grossa, olhos ovais com brilho, bochecha alaranjada, cabelo com textura,
+    roupa com sombra lateral e dobras, mão em luva, tênis de sola grossa; andar com o pé que sobe (`walk`), corpo balançando;
+  - cenário `bairro(tag)` em camadas (céu azul com nuvens, morro com casinhas, casas detalhadas com telhas/venezianas/floreira/
+    cerquinha/tijolo, postes com fios, árvores, calçada em perspectiva, asfalto escuro) e `parallax(tag, x)` quando a câmera anda;
+    interiores com `room2()`;
+  - saldo de cada personagem num balão sobre a cabeça (`pillSvg`/`showPill`) com "-R$" saltando dali; título grande no topo
+    no gancho (`titleSvg`/`showTitle`); legenda branca no asfalto (y≈1745) com a palavra falada em amarelo;
+  - cortes a cada ~2 s, closes para as reações, câmera sempre se movendo.
+  Detalhes em `estilo-cartoon/GUIA.md` (seção "Estilo 2").
 
 ## Outros estilos do canal
 - `estilo-cartoon/GUIA.md`: análise de dois cartoons 2D narrados (regra mágica, roteiro de 2 min, legenda karaokê) e prompts para refazer.

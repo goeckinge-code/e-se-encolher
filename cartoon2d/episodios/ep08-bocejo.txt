@@ -1,0 +1,43 @@
+Episódio 8 (estilo 2): "Na minha cidade, cada bocejo custa dois reais."
+
+ELEVENLABS (copiar e colar)
+Na minha cidade, cada bocejo custa dois reais.
+E o pior: bocejo pega.
+Eu sou o Caio, e fui pra escola com vinte reais.
+Primeira aula: fotossíntese.
+O Bruno bocejou.
+A Ana bocejou.
+Eu segurei… segurei…
+E bocejei.
+No fim da aula, a sala inteira tava quebrada.
+Menos a professora.
+Cada bocejo caía na conta dela.
+Agora eu sei por que a aula é tão chata.
+
+TEXTO
+Na minha cidade, cada bocejo custa dois reais.
+E o pior: bocejo pega.
+Eu sou o Caio, e fui pra escola com vinte reais.
+Primeira aula: fotossíntese.
+O Bruno bocejou.
+A Ana bocejou.
+Eu segurei… segurei…
+E bocejei.
+No fim da aula, a sala inteira tava quebrada.
+Menos a professora.
+Cada bocejo caía na conta dela.
+Agora eu sei por que a aula é tão chata.
+
+COM TEMPOS
+[0:00.3 - 0:02.8] Na minha cidade, cada bocejo custa dois reais.
+[0:03.0 - 0:05.0] E o pior: bocejo pega.
+[0:05.2 - 0:07.8] Eu sou o Caio, e fui pra escola com vinte reais.
+[0:08.0 - 0:10.4] Primeira aula: fotossíntese.
+[0:10.6 - 0:12.4] O Bruno bocejou.
+[0:12.6 - 0:14.4] A Ana bocejou.
+[0:14.6 - 0:17.2] Eu segurei… segurei…
+[0:17.4 - 0:19.4] E bocejei.
+[0:19.6 - 0:22.2] No fim da aula, a sala inteira tava quebrada.
+[0:22.4 - 0:24.8] Menos a professora.
+[0:25.0 - 0:27.4] Cada bocejo caía na conta dela.
+[0:27.6 - 0:29.8] Agora eu sei por que a aula é tão chata.

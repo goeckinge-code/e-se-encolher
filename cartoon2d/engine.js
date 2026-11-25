@@ -39,7 +39,8 @@ const POCKET = (ch, x, y, s) => [x + ch.geo.tw * .25 * s, y + (ch.geo.torsoBot -
 
 // ------------------------------------------------------------------ montagem do SVG e render(t)
 function captionSvg() {
-  return `<g id="cap" font-family="Poppins" font-weight="800" font-size="72" text-anchor="middle"><text id="capT" x="540" y="1660" fill="#fff" stroke="${OL}" stroke-width="14" paint-order="stroke" stroke-linejoin="round" filter="url(#shadow)"></text></g>`;
+  const CP = window.CAPTION || { y: 1660, size: 72 };
+  return `<g id="cap" font-family="Poppins" font-weight="800" font-size="${CP.size}" text-anchor="middle"><text id="capT" x="540" y="${CP.y}" fill="#fff" stroke="${OL}" stroke-width="14" paint-order="stroke" stroke-linejoin="round" filter="url(#shadow)"></text></g>`;
 }
 function setup() {
   const root = $('stage');
@@ -71,7 +72,8 @@ function render(t) {
   if (!g) { T.textContent = ''; return; }
   T.innerHTML = g.map(w => `<tspan fill="${t >= w.t0 && t < w.t1 + .05 ? '#f5c531' : '#fff'}">${w.w.replace(/&/g, '&amp;')}</tspan>`).join(' ');
   const k = backOut((t - g.t0) / .18, 1.6);
-  T.setAttribute('transform', `translate(540,1640) scale(${k}) translate(-540,-1640)`);
+  const cy = (window.CAPTION || { y: 1660 }).y - 20;
+  T.setAttribute('transform', `translate(540,${cy}) scale(${k}) translate(-540,${-cy})`);
 }
 window.addEventListener('load', () => { buildCaptions(); setup(); render(0); window.READY = true; });
 window.render = render;
