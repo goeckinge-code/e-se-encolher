@@ -98,6 +98,20 @@ def place(base, im, cx, cy, k=1.0, alpha=1.0):
         a = im.getchannel("A").point(lambda v: int(v * alpha)); im = im.copy(); im.putalpha(a)
     base.alpha_composite(im, (int(cx - im.width / 2), int(cy - im.height / 2)))
 
+def wrapped(txt, fill, width=W - 140):
+    """Texto em várias linhas centralizadas, na fonte da legenda."""
+    words, lines, cur = txt.split(), [], ""
+    for w in words:
+        test = (cur + " " + w).strip()
+        if F_CAP.getlength(test.upper()) + 20 > width and cur: lines.append(cur); cur = w
+        else: cur = test
+    lines.append(cur)
+    parts = [outlined(l.upper(), F_CAP, fill) for l in lines]
+    w = max(p.width for p in parts); h = sum(p.height for p in parts) - 14 * (len(parts) - 1)
+    im = Image.new("RGBA", (w, h)); y = 0
+    for p in parts: im.alpha_composite(p, ((w - p.width) // 2, y)); y += p.height - 14
+    return im
+
 def title_img(txt):
     lines = txt.split("\n")
     parts = [outlined(l, F_TIT, (255, 214, 64), stroke=(74, 36, 10), sw=12, shadow=12,
@@ -158,8 +172,15 @@ def compose(sh, f):
                 lab = outlined(f"PESSOAS NO NÍVEL {lvl}", F_PILL, (255, 255, 255), sw=6, shadow=4)
                 place(im, lab, W / 2, H * y + 100)
         if t >= t0:
-            k = back((t - t0) / 0.25) * (1.6 if sh is R.SHOTS[0] else 1.0)   # no gancho o número é maior
-            place(im, outlined(txt, F_BIG, COL[col]), W / 2, H * y, k)
+            k = back((t - t0) / 0.25) * (1.6 if sh is R.SHOTS[0] and len(txt) < 12 else 1.0)   # no gancho o número é maior
+            bi = outlined(txt, F_BIG, COL[col])
+            if bi.width * k > W - 70: k *= (W - 70) / (bi.width * k)         # cabe na largura
+            place(im, bi, W / 2, H * y, k)
+    # textos longos (cartela final): (texto, tempo, y, cor) com quebra de linha
+    for txt, word, y, col in sh.get("texts", []):
+        t0 = wt(word)
+        if t >= t0:
+            place(im, wrapped(txt, COL.get(col, (255, 255, 255))), W / 2, H * y, back((t - t0) / 0.3))
     # título de capítulo
     if sh.get("title"):
         txt, word = sh["title"]; t0 = wt(word)
@@ -200,6 +221,8 @@ def collect_sfx():
         if sh.get("title"): SFX.append((s0 + R.wt(sh, sh["title"][1]), "boom"))
         if sh.get("x"): SFX.append((s0 + R.wt(sh, sh["x"]), "buzz"))
         if sh is R.SHOTS[0]: SFX.extend([(0.0, "boom"), (0.03, "whoosh"), (0.25, "fanfare")])
+        for tt, kind in sh.get("sfx", []): SFX.append((s0 + tt, kind))
+        for _, word, *_ in sh.get("texts", []): SFX.append((s0 + R.wt(sh, word), "pop"))
         if sh["id"] == "s24": SFX.append((s0 + R.wt(sh, "bloquear"), "clang"))
 
 # ------------------------------------------------------------------ síntese dos efeitos (sem arquivos externos)
@@ -238,6 +261,16 @@ def synth(kind):
             n = int(0.5 * SR); t = np.arange(n) / SR; st = int(i * 0.12 * SR)
             out[st:st + n] += 0.18 * (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(4 * np.pi * f * t)) * env(n, 0.005, 0.3)
         return out
+    if kind == "briga":      # confusão: batidas e "pofs" abafados
+        n = int(1.0 * SR); out = np.zeros(n); r = np.random.default_rng(3)
+        for i in range(9):
+            st = int(r.uniform(0, 0.85) * SR); m = int(0.12 * SR); tt = np.arange(m) / SR
+            out[st:st + m] += 0.35 * np.sin(2 * np.pi * r.uniform(90, 220) * tt) * np.exp(-tt * 30) + 0.12 * r.standard_normal(m) * np.exp(-tt * 40)
+        return out
+    if kind == "boing":
+        n = int(0.45 * SR); t = np.arange(n) / SR
+        f = 220 + 160 * np.sin(2 * np.pi * 9 * t) * np.exp(-t * 4)
+        return 0.35 * np.sin(2 * np.pi * np.cumsum(f) / SR) * env(n, 0.003, 0.2)
     return np.zeros(10)
 
 def music(total):
